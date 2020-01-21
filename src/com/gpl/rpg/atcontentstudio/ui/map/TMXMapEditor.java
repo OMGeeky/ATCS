@@ -688,6 +688,8 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			case inventoryKeep:
 			case inventoryRemove:
 			case usedItem:
+			case wear:
+			case wearRemove:
 				requirementObj = addItemBox(pane, project, "Item: ", (Item) requirement.required_obj, writable, listener);
 				requirementObjId = null;
 				requirementValue = addIntegerField(pane, "Quantity: ", requirement.required_value, false, writable, listener);
@@ -727,11 +729,6 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 				requirementObjId = addTextField(pane, "Faction ID:", requirement.required_obj_id, writable, listener);
 				requirementValue = addIntegerField(pane, "Exact value: ", requirement.required_value, true, writable, listener);
 				break;				
-			case wear:
-				requirementObj = addItemBox(pane, project, "Item: ", (Item) requirement.required_obj, writable, listener);
-				requirementObjId = null;
-				requirementValue = null;
-				break;
 			}
 		}
 		requirementNegated = addBooleanBasedCheckBox(pane, "Negate this requirement.", requirement.negated, writable, listener);
