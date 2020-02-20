@@ -203,7 +203,7 @@ public class Item extends JSONElement {
 			//TODO correct game data, to unify format.
 //			this.equip_effect.critical_multiplier = JSONElement.getDouble((Number) equipEffect.get("setCriticalMultiplier"));
 			if (equipEffect.get("setCriticalMultiplier") != null) this.equip_effect.critical_multiplier = JSONElement.getDouble(Double.parseDouble(equipEffect.get("setCriticalMultiplier").toString()));
-			this.equip_effect.damage_modifier = JSONElement.getInteger((Number) equipEffect.get("setDamageModifier"));
+			this.equip_effect.damage_modifier = JSONElement.getInteger((Number) equipEffect.get("setNonWeaponDamageModifier"));
 			
 			List conditionsJson = (List) equipEffect.get("addedConditions");
 			if (conditionsJson != null && !conditionsJson.isEmpty()) {
@@ -217,6 +217,7 @@ public class Item extends JSONElement {
 				}
 			}
 		}
+		
 		
 		Map hitEffect = (Map) itemJson.get("hitEffect");
 		if (hitEffect != null) {
@@ -645,7 +646,7 @@ public class Item extends JSONElement {
 			if (this.equip_effect.increase_block_chance != null) equipEffectJson.put("increaseBlockChance", this.equip_effect.increase_block_chance);
 			if (this.equip_effect.increase_damage_resistance != null) equipEffectJson.put("increaseDamageResistance", this.equip_effect.increase_damage_resistance);
 			if (this.equip_effect.critical_multiplier != null) equipEffectJson.put("setCriticalMultiplier", this.equip_effect.critical_multiplier);
-			if (this.equip_effect.damage_modifier != null) equipEffectJson.put("setDamageModifier", this.equip_effect.damage_modifier);
+			if (this.equip_effect.damage_modifier != null) equipEffectJson.put("setNonWeaponDamageModifier", this.equip_effect.damage_modifier);
 			if (this.equip_effect.conditions != null) {
 				List conditionsJson = new ArrayList();
 				equipEffectJson.put("addedConditions", conditionsJson);
