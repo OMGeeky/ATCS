@@ -218,7 +218,7 @@ public class ItemEditor extends JSONElementEditor {
 		}
 		equipDmgMin = addIntegerField(equipEffectPane, "Attack Damage min: ", equipEffect.damage_boost_min, true, item.writable, listener);
 		equipDmgMax = addIntegerField(equipEffectPane, "Attack Damage max: ", equipEffect.damage_boost_max, true, item.writable, listener);
-		equipSetDM =  addIntegerField(equipEffectPane, "Damage modifier: ", equipEffect.damage_modifier, false, item.writable, listener);
+		equipSetDM =  addIntegerField(equipEffectPane, "Damage modifier %: ", equipEffect.damage_modifier, 100, false, item.writable, listener);
 		equipBoostHP = addIntegerField(equipEffectPane, "Boost max HP: ", equipEffect.max_hp_boost, true, item.writable, listener);
 		equipBoostAP = addIntegerField(equipEffectPane, "Boost max AP: ", equipEffect.max_ap_boost, true, item.writable, listener);
 		equipBoostAC = addIntegerField(equipEffectPane, "Boost attack chance: ", equipEffect.increase_attack_chance, true, item.writable, listener);

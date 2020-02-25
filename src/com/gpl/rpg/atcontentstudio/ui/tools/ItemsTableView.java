@@ -73,7 +73,7 @@ public class ItemsTableView extends ElementTableView {
 			case 27: return "On hit recv - Tgt AP max";			
 			case 28: return "AD min";
 			case 29: return "AD max";
-			case 30: return "Damage modifier";					
+			case 30: return "Damage modifier %";					
 			case 31: return "Max HP";
 			case 32: return "Max AP";	
 			case 33: return "Attack cost";
