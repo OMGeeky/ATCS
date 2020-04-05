@@ -47,6 +47,9 @@ import java.util.Vector;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.gpl.rpg.atcontentstudio.model.GameSource.Type;
+import com.gpl.rpg.atcontentstudio.model.maps.TMXMapSet;
+
 import tiled.core.AnimatedTile;
 import tiled.core.Map;
 import tiled.core.MapLayer;
@@ -238,7 +241,11 @@ public class TMXMapWriter
         } else {
             w.startElement("tileset");
             w.writeAttribute("firstgid", getFirstGidForTileset(set));
-            w.writeAttribute("source", getRelativePath(wp, source));
+			if (set.sheet.parent.getDataType() == Type.source) {
+				w.writeAttribute("source", (TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE + set.getName()).replace("\\", "/"));
+			} else {
+				w.writeAttribute("source", getRelativePath(wp, source));
+			}
             if (set.getBaseDir() != null) {
                 w.writeAttribute("basedir", set.getBaseDir());
             }
@@ -279,7 +286,11 @@ public class TMXMapWriter
 
         if (tileBitmapFile != null) {
             w.startElement("image");
-            w.writeAttribute("source", getRelativePath(wp, tileBitmapFile));
+			if (set.sheet.parent.getDataType() == Type.source) {
+				w.writeAttribute("source", (TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE + set.getName()).replace("\\", "/"));
+			} else {
+				w.writeAttribute("source", getRelativePath(wp, tileBitmapFile));
+			}            
             if (set.sheetDimensions != null) {
             	w.writeAttribute("width", set.sheetDimensions.width);
             	w.writeAttribute("height", set.sheetDimensions.height);
