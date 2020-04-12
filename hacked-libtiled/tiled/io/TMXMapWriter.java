@@ -242,7 +242,11 @@ public class TMXMapWriter
             w.startElement("tileset");
             w.writeAttribute("firstgid", getFirstGidForTileset(set));
 			if (set.sheet.parent.getDataType() == Type.source) {
-				w.writeAttribute("source", (TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE + set.getName()).replace("\\", "/"));
+				String fileName = set.getName();
+				if (fileName.length() > 3 && !(fileName.substring(fileName.length() - 4).equalsIgnoreCase(".png"))) {
+					fileName += ".png";
+				}				
+				w.writeAttribute("source", (TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE + fileName).replace("\\", "/"));
 			} else {
 				w.writeAttribute("source", getRelativePath(wp, source));
 			}
@@ -287,7 +291,11 @@ public class TMXMapWriter
         if (tileBitmapFile != null) {
             w.startElement("image");
 			if (set.sheet.parent.getDataType() == Type.source) {
-				w.writeAttribute("source", (TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE + set.getName()).replace("\\", "/"));
+				String fileName = set.getName();
+				if (fileName.length() > 3 && !(fileName.substring(fileName.length() - 4).equalsIgnoreCase(".png"))) {
+					fileName += ".png";
+				}		
+				w.writeAttribute("source", (TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE + fileName).replace("\\", "/"));
 			} else {
 				w.writeAttribute("source", getRelativePath(wp, tileBitmapFile));
 			}            
