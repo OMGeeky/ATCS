@@ -258,7 +258,7 @@ public class TMXMap extends GameDataElement {
 			if (getDataType() == GameSource.Type.source) {
 				writer.writeMap(tmxMap, baos, tmxFile.getAbsolutePath());
 			} else {
-				writer.writeMap(tmxMap, baos, getProject().baseContent.gameMaps.mapFolder.getAbsolutePath()+File.separator+"placeholder.tmx");
+				writer.writeMap(tmxMap, baos, ((TMXMapSet)this.parent).mapFolder.getAbsolutePath()+File.separator+"placeholder.tmx");
 			}
 		} catch (Exception e) {
 			Notification.addError("Error while converting map "+getDesc()+" to XML: "+e.getMessage());

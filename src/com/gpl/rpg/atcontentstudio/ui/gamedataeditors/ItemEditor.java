@@ -82,6 +82,7 @@ public class ItemEditor extends JSONElementEditor {
 	private JSpinner equipBoostBC;
 	private JSpinner equipBoostCS;
 	private JSpinner equipSetCM;
+	private JSpinner equipSetDM;
 	private JSpinner equipBoostDR;
 	private JSpinner equipIncMoveCost;
 	private JSpinner equipIncUseCost;
@@ -217,6 +218,7 @@ public class ItemEditor extends JSONElementEditor {
 		}
 		equipDmgMin = addIntegerField(equipEffectPane, "Attack Damage min: ", equipEffect.damage_boost_min, true, item.writable, listener);
 		equipDmgMax = addIntegerField(equipEffectPane, "Attack Damage max: ", equipEffect.damage_boost_max, true, item.writable, listener);
+		equipSetDM =  addIntegerField(equipEffectPane, "Damage modifier %: ", equipEffect.damage_modifier, 100, false, item.writable, listener);
 		equipBoostHP = addIntegerField(equipEffectPane, "Boost max HP: ", equipEffect.max_hp_boost, true, item.writable, listener);
 		equipBoostAP = addIntegerField(equipEffectPane, "Boost max AP: ", equipEffect.max_ap_boost, true, item.writable, listener);
 		equipBoostAC = addIntegerField(equipEffectPane, "Boost attack chance: ", equipEffect.increase_attack_chance, true, item.writable, listener);
@@ -1431,6 +1433,7 @@ public class ItemEditor extends JSONElementEditor {
 	public static boolean isNull(Item.EquipEffect effect) {
 		if (effect.conditions != null) return false;
 		if (effect.critical_multiplier != null) return false;
+		if (effect.damage_modifier != null) return false;
 		if (effect.damage_boost_max != null) return false;
 		if (effect.damage_boost_min != null) return false;
 		if (effect.increase_attack_chance != null) return false;
@@ -1619,6 +1622,10 @@ public class ItemEditor extends JSONElementEditor {
 				equipEffect.critical_multiplier = (Double) value;
 				updatePrice = true;
 				updateEquip = true;
+			} else if (source == equipSetDM) {
+				equipEffect.damage_modifier = (Integer) value;
+				updatePrice = true;
+				updateEquip = true;		
 			} else if (source == equipBoostDR) {
 				equipEffect.increase_damage_resistance = (Integer) value;
 				updatePrice = true;

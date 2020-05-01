@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -74,7 +78,9 @@ import com.gpl.rpg.atcontentstudio.utils.FileUtils;
 public class Project implements ProjectTreeNode, Serializable {
 
 	private static final long serialVersionUID = 4807454973303366758L;
+	private static final String drawablePath = TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE.replace("\\", "/");
 
+	
 	//Every instance field that is not transient will be saved in this file.
 	public static final String SETTINGS_FILE = ".project";
 	
@@ -1079,10 +1085,16 @@ public class Project implements ProjectTreeNode, Serializable {
 			public void run() {
 				Notification.addInfo("Exporting project \""+name+"\" as "+target.getAbsolutePath());
 				
-				File tmpDir = exportProjectToTmpDir();
+				File tmpDir;
+				try {
+					tmpDir = exportProjectToTmpDir();
+					FileUtils.writeToZip(tmpDir, target);
+					FileUtils.deleteDir(tmpDir);					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-				FileUtils.writeToZip(tmpDir, target);
-				FileUtils.deleteDir(tmpDir);
 				Notification.addSuccess("Project \""+name+"\" exported as "+target.getAbsolutePath());
 			}
 
@@ -1096,10 +1108,16 @@ public class Project implements ProjectTreeNode, Serializable {
 			public void run() {
 				Notification.addInfo("Exporting project \""+name+"\" into "+target.getAbsolutePath());
 				
-				File tmpDir = exportProjectToTmpDir();
+				File tmpDir;
+				try {					
+					tmpDir = exportProjectToTmpDir();
+					FileUtils.copyOver(tmpDir, target);
+					FileUtils.deleteDir(tmpDir);					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-				FileUtils.copyOver(tmpDir, target);
-				FileUtils.deleteDir(tmpDir);
 				Notification.addSuccess("Project \""+name+"\" exported into "+target.getAbsolutePath());
 			}
 
@@ -1107,7 +1125,7 @@ public class Project implements ProjectTreeNode, Serializable {
 		});
 	}
 	
-	public File exportProjectToTmpDir() {
+	public File exportProjectToTmpDir() throws IOException {
 		File tmpDir = new File(baseFolder, "tmp");
 		FileUtils.deleteDir(tmpDir);
 		tmpDir.mkdir();
@@ -1139,12 +1157,12 @@ public class Project implements ProjectTreeNode, Serializable {
 		writtenFiles = new LinkedList<String>();
 		for (File createdMapFile : createdContent.gameMaps.mapFolder.listFiles()) {
 			if (createdMapFile.getName().equalsIgnoreCase("worldmap.xml")) continue;
-			FileUtils.copyFile(createdMapFile, new File(tmpMapDir, createdMapFile.getName()));
+			copyTmxConverted(createdMapFile.toPath(), Paths.get(tmpMapDir.getAbsolutePath(), createdMapFile.getName()));
 			writtenFiles.add(createdMapFile.getName());
 		}
 		for (File alteredMapFile : alteredContent.gameMaps.mapFolder.listFiles()) {
 			if (alteredMapFile.getName().equalsIgnoreCase("worldmap.xml")) continue;
-			FileUtils.copyFile(alteredMapFile, new File(tmpMapDir, alteredMapFile.getName()));
+			copyTmxConverted(alteredMapFile.toPath(), Paths.get(tmpMapDir.getAbsolutePath(), alteredMapFile.getName()));
 			writtenFiles.add(alteredMapFile.getName());
 		}
 		writtenFilesPerDataType.put(TMXMap.class, writtenFiles);
@@ -1177,6 +1195,16 @@ public class Project implements ProjectTreeNode, Serializable {
 		return tmpDir;
 	}
 	
+	private void copyTmxConverted(Path from, Path to) throws IOException {
+		String xml = new String(Files.readAllBytes(from), StandardCharsets.UTF_8);
+		xml = xml.replace("../../altered/spritesheets/", drawablePath);
+		xml = xml.replace("../../created/spritesheets/", drawablePath);
+		xml = xml.replace("../spritesheets/", drawablePath);
+		xml = xml.replace("../spritesheets/", drawablePath);
+		Files.write(to, xml.getBytes(StandardCharsets.UTF_8));
+	}
+
+
 	@SuppressWarnings("rawtypes")
 	public List<String> writeDataDeltaForDataType(GameDataCategory<? extends JSONElement> created, GameDataCategory<? extends JSONElement> altered, GameDataCategory<? extends JSONElement> source, Class<? extends JSONElement> gdeClass, File targetFolder) {
 		List<String> filenamesToWrite = new LinkedList<String>();
