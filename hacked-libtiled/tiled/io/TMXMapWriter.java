@@ -241,7 +241,7 @@ public class TMXMapWriter
         } else {
             w.startElement("tileset");
             w.writeAttribute("firstgid", getFirstGidForTileset(set));
-			if (set.sheet.parent.getDataType() == Type.source) {
+			if (set.sheet != null && set.sheet.parent.getDataType() == Type.source) {
 				String fileName = set.getName();
 				if (fileName.length() > 3 && !(fileName.substring(fileName.length() - 4).equalsIgnoreCase(".png"))) {
 					fileName += ".png";
@@ -290,7 +290,7 @@ public class TMXMapWriter
 
         if (tileBitmapFile != null) {
             w.startElement("image");
-			if (set.sheet.parent.getDataType() == Type.source) {
+			if (set.sheet != null && set.sheet.parent.getDataType() == Type.source) {
 				String fileName = set.getName();
 				if (fileName.length() > 3 && !(fileName.substring(fileName.length() - 4).equalsIgnoreCase(".png"))) {
 					fileName += ".png";
