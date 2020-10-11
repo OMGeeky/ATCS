@@ -85,6 +85,7 @@ public class Requirement extends JSONElement {
 		,resistancePhysical	// lowers chance to get negative active conditions by monsters (Physical Capacity like Minor fatigue)
 		,resistanceBlood	// lowers chance to get negative active conditions by monsters (Blood Disorder like Weak Poison)
 		,shadowBless
+		,sporeImmunity
 		,crit1			// lowers atk ability
 		,crit2			// lowers def ability ,rejuvenation	// Reduces magnitudes of conditions
 		,rejuvenation	// Reduces magnitudes of conditions
