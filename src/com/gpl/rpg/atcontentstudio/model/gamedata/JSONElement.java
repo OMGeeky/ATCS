@@ -53,6 +53,10 @@ public abstract class JSONElement extends GameDataElement {
 		} catch (ParseException e) {
 			Notification.addError("Error while parsing JSON file "+jsonFile.getAbsolutePath()+": "+e.getMessage());
 			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			System.out.println(id);
+			Notification.addError("Error while parsing JSON file "+jsonFile.getAbsolutePath()+": "+e.getMessage());
+			e.printStackTrace();
 		} finally {
 			if (reader != null)
 				try {
