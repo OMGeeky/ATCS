@@ -521,16 +521,6 @@ public class WorldMapView extends JComponent implements Scrollable {
 			}
 			worldmap.getProject().getMap(id).addBacklink(worldmap);
 		}
-		
-		List<String> toRemove = new ArrayList<String>();
-		for (String s : worldmap.labels.keySet()) {
-			if (!mapLocations.containsKey(s)) {
-				toRemove.add(s);
-			}
-		}
-		for (String s : toRemove) {
-			worldmap.labels.remove(s);
-		}
 	}
 	
 }
