@@ -83,16 +83,16 @@ Section install
   FileClose $9
   
   SetOutPath "$INSTDIR\lib\"
-  file "jide-oss.jar"
-  file "ui.jar"
-  file "AndorsTrainer_v${TRAINER_VERSION}.jar"
-  file "junit-4.10.jar"
-  file "json_simple-1.1.jar"
-  file "ATCS_v${VERSION}.jar"
-  file "rsyntaxtextarea.jar"
-  file "prefuse.jar"
-  file "bsh-2.0b4.jar"
-  file "jsoup-1.10.2.jar"
+  file "C:\AT\ATCS_source\lib\jide-oss.jar"
+  file "C:\AT\ATCS_source\lib\ui.jar"
+  file "C:\AT\ATCS_source\lib\AndorsTrainer_v${TRAINER_VERSION}.jar"
+  file "C:\AT\ATCS_source\lib\junit-4.10.jar"
+  file "C:\AT\ATCS_source\lib\json_simple-1.1.jar"
+  file "C:\AT\temp\ATCS_v0.6.17\ATCS_v${VERSION}.jar"
+  file "C:\AT\ATCS_source\lib\rsyntaxtextarea.jar"
+  file "C:\AT\ATCS_source\lib\prefuse.jar"
+  file "C:\AT\ATCS_source\lib\bsh-2.0b4.jar"
+  file "C:\AT\ATCS_source\lib\jsoup-1.10.2.jar"
 
   SetOutPath $INSTDIR
   
