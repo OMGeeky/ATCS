@@ -38,10 +38,15 @@ public abstract class JSONElement extends GameDataElement {
 			for (Object obj : gameDataElements) {
 				Map jsonObj = (Map)obj;
 				String id  = (String) jsonObj.get("id");
+				try {
 				if (id != null && id.equals(this.id )) {
 					this.parse(jsonObj);
 					this.state = State.parsed;
 					break;
+				}
+				}
+				catch(Exception e){
+					System.out.println("Error in ID: " + id);
 				}
 			}
 		} catch (FileNotFoundException e) {

@@ -153,7 +153,7 @@ public class TMXMapWriter
     }
 
     private void writeMap(Map map, XMLWriter w, String wp) throws IOException {
-        w.writeDocType("map", null, "http://mapeditor.org/dtd/1.0/map.dtd");
+        w.writeDocType("map", null, "https://mapeditor.org/dtd/1.0/map.dtd");
         w.startElement("map");
 
         w.writeAttribute("version", "1.0");

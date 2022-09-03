@@ -913,7 +913,8 @@ public class TMXMapReader
     private class MapEntityResolver implements EntityResolver
     {
         public InputSource resolveEntity(String publicId, String systemId) {
-            if (systemId.equals("http://mapeditor.org/dtd/1.0/map.dtd")) {
+            if (systemId.equals("http://mapeditor.org/dtd/1.0/map.dtd") ||
+            	systemId.equals("https://mapeditor.org/dtd/1.0/map.dtd")) {
                 return new InputSource(TMXMapReader.class.getResourceAsStream(
                         "resources/map.dtd"));
             }

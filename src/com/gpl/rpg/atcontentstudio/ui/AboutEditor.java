@@ -37,17 +37,17 @@ public class AboutEditor extends Editor {
 			"<b>Right click on the left area or use the \"File\" menu to create a project.</b><br/>" +
 			"<br/>" +
 			"Play <a href=\"https://play.google.com/store/apps/details?id=com.gpl.rpg.AndorsTrail\">Andor's Trail</a> for free on your Android device.<br/>" +
-			"Visit <a href=\"http://andorstrail.com/\">the official forum</a> to give or receive help.<br/>" +
+			"Visit <a href=\"https://andorstrail.com/\">the official forum</a> to give or receive help.<br/>" +
 			"Open the project's <a href=\"https://github.com/Zukero/andors-trail/\">GitHub project page</a> to check out the game's source code.<br/>" +
 			"<br/>" +
 			"For content creation help, make sure to use the following resources:<br/>" +
-			"<a href=\"http://andorstrail.com/viewtopic.php?f=6&t=4560\">The contribution guide on the forums</a><br/>" +
-			"<a href=\"http://andorstrail.com/wiki/doku.php?id=andors_trail_wiki:developer_section\">The developer section of the Andor's Trail wiki</a><br/>" +
+			"<a href=\"https://andorstrail.com/viewtopic.php?f=6&t=4560\">The contribution guide on the forums</a><br/>" +
+			"<a href=\"https://andorstrail.com/wiki/doku.php?id=andors_trail_wiki:developer_section\">The developer section of the Andor's Trail wiki</a><br/>" +
 			"<a href=\"https://docs.google.com/document/d/1BwWD1tLgPcmA2bwudrVnOc6f2dkPLFCjWdn7tXlIp5g\">The design outline document on Google Drive/Docs</a><br/>" +
 			"<br/>" +
 			"<font size=+1>Credits:</font><br/>" +
 			"<br/>" +
-			"Author: <a href=\"http://andorstrail.com/memberlist.php?mode=viewprofile&u=2875\">Zukero</a><br/>" +
+			"Author: <a href=\"https://andorstrail.com/memberlist.php?mode=viewprofile&u=2875\">Zukero</a><br/>" +
 			"Licence: <a href=\"http://www.gnu.org/licenses/gpl-3.0.html\">GPL v3</a><br/>" +
 			"Sources are included in this package and on <a href=\"https://github.com/Zukero/ATCS\">GitHub</a>.<br/>" +
 			"<br/>" +
