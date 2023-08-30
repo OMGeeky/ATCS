@@ -11,7 +11,7 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 public class SpawnArea extends MapObject {
 
 	public int quantity = 1;
-	public int spawnchance = 10;
+	public int respawnSpeed = 10;
 	public boolean active = true;
 	public boolean ignoreAreas = false;
 	public String spawngroup_id;
@@ -21,8 +21,8 @@ public class SpawnArea extends MapObject {
 		if (obj.getProperties().getProperty("quantity") != null) {
 			this.quantity = Integer.parseInt(obj.getProperties().getProperty("quantity"));
 		}
-		if (obj.getProperties().getProperty("spawnchance") != null) {
-			this.spawnchance = Integer.parseInt(obj.getProperties().getProperty("spawnchance"));
+		if (obj.getProperties().getProperty("respawnspeed") != null) {
+			this.respawnSpeed = Integer.parseInt(obj.getProperties().getProperty("respawnspeed"));
 		}
 		if (obj.getProperties().getProperty("active") != null) {
 			this.active = Boolean.parseBoolean(obj.getProperties().getProperty("active"));
@@ -82,8 +82,8 @@ public class SpawnArea extends MapObject {
 		if (quantity != 1) {
 			tmxObject.getProperties().setProperty("quantity", Integer.toString(quantity));
 		}
-		if (spawnchance != 10) {
-			tmxObject.getProperties().setProperty("spawnchance", Integer.toString(spawnchance));
+		if (respawnSpeed != 10) {
+			tmxObject.getProperties().setProperty("respawnspeed", Integer.toString(respawnSpeed));
 		}
 		if (!this.active) {
 			tmxObject.getProperties().setProperty("active", Boolean.toString(active));
@@ -92,5 +92,4 @@ public class SpawnArea extends MapObject {
 			tmxObject.getProperties().setProperty("ignoreAreas", Boolean.toString(ignoreAreas));
 		}
 	}
-	
 }
