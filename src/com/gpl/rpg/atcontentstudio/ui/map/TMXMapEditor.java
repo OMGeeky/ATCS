@@ -161,6 +161,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 	@SuppressWarnings("rawtypes")
 	private JComboBox evaluateTriggerBox;
 	private JSpinner quantityField;
+	private JSpinner respawnSpeedField;
 	private JCheckBox spawnActiveForNewGame;
 	private JCheckBox spawnIgnoreAreas;
 	private JTextField spawngroupField;
@@ -629,6 +630,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			areaField = addTextField(pane, "Spawn area ID: ", ((SpawnArea)selected).name, ((TMXMap)target).writable, listener);
 			spawngroupField = addTextField(pane, "Spawn group ID: ", ((SpawnArea)selected).spawngroup_id, ((TMXMap)target).writable, listener);
 			quantityField = addIntegerField(pane, "Number of spawned NPCs: ", ((SpawnArea)selected).quantity, false, ((TMXMap)target).writable, listener);
+			respawnSpeedField = addIntegerField(pane, "Respawn-Speed of NPCs: ", ((SpawnArea)selected).respawnSpeed, false, ((TMXMap)target).writable, listener);
 			spawnActiveForNewGame = addBooleanBasedCheckBox(pane, "Active in a new game: ", ((SpawnArea)selected).active, ((TMXMap)target).writable, listener);
 			spawnIgnoreAreas = addBooleanBasedCheckBox(pane, "Monsters can walk on other game objects: ", ((SpawnArea)selected).ignoreAreas, ((TMXMap)target).writable, listener);
 			npcListModel = new SpawnGroupNpcListModel((SpawnArea) selected);
@@ -2048,6 +2050,10 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 				if (selectedMapObject instanceof SpawnArea) {
 					SpawnArea area = (SpawnArea) selectedMapObject;
 					area.quantity = (Integer) value;
+				}
+			} else if (source == respawnSpeedField) {
+				if (selectedMapObject instanceof SpawnArea area) {
+					area.respawnSpeed = (Integer) value;
 				}
 			} else if (source == spawnActiveForNewGame) {
 				if (selectedMapObject instanceof SpawnArea) {
