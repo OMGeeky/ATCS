@@ -2052,7 +2052,8 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 					area.quantity = (Integer) value;
 				}
 			} else if (source == respawnSpeedField) {
-				if (selectedMapObject instanceof SpawnArea area) {
+				if (selectedMapObject instanceof SpawnArea) {
+					SpawnArea area = (SpawnArea) selectedMapObject;					
 					area.respawnSpeed = (Integer) value;
 				}
 			} else if (source == spawnActiveForNewGame) {

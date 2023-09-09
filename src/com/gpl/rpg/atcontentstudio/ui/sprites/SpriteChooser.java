@@ -108,6 +108,7 @@ public class SpriteChooser extends JDialog {
 		int i;
 		Image img;
 		group = new ButtonGroup();
+		//For every sprite find a free space in panel:
 		for (Spritesheet sheet : spritesheets) {
 			i = 0;
 			while ((img = sheet.getImage(i)) != null) {
@@ -131,14 +132,20 @@ public class SpriteChooser extends JDialog {
 							for (int y = c.gridy; y < c.gridy + c.gridwidth; y++) {
 								if (reservedSlots.contains(new Point(x, y))) {
 									slotOk = false;
+									break;
 								}
 							}
+							if (!slotOk) {
+								break;
+							}
 						}
-						if (slotOk && c.gridx + c.gridwidth > MAX_PER_ROW) {
+						if (c.gridx + c.gridwidth > MAX_PER_ROW) {
 							c.gridx = 0;
 							c.gridy++;
 							slotOk = false;
-						}
+						} else if (!slotOk) {
+							c.gridx++;
+						}						
 					}
 					pane.add(button, c);
 					for (int x = c.gridx; x < c.gridx + c.gridwidth; x++) {
