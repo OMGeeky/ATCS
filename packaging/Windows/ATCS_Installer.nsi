@@ -1,8 +1,8 @@
 !include MUI2.nsh
 
-!define VERSION "0.6.18"
+!define VERSION "0.6.19"
 !define TRAINER_VERSION "0.1.5"
-!define JAVA_BIN "javaw"
+!define JAVA_BIN "java"
 
 Name "Andor's Trail Content Studio v${VERSION}"
 OutFile "ATCS_v${VERSION}_Setup.exe"
@@ -88,7 +88,7 @@ Section install
   file "C:\AT\ATCS_source\lib\AndorsTrainer_v${TRAINER_VERSION}.jar"
   file "C:\AT\ATCS_source\lib\junit-4.10.jar"
   file "C:\AT\ATCS_source\lib\json_simple-1.1.jar"
-  file "C:\AT\temp\ATCS_v0.6.18\ATCS_v${VERSION}.jar"
+  file "C:\AT\temp\ATCS_v0.6.19\ATCS_v${VERSION}.jar"
   file "C:\AT\ATCS_source\lib\rsyntaxtextarea.jar"
   file "C:\AT\ATCS_source\lib\prefuse.jar"
   file "C:\AT\ATCS_source\lib\bsh-2.0b4.jar"
