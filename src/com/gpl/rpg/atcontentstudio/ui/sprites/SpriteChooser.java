@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +14,7 @@ import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet.Category;
+import com.gpl.rpg.atcontentstudio.utils.SpriteUtils;
 
 
 public class SpriteChooser extends JDialog {
@@ -97,11 +97,14 @@ public class SpriteChooser extends JDialog {
 		Point nextFreeSlot = new Point(0, 0);
 
 		int i;
-		Image img;
+		BufferedImage img;
 		group = new ButtonGroup();
 		for (Spritesheet sheet : spritesheets) {
-			i = 0;
-			while ((img = sheet.getImage(i)) != null) {
+            i = -1;
+            while ((img = sheet.getImage(++i)) != null) {
+                if (SpriteUtils.checkIsImageEmpty(img)) {
+                    continue;
+                }
 				IconButton button = new IconButton(img, sheet.id, i);
 				group.add(button);
 				if (sheet.spriteWidth == STD_WIDTH && sheet.spriteHeight == STD_HEIGHT) {
@@ -150,7 +153,6 @@ public class SpriteChooser extends JDialog {
 					}
 					nextFreeSlot.setLocation(c.gridx, c.gridy);
 				}
-				i++;
 			}
 		}
 
