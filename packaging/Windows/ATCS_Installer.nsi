@@ -2,7 +2,7 @@
 
 !define VERSION "0.6.19"
 !define TRAINER_VERSION "0.1.5"
-!define JAVA_BIN "javaw"
+!define JAVA_BIN "java"
 
 Name "Andor's Trail Content Studio v${VERSION}"
 OutFile "ATCS_v${VERSION}_Setup.exe"
