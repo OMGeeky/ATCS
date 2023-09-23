@@ -57,7 +57,7 @@ public class ExportProjectWizard extends JDialog {
 		radioGroup.add(asZip);
 		overSources = new JRadioButton("... into a game source folder");
 		radioGroup.add(overSources);
-		asZip.setSelected(true);
+		overSources.setSelected(true);
 
 		pane.add(asZip, JideBoxLayout.FIX);
 		pane.add(overSources, JideBoxLayout.FIX);
