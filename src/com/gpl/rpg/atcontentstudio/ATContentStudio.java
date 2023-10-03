@@ -39,24 +39,24 @@ import com.gpl.rpg.atcontentstudio.ui.StudioFrame;
 import com.gpl.rpg.atcontentstudio.ui.WorkerDialog;
 import com.gpl.rpg.atcontentstudio.ui.WorkspaceSelector;
 
-
 public class ATContentStudio {
 
 	public static final String APP_NAME = "Andor's Trail Content Studio";
-	public static final String APP_VERSION = "v0.6.19";
-	
+	public static final String APP_VERSION = "v0.6.20";
+
 	public static final String CHECK_UPDATE_URL = "https://andorstrail.com/static/ATCS_latest";
 	public static final String DOWNLOAD_URL = "https://andorstrail.com/viewtopic.php?f=6&t=4806";
-	
+
 	public static final String FONT_SCALE_ENV_VAR_NAME = "FONT_SCALE";
 
 	public static boolean STARTED = false;
-	public static float SCALING=1.0f;
+	public static float SCALING = 1.0f;
 	public static StudioFrame frame = null;
 
-	//Need to keep a strong reference to it, to avoid garbage collection that'll reset these loggers.
+	// Need to keep a strong reference to it, to avoid garbage collection that'll
+	// reset these loggers.
 	public static final List<Logger> configuredLoggers = new LinkedList<Logger>();
-	
+
 	/**
 	 * @param args
 	 */
@@ -66,18 +66,19 @@ public class ATContentStudio {
 		if (fontScaling != null) {
 			try {
 				fontScale = Float.parseFloat(fontScaling);
-				SCALING=fontScale;
+				SCALING = fontScale;
 			} catch (NumberFormatException e) {
 				System.err.println("Failed to parse font scaling parameter. Using default.");
 				e.printStackTrace();
 			}
 		}
-		
+
 		ConfigCache.init();
-		
+
 		try {
 			String laf = ConfigCache.getFavoriteLaFClassName();
-			if (laf == null) laf = UIManager.getSystemLookAndFeelClassName();
+			if (laf == null)
+				laf = UIManager.getSystemLookAndFeelClassName();
 			UIManager.setLookAndFeel(laf);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -88,37 +89,40 @@ public class ATContentStudio {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		scaleUIFont();
 
-		//Need to keep a strong reference to it, to avoid garbage collection that'll reset this setting.
+		// Need to keep a strong reference to it, to avoid garbage collection that'll
+		// reset this setting.
 		Logger l = Logger.getLogger(ExpressionParser.class.getName());
 		l.setLevel(Level.OFF);
-		configuredLoggers.add(l); 
-		
+		configuredLoggers.add(l);
+
 		final WorkspaceSelector wsSelect = new WorkspaceSelector();
 		wsSelect.pack();
 		Dimension sdim = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension wdim = wsSelect.getSize();
-		wsSelect.setLocation((sdim.width - wdim.width)/2, (sdim.height - wdim.height)/2);
+		wsSelect.setLocation((sdim.width - wdim.width) / 2, (sdim.height - wdim.height) / 2);
 		wsSelect.setVisible(true);
-		
+
 		wsSelect.addWindowListener(new WindowAdapter() {
 			@Override
 			public synchronized void windowClosed(WindowEvent e) {
 				if (wsSelect.selected != null && !STARTED) {
 					ATContentStudio.STARTED = true;
 					final File workspaceRoot = new File(wsSelect.selected);
-					WorkerDialog.showTaskMessage("Loading your workspace...", null, new Runnable(){
+					WorkerDialog.showTaskMessage("Loading your workspace...", null, new Runnable() {
 						public void run() {
 							Workspace.setActive(workspaceRoot);
-							if (Workspace.activeWorkspace.settings.useInternet.getCurrentValue() && Workspace.activeWorkspace.settings.checkUpdates.getCurrentValue()) {
+							if (Workspace.activeWorkspace.settings.useInternet.getCurrentValue()
+									&& Workspace.activeWorkspace.settings.checkUpdates.getCurrentValue()) {
 								new Thread() {
-									public void run() {checkUpdate();}
+									public void run() {
+										checkUpdate();
+									}
 								}.start();
 							}
-							frame = new StudioFrame(APP_NAME+" "+APP_VERSION);
+							frame = new StudioFrame(APP_NAME + " " + APP_VERSION);
 							frame.setVisible(true);
 							frame.setDefaultCloseOperation(StudioFrame.DO_NOTHING_ON_CLOSE);
 						};
@@ -138,7 +142,7 @@ public class ATContentStudio {
 			}
 		});
 	}
-	
+
 	private static void checkUpdate() {
 		BufferedReader in = null;
 		try {
@@ -146,32 +150,34 @@ public class ATContentStudio {
 			in = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			String inputLine, lastLine = null;
-			while ((inputLine = in.readLine()) != null) {lastLine = inputLine;}
+			while ((inputLine = in.readLine()) != null) {
+				lastLine = inputLine;
+			}
 			if (lastLine != null && !lastLine.equals(APP_VERSION)) {
-				
-				// for copying style
-			    JLabel label = new JLabel();
-			    Font font = label.getFont();
-		        Color color = label.getBackground();
 
-			    // create some css from the label's font
-			    StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
-			    style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
-			    style.append("font-size:" + font.getSize() + "pt;");
-			    style.append("background-color: rgb("+color.getRed()+","+color.getGreen()+","+color.getBlue()+");");
-				
-				JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-						+ "You are not running the latest ATCS version.<br/>"
-						+ "You can get the latest version ("+lastLine+") by clicking the link below.<br/>"
-						+ "<a href=\""+DOWNLOAD_URL+"\">"+DOWNLOAD_URL+"</a><br/>"
-						+ "<br/>"
-						+ "</body></html>");
-				
+				// for copying style
+				JLabel label = new JLabel();
+				Font font = label.getFont();
+				Color color = label.getBackground();
+
+				// create some css from the label's font
+				StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
+				style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+				style.append("font-size:" + font.getSize() + "pt;");
+				style.append("background-color: rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue()
+						+ ");");
+
+				JEditorPane ep = new JEditorPane("text/html",
+						"<html><body style=\"" + style + "\">" + "You are not running the latest ATCS version.<br/>"
+								+ "You can get the latest version (" + lastLine + ") by clicking the link below.<br/>"
+								+ "<a href=\"" + DOWNLOAD_URL + "\">" + DOWNLOAD_URL + "</a><br/>" + "<br/>"
+								+ "</body></html>");
+
 				ep.setEditable(false);
 				ep.setBorder(null);
-				
+
 				ep.addHyperlinkListener(new HyperlinkListener() {
-					
+
 					@Override
 					public void hyperlinkUpdate(HyperlinkEvent e) {
 						try {
@@ -185,7 +191,7 @@ public class ATContentStudio {
 						}
 					}
 				});
-				
+
 				JOptionPane.showMessageDialog(null, ep, "Update available", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} catch (MalformedURLException e) {
@@ -194,16 +200,17 @@ public class ATContentStudio {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (in != null) in.close();
+				if (in != null)
+					in.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
 	public static void scaleUIFont() {
 		if (SCALING != 1.0f) {
-			System.out.println("Scaling fonts to "+SCALING);
+			System.out.println("Scaling fonts to " + SCALING);
 			UIDefaults defaults = UIManager.getLookAndFeelDefaults();
 			Map<Object, Object> newDefaults = new HashMap<Object, Object>();
 			for (Enumeration<Object> e = defaults.keys(); e.hasMoreElements();) {
@@ -211,7 +218,7 @@ public class ATContentStudio {
 				Object value = defaults.get(key);
 				if (value instanceof Font) {
 					Font font = (Font) value;
-					int newSize = (int)(font.getSize() * SCALING);
+					int newSize = (int) (font.getSize() * SCALING);
 					if (value instanceof FontUIResource) {
 						newDefaults.put(key, new FontUIResource(font.getName(), font.getStyle(), newSize));
 					} else {

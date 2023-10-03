@@ -384,6 +384,13 @@ public class DialogueEditor extends JSONElementEditor {
 				rewardObj = null;
 				rewardValue = null;
 				break;
+			case mapchange:
+				rewardMap = addMapBox(pane, ((Dialogue)target).getProject(), "Map Name: ", reward.map, writable, listener);
+				rewardObjId = addTextField(pane, "Place: ", reward.reward_obj_id, writable, listener);
+				rewardObjIdCombo = null;
+				rewardObj = null;
+				rewardValue = null;
+				break;
 			case deactivateSpawnArea:
 			case removeSpawnArea:
 			case spawnAll:
@@ -777,6 +784,26 @@ public class DialogueEditor extends JSONElementEditor {
 				requirementObjId = addTextField(pane, "Faction ID:", requirement.required_obj_id, writable, listener);
 				requirementValue = addIntegerField(pane, "Exact value: ", requirement.required_value, true, writable, listener);
 				break;
+			case date:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Date type YYYYMMTT:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Minimum date value: ", requirement.required_value, true, writable, listener);
+				break;
+			case dateEquals:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Date type YYYYMMTT:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Exact date value: ", requirement.required_value, true, writable, listener);
+				break;
+			case time:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Time type HHMMSS:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Minimum time value: ", requirement.required_value, true, writable, listener);
+				break;
+			case timeEquals:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Time type HHMMSS:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Exact time value: ", requirement.required_value, true, writable, listener);
+				break;
 			}
 			requirementNegated = addBooleanBasedCheckBox(pane, "Negate this requirement.", requirement.negated, writable, listener);
 		}
@@ -942,6 +969,10 @@ public class DialogueEditor extends JSONElementEditor {
 			case changeMapFilter:
 				label.setText("Change map filter to "+rewardObjDesc+" on map "+reward.map_name);
 				label.setIcon(new ImageIcon(DefaultIcons.getReplaceIcon()));
+				break;
+			case mapchange:
+				label.setText("Teleport to "+rewardObjDesc+" on map "+reward.map_name);
+				label.setIcon(new ImageIcon(DefaultIcons.getMapchangeIcon()));
 				break;
 			}
 		} else {
@@ -1178,6 +1209,9 @@ public class DialogueEditor extends JSONElementEditor {
 			label.setIcon(new ImageIcon(DefaultIcons.getTimerIcon()));
 		} else if (req.type == Requirement.RequirementType.factionScore || req.type == Requirement.RequirementType.factionScoreEquals) {
 			label.setIcon(new ImageIcon(DefaultIcons.getAlignmentIcon()));
+		} else if (req.type == Requirement.RequirementType.date || req.type == Requirement.RequirementType.dateEquals || 
+				   req.type == Requirement.RequirementType.time || req.type == Requirement.RequirementType.timeEquals) {
+			label.setIcon(new ImageIcon(DefaultIcons.getDateIcon()));
 		}
 		if (req.type == null) {
 			label.setText("New, undefined requirement.");

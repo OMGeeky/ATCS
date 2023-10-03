@@ -731,6 +731,26 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 				requirementObjId = addTextField(pane, "Faction ID:", requirement.required_obj_id, writable, listener);
 				requirementValue = addIntegerField(pane, "Exact value: ", requirement.required_value, true, writable, listener);
 				break;				
+			case date:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Date type YYYYMMTT:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Minimum date value: ", requirement.required_value, true, writable, listener);
+				break;
+			case dateEquals:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Date type YYYYMMTT:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Exact date value: ", requirement.required_value, true, writable, listener);
+				break;
+			case time:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Time type HHMMSS:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Minimum time value: ", requirement.required_value, true, writable, listener);
+				break;
+			case timeEquals:
+				requirementObj = null;
+				requirementObjId = addTextField(pane, "Time type HHMMSS:", requirement.required_obj_id, writable, listener);
+				requirementValue = addIntegerField(pane, "Exact time value: ", requirement.required_value, true, writable, listener);
+				break;
 			}
 		}
 		requirementNegated = addBooleanBasedCheckBox(pane, "Negate this requirement.", requirement.negated, writable, listener);
