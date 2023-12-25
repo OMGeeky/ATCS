@@ -68,7 +68,8 @@ public class Dialogue extends JSONElement {
 			deactivateSpawnArea,
 			activateMapObjectGroup,
 			deactivateMapObjectGroup,
-			changeMapFilter
+			changeMapFilter,
+			mapchange
 		}
 	}
 	
@@ -249,6 +250,7 @@ public class Dialogue extends JSONElement {
 					case removeSpawnArea:
 					case deactivateSpawnArea:
 					case changeMapFilter:
+					case mapchange:
 						reward.map = reward.map_name != null ? proj.getMap(reward.map_name) : null;
 						break;
 					case actorCondition:

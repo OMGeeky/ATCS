@@ -260,6 +260,14 @@ public class DefaultIcons {
 	public static Image getTimerImage() { return getImage(TIMER_RES); }
 	public static Image getTimerIcon() { return getIcon(TIMER_RES); }
 	
+	private static String DATE_RES = "/com/gpl/rpg/atcontentstudio/img/date.png";
+	public static Image getDateImage() { return getImage(DATE_RES); }
+	public static Image getDateIcon() { return getIcon(DATE_RES); }
+	
+	private static String TIME_RES = "/com/gpl/rpg/atcontentstudio/img/date.png";
+	public static Image getTimeImage() { return getImage(TIME_RES); }
+	public static Image getTimeIcon() { return getIcon(TIME_RES); }
+	
 	private static String ALIGNMENT_RES = "/com/gpl/rpg/atcontentstudio/img/alignment.png";
 	public static Image getAlignmentImage() { return getImage(ALIGNMENT_RES); }
 	public static Image getAlignmentIcon() { return getIcon(ALIGNMENT_RES); }
@@ -273,7 +281,7 @@ public class DefaultIcons {
 	public static Image getStatusOrangeIcon() { return getIcon(STATUS_ORANGE_RES); }
 	
 	private static String STATUS_GREEN_RES = "/com/gpl/rpg/atcontentstudio/img/status_green.png";
-	public static Image getStatusGreenImage() { return getImage(STATUS_GREEN_RES); }
+	public static Image getStatusGreenImage() { return getImage(STATUS_GREEN_RES); } 
 	public static Image getStatusGreenIcon() { return getIcon(STATUS_GREEN_RES); }
 	
 	private static String STATUS_BLUE_RES = "/com/gpl/rpg/atcontentstudio/img/status_blue.png";

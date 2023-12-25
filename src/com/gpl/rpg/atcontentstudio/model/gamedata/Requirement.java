@@ -60,7 +60,11 @@ public class Requirement extends JSONElement {
 		factionScore,
 		random,
 		factionScoreEquals,
-		wearRemove
+		wearRemove,
+		date,
+		dateEquals,
+		time,
+		timeEquals
 	}
 	
 	public enum SkillID {
@@ -196,6 +200,10 @@ public class Requirement extends JSONElement {
 		case factionScore:
 		case factionScoreEquals:
 		case random:
+		case date:
+		case dateEquals:
+		case time:
+		case timeEquals:
 			break;
 		}
 		if (this.required_obj != null) this.required_obj.addBacklink((GameDataElement) this.parent);
