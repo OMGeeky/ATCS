@@ -80,5 +80,5 @@ if [ "$LINUX" = true ] ; then
     tar caf "ATCS_${VERSION}.tar.gz" "common"
     echo "Created archive at ${PACKAGING_DIR}/ATCS_${VERSION}.tar.gz"
 else
-    echo "Can't create zip files on windows yet. Please pack the content of the '${PACKAGING_DIR}/common/' folder yourself
-fi 
+	echo "Can't create zip files on windows yet. Please pack the content of the '${PACKAGING_DIR}/common/' folder yourself"
+fi
