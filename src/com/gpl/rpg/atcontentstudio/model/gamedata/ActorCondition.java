@@ -236,7 +236,12 @@ public class ActorCondition extends JSONElement {
 		if (this.icon_id != null) {
 			String spritesheetId = this.icon_id.split(":")[0];
 			if (getProject().getSpritesheet(spritesheetId) == null) {
+				System.out.println("Actor Condition");
 				System.out.println(this.id);
+				System.out.println("failed to load spritesheet");
+				System.out.println(spritesheetId);
+				System.out.println("while creating backling for icon_id");
+				System.out.println(this.icon_id);
 			}
 			getProject().getSpritesheet(spritesheetId).addBacklink(this);
 		}
