@@ -28,6 +28,7 @@ public class PotGenerator {
 		
 		for (ActorCondition ac : gsrc.gameData.actorConditions) {
 			pushString(stringsResources, resourcesStrings, ac.display_name, getPotContextComment(ac));
+			pushString(stringsResources, resourcesStrings, ac.description, getPotContextComment(ac)+":description");
 		}
 		
 		for (Dialogue d : gsrc.gameData.dialogues ) {

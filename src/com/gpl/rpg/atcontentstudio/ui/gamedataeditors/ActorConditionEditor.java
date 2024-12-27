@@ -30,6 +30,7 @@ public class ActorConditionEditor extends JSONElementEditor {
 	private JButton acIcon;
 	private JTextField idField;
 	private JTextField nameField;
+	private JTextField descriptionField;
 	@SuppressWarnings("rawtypes")
 	private JComboBox categoryBox;
 	private IntegerBasedCheckBox positiveBox;
@@ -81,6 +82,7 @@ public class ActorConditionEditor extends JSONElementEditor {
 		
 		idField = addTextField(pane, "Internal ID: ", ac.id, ac.writable, listener);
 		nameField = addTranslatableTextField(pane, "Display name: ", ac.display_name, ac.writable, listener);
+		descriptionField = addTranslatableTextField(pane, "Description: ", ac.description, ac.writable, listener);
 		categoryBox = addEnumValueBox(pane, "Category: ", ActorCondition.ACCategory.values(), ac.category, ac.writable, listener);
 		positiveBox = addIntegerBasedCheckBox(pane, "Positive", ac.positive, ac.writable, listener);
 		stackingBox = addIntegerBasedCheckBox(pane, "Stacking", ac.stacking, ac.writable, listener);
@@ -170,6 +172,10 @@ public class ActorConditionEditor extends JSONElementEditor {
 			} else if (source == nameField) {
 				aCond.display_name = (String) value;
 				ActorConditionEditor.this.name = aCond.getDesc();
+				aCond.childrenChanged(new ArrayList<ProjectTreeNode>());
+				ATContentStudio.frame.editorChanged(ActorConditionEditor.this);
+			}else if (source == descriptionField) {
+				aCond.description = (String) value;
 				aCond.childrenChanged(new ArrayList<ProjectTreeNode>());
 				ATContentStudio.frame.editorChanged(ActorConditionEditor.this);
 			} else if (source == acIcon) {

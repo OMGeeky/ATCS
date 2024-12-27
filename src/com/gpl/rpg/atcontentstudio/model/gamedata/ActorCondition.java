@@ -29,7 +29,8 @@ public class ActorCondition extends JSONElement {
 	//public String id; inherited.
 	public String icon_id;
 	public String display_name;
-	
+	public String description;
+
 	// Available from parsed state
 	public ACCategory category = null;
 	public Integer positive = null;
@@ -157,6 +158,7 @@ public class ActorCondition extends JSONElement {
 	@Override
 	public void parse(Map aCondJson) {
 
+		if (aCondJson.get("description") != null) this.description = (String) aCondJson.get("description");
 		if (aCondJson.get("category") != null) this.category = ACCategory.valueOf((String) aCondJson.get("category"));
 		this.positive = JSONElement.getInteger((Number) aCondJson.get("isPositive"));
 		Map abilityEffect = (Map) aCondJson.get("abilityEffect");
@@ -266,6 +268,7 @@ public class ActorCondition extends JSONElement {
 		clone.state = this.state;
 		clone.id = this.id;
 		clone.display_name = this.display_name;
+		clone.description = this.description;
 		clone.icon_id = this.icon_id;
 		clone.category = this.category;
 		clone.positive = this.positive;
@@ -294,6 +297,7 @@ public class ActorCondition extends JSONElement {
 		jsonAC.put("id", this.id);
 		if (this.icon_id != null) jsonAC.put("iconID", this.icon_id);
 		if (this.display_name != null) jsonAC.put("name", this.display_name);
+		if (this.description != null) jsonAC.put("description", this.description);
 		if (this.category != null) jsonAC.put("category", this.category.toString());
 		if (this.positive != null && this.positive == 1) jsonAC.put("isPositive", this.positive);
 		if (this.stacking != null && this.stacking == 1) jsonAC.put("isStacking", this.stacking);
