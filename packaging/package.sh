@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to build ATContentStudio.jar, replicating IntelliJ artifact definition
-# Linux and Windows compatible - NO GRADLE - Includes extra source code folders
+# Linux and Windows compatible - NO GRADLE - Includes extra source code folders - FIXED SUBDIRS
 
 # --- Platform Detection ---
 if [ "$1" = "-windows" ]; then
@@ -74,15 +74,12 @@ done
 echo 'Setting class path'
 CP="lib/*${PATH_SEPARATOR}${SOURCE_BASE_DIR}" # Platform-dependent classpath separator
 
-# --- **Extend Class Path for Compilation** ---
-SOURCE_PATH="" # Start with the standard source path
+
+# --- **Construct Source Path for Compilation** ---
+SOURCE_PATH="${SOURCE_BASE_DIR}" # Start with the standard source path
 for EXTRA_SOURCE_DIR in "${EXTRA_SOURCE_DIRS[@]}"; do
   SOURCE_PATH="${SOURCE_PATH}${PATH_SEPARATOR}${ATCS_SOURCE_DIR}/${EXTRA_SOURCE_DIR}" # Add extra source dirs
 done
-SOURCE_PATH="${SOURCE_PATH:${#PATH_SEPARATOR}}" # Remove first separator
-
-CP="${CP}${PATH_SEPARATOR}${SOURCE_PATH}" # Add source path to classpath (needed for some cases)
-
 
 echo "ClassPath: ${CP}"
 echo "SourcePath: ${SOURCE_PATH}"
@@ -90,7 +87,12 @@ echo ""
 
 # --- Build Java classes ---
 echo 'Building java classes'
-javac -cp "$CP" -sourcepath "${SOURCE_PATH}" -d "${TEMP_DIR}" "${SOURCE_BASE_DIR}"/com/gpl/rpg/**/*.java
+
+# Find all java files in source directories and compile them
+SOURCE_FILES=$(find "${SOURCE_BASE_DIR}" "${ATCS_SOURCE_DIR}/hacked-libtiled" "${ATCS_SOURCE_DIR}/minify" "${ATCS_SOURCE_DIR}/siphash-zackehh/src/main/java" -name "*.java" -print)
+
+javac -cp "$CP" -sourcepath "${SOURCE_PATH}" -d "${TEMP_DIR}" $SOURCE_FILES
+echo "javac -cp \"${CP}\" -sourcepath \"${SOURCE_PATH}\" -d \"${TEMP_DIR}\" $SOURCE_FILES"
 
 
 if [ $? -ne 0 ]; then
