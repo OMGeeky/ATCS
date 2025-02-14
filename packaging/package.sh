@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to build ATContentStudio.jar, replicating IntelliJ artifact definition
-# Linux and Windows compatible
+# Linux and Windows compatible - NO GRADLE - Includes extra source code folders
 
 # --- Platform Detection ---
 if [ "$1" = "-windows" ]; then
@@ -21,9 +21,16 @@ TEMP_DIR="${PACKAGING_DIR}/tmp"
 JAR_LOCATION="${PACKAGING_DIR}/common/ATCS.jar" # Output JAR location as per script
 MANIFEST_LOCATION="${PACKAGING_DIR}/Manifest.txt"
 VERSION_FILE="${PACKAGING_DIR}/ATCS_latest"
-SOURCE_BASE_DIR="${ATCS_SOURCE_DIR}/src" # Base directory for source code
-LIB_BASE_DIR="${ATCS_SOURCE_DIR}/lib"     # Base directory for libraries - ASSUMPTION: Libraries are in project root 'lib'
+SOURCE_BASE_DIR="${ATCS_SOURCE_DIR}/src" # Base directory for standard source code
+LIB_BASE_DIR="${ATCS_SOURCE_DIR}/lib"     # Base directory for libraries
 OUTPUT_JAR_DIR="${PACKAGING_DIR}/common"  # Directory where the final JAR will be placed - as per script
+
+# --- **ADDITIONAL SOURCE CODE FOLDERS** ---
+EXTRA_SOURCE_DIRS=(
+  "hacked-libtiled"
+  "minify"
+  "siphash-zackehh/src/main/java"
+)
 
 # --- Libraries to include (from IntelliJ artifact definition) ---
 LIBRARIES=(
@@ -55,8 +62,8 @@ echo "Copying manifest to temp folder"
 cp "${MANIFEST_LOCATION}" "${TEMP_DIR}"
 MANIFEST_LOCATION="${TEMP_DIR}/Manifest.txt" # Update MANIFEST_LOCATION to the temp one
 
-# --- Copy lib files ---
-echo 'Copying lib files'
+# --- Copy lib files from standard lib folder ---
+echo 'Copying lib files from standard lib folder'
 mkdir -p "${TEMP_DIR}/lib/" # Ensure lib dir exists in temp
 for LIB in "${LIBRARIES[@]}"; do
     echo "Copying library: ${LIB}"
@@ -66,13 +73,25 @@ done
 # --- Set ClassPath ---
 echo 'Setting class path'
 CP="lib/*${PATH_SEPARATOR}${SOURCE_BASE_DIR}" # Platform-dependent classpath separator
+
+# --- **Extend Class Path for Compilation** ---
+SOURCE_PATH="" # Start with the standard source path
+for EXTRA_SOURCE_DIR in "${EXTRA_SOURCE_DIRS[@]}"; do
+  SOURCE_PATH="${SOURCE_PATH}${PATH_SEPARATOR}${ATCS_SOURCE_DIR}/${EXTRA_SOURCE_DIR}" # Add extra source dirs
+done
+SOURCE_PATH="${SOURCE_PATH:${#PATH_SEPARATOR}}" # Remove first separator
+
+CP="${CP}${PATH_SEPARATOR}${SOURCE_PATH}" # Add source path to classpath (needed for some cases)
+
+
 echo "ClassPath: ${CP}"
+echo "SourcePath: ${SOURCE_PATH}"
 echo ""
 
 # --- Build Java classes ---
 echo 'Building java classes'
-#echo javac -cp "$CP" -sourcepath "${SOURCE_BASE_DIR}" "${SOURCE_BASE_DIR}/com/gpl/rpg/atcontentstudio/*.java" -d "${TEMP_DIR}"
-javac -cp "$CP" -sourcepath "${SOURCE_BASE_DIR}" -d "${TEMP_DIR}" "${SOURCE_BASE_DIR}"/com/gpl/rpg/atcontentstudio/**/*.java
+javac -cp "$CP" -sourcepath "${SOURCE_PATH}" -d "${TEMP_DIR}" "${SOURCE_BASE_DIR}"/com/gpl/rpg/**/*.java
+
 
 if [ $? -ne 0 ]; then
     echo "Compilation failed. Please check errors above."
