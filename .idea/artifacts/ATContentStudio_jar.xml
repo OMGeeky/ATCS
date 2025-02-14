@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact name="ATContentStudio:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ATContentStudio_jar</output-path>
+    <root id="root">
+      <element id="archive" name="ATContentStudio.jar">
+        <element id="module-output" name="ATContentStudio" />
+      </element>
+      <element id="library" level="module" name="jide-oss.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="jsoup-1.10.2.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="ui.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="junit-4.10.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="AndorsTrainer_v0.1.5.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="prefuse.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="rsyntaxtextarea.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="bsh-2.0b4.jar" module-name="ATContentStudio" />
+      <element id="library" level="module" name="json_simple-1.1.jar" module-name="ATContentStudio" />
+    </root>
+  </artifact>
+</component>
