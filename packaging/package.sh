@@ -72,7 +72,7 @@ echo ""
 # --- Build Java classes ---
 echo 'Building java classes'
 #echo javac -cp "$CP" -sourcepath "${SOURCE_BASE_DIR}" "${SOURCE_BASE_DIR}/com/gpl/rpg/atcontentstudio/*.java" -d "${TEMP_DIR}"
-javac -cp "$CP" -sourcepath "${SOURCE_BASE_DIR}" -d "${TEMP_DIR}"
+javac -cp "$CP" -sourcepath "${SOURCE_BASE_DIR}" -d "${TEMP_DIR}" "${SOURCE_BASE_DIR}"/com/gpl/rpg/atcontentstudio/**/*.java
 
 if [ $? -ne 0 ]; then
     echo "Compilation failed. Please check errors above."
