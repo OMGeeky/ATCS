@@ -102,9 +102,7 @@ fi
 
 # --- Add Class-Path to Manifest ---
 echo "Adding Class-Path to Manifest"
-LIB_PATHS=$(find "${TEMP_DIR}/lib" -name '*.jar' | paste -sd' ')
-echo "LIB_PATHS: ${LIB_PATHS}"
-echo "Class-Path: lib/* ${LIB_PATHS}" >>"${MANIFEST_LOCATION}" # Adjusted Class-Path to be relative to JAR
+#echo "Class-Path: . lib/*" >>"${MANIFEST_LOCATION}" # Add standard lib path to manifest
 
 # --- Create JAR file ---
 echo ""
@@ -112,7 +110,7 @@ echo "Creating jar at location: ${JAR_LOCATION}"
 
 cd "${TEMP_DIR}" || exit # Change to temp dir for JAR command
 
-jar cfm "${OUTPUT_JAR_DIR}/ATCS.jar" "${MANIFEST_LOCATION}"  -C . com/gpl/rpg/atcontentstudio/ lib
+jar cfm "${OUTPUT_JAR_DIR}/ATCS.jar" "${MANIFEST_LOCATION}"  -C . .
 
 if [ $? -ne 0 ]; then
     echo "JAR creation failed."
@@ -124,13 +122,11 @@ cd "${PACKAGING_DIR}" || exit # Go back to packaging dir
 echo ''
 echo "Done creating jar at ${OUTPUT_JAR_DIR}/ATCS.jar"
 
-cp "${OUTPUT_JAR_DIR}/ATCS.jar" "${OUTPUT_JAR_DIR}"
-
 # --- Create archive ---
 if [ "$PLATFORM" = "LINUX" ]; then
     cd "${OUTPUT_JAR_DIR}" || exit
     echo "Creating archive"
-    tar caf "ATCS_${VERSION}.tar.gz" "common" # archive the 'common' folder which now contains the JAR and libs
+    tar caf "ATCS_${VERSION}.tar.gz" * # archive the 'common' folder which now contains the JAR and libs
     echo "Created archive at ${OUTPUT_JAR_DIR}/ATCS_${VERSION}.tar.gz"
     cd "${PACKAGING_DIR}" || exit
 else
