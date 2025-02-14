@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to build ATContentStudio.jar, replicating IntelliJ artifact definition
-# Linux and Windows compatible - NO GRADLE - Includes extra source code folders - FIXED SUBDIRS
+# Script to build ATContentStudio.jar, replicating IntelliJ artifact definition (EXTRACT LIBS)
+# Linux and Windows compatible - NO GRADLE - Includes extra source code folders - EXTRACT LIBS
 
 # --- Platform Detection ---
 if [ "$1" = "-windows" ]; then
@@ -55,25 +55,23 @@ echo "Removing tmp folder"
 rm -rf "${TEMP_DIR}"
 echo "Recreating tmp folder"
 mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio" # create package structure in temp dir
-mkdir -p "${TEMP_DIR}/lib"
+# NO mkdir -p "${TEMP_DIR}/lib" - we are extracting to TEMP_DIR root now
 
 # --- Copy manifest to temp folder for editing ---
 echo "Copying manifest to temp folder"
 cp "${MANIFEST_LOCATION}" "${TEMP_DIR}"
 MANIFEST_LOCATION="${TEMP_DIR}/Manifest.txt" # Update MANIFEST_LOCATION to the temp one
 
-# --- Copy lib files from standard lib folder ---
-echo 'Copying lib files from standard lib folder'
-mkdir -p "${TEMP_DIR}/lib/" # Ensure lib dir exists in temp
+# --- **EXTRACT lib files directly to TEMP_DIR** ---
+echo 'Extracting lib files to TEMP_DIR'
 for LIB in "${LIBRARIES[@]}"; do
-    echo "Copying library: ${LIB}"
-    cp "${LIB_BASE_DIR}/${LIB}" "${TEMP_DIR}/lib/"
+    echo "Extracting library: ${LIB}"
+    unzip -o "${LIB_BASE_DIR}/${LIB}" -d "${TEMP_DIR}" # Extract JAR contents to TEMP_DIR root
 done
 
 # --- Set ClassPath ---
 echo 'Setting class path'
-CP="lib/*${PATH_SEPARATOR}${SOURCE_BASE_DIR}" # Platform-dependent classpath separator
-
+CP="${TEMP_DIR}${PATH_SEPARATOR}${SOURCE_BASE_DIR}" # Classpath is simplified - only source path needed for compilation
 
 # --- **Construct Source Path for Compilation** ---
 SOURCE_PATH="${SOURCE_BASE_DIR}" # Start with the standard source path
@@ -100,9 +98,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# --- Add Class-Path to Manifest ---
-echo "Adding Class-Path to Manifest"
-#echo "Class-Path: . lib/*" >>"${MANIFEST_LOCATION}" # Add standard lib path to manifest
+# --- Copy res folder to temp folder ---
+cp "${ATCS_SOURCE_DIR}"/res/* "${TEMP_DIR}/"
+mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img"
+cp -r "${ATCS_SOURCE_DIR}"/src/com/gpl/rpg/atcontentstudio/img/* "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img/"
+
 
 # --- Create JAR file ---
 echo ""
@@ -110,6 +110,7 @@ echo "Creating jar at location: ${JAR_LOCATION}"
 
 cd "${TEMP_DIR}" || exit # Change to temp dir for JAR command
 
+# JAR command WITHOUT lib directory
 jar cfm "${OUTPUT_JAR_DIR}/ATCS.jar" "${MANIFEST_LOCATION}"  -C . .
 
 if [ $? -ne 0 ]; then
@@ -126,7 +127,7 @@ echo "Done creating jar at ${OUTPUT_JAR_DIR}/ATCS.jar"
 if [ "$PLATFORM" = "LINUX" ]; then
     cd "${OUTPUT_JAR_DIR}" || exit
     echo "Creating archive"
-    tar caf "ATCS_${VERSION}.tar.gz" * # archive the 'common' folder which now contains the JAR and libs
+    tar caf "ATCS_${VERSION}.tar.gz" ./* # archive the 'common' folder which now contains the JAR and libs
     echo "Created archive at ${OUTPUT_JAR_DIR}/ATCS_${VERSION}.tar.gz"
     cd "${PACKAGING_DIR}" || exit
 else
