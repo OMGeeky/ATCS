@@ -3,6 +3,7 @@
 !define VERSION "0.6.20"
 !define TRAINER_VERSION "0.1.5"
 !define JAVA_BIN "java"
+!define ATCS_SOURCE_DIR "C:\ATCS"
 
 Name "Andor's Trail Content Studio v${VERSION}"
 OutFile "ATCS_v${VERSION}_Setup.exe"
@@ -13,8 +14,8 @@ InstallDir "$PROGRAMFILES\ATCS\"
 Var StartMenuFolder
 
 !define MUI_WELCOMEPAGE_TITLE "Welcome to Andor's Trail Content Studio installer"
-!define MUI_WELCOMEPAGE_TEXT "This will install Andor's Trail Content Studio v${VERSION} installer"
-!define MUI_FINISHPAGE_TEXT "Andor's Trail Content Studio v${VERSION} install completed !"
+!define MUI_WELCOMEPAGE_TEXT "This will install Andor's Trail Content Studio v${VERSION}"
+!define MUI_FINISHPAGE_TEXT "Andor's Trail Content Studio v${VERSION} - Install completed !"
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Andor's Trail Content Studio"
 !define MUI_PAGE_HEADER_TEXT "Installing Andor's Trail Content Studio v${VERSION}"
 
@@ -46,19 +47,21 @@ Var StartMenuFolder
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
-
 !insertmacro MUI_LANGUAGE "English"
 
+
+;------------------------------------------------------------------------------------
 Section install
 
-
+  ;--- Create in ...\packaging\common\   ATCS.cmd  ATCT.ico  ATCS.jar
   SetOutPath $INSTDIR
   file "ATCS.ico"
-  
-  Delete "$INSTDIR\lib\*"
-  
+  file "${ATCS_SOURCE_DIR}\packaging\common\ATCS.jar"
+
   Call GetJRE
   Pop $R0
+;  file "${ATCS_SOURCE_DIR}\packaging\common\ATCS.cmd"
+;  !insertmacro _ReplaceInFile "ATCS.cmd" "java.exe" "$R0"  (It was too much work this way)
   FileOpen $9 "ATCS.cmd" w
   FileWrite $9 '@echo off$\r$\n'
   FileWrite $9 '$\r$\n'
@@ -70,7 +73,7 @@ Section install
   FileWrite $9 'set "ENV_FILE=%ATCS_DIR%ATCS.env.bat"$\r$\n'
   FileWrite $9 'set "MAIN_CLASS=com.gpl.rpg.atcontentstudio.ATContentStudio"$\r$\n'
   FileWrite $9 '$\r$\n'
-  FileWrite $9 'if exist "%ENV_FILE%" ($\r$\n' 
+  FileWrite $9 'if exist "%ENV_FILE%" ($\r$\n'
   FileWrite $9 '  call "%ENV_FILE%"$\r$\n'
   FileWrite $9 ') else ($\r$\n'
   FileWrite $9 '  echo REM set "MAX_MEM=%MAX_MEM%">"%ENV_FILE%"$\r$\n'
@@ -79,20 +82,22 @@ Section install
   FileWrite $9 '  echo.>>"%ENV_FILE%"$\r$\n'
   FileWrite $9 ')$\r$\n'
   FileWrite $9 '$\r$\n'
-  FileWrite $9 'start "" "%JAVA%" %JAVA_OPTS% -Xmx%MAX_MEM% -cp "%CP%" %MAIN_CLASS%$\r$\n'
+  FileWrite $9 'start "" "%JAVA%" %JAVA_OPTS% -Xmx%MAX_MEM% -jar ATCS.jar$\r$\n'
   FileClose $9
-  
+
+  ;--- Create in ...\lib\   jide-oss.jar  and other libs.
+  Delete "$INSTDIR\lib\*"
   SetOutPath "$INSTDIR\lib\"
-  file "C:\AT\ATCS_source\lib\jide-oss.jar"
-  file "C:\AT\ATCS_source\lib\ui.jar"
-  file "C:\AT\ATCS_source\lib\AndorsTrainer_v${TRAINER_VERSION}.jar"
-  file "C:\AT\ATCS_source\lib\junit-4.10.jar"
-  file "C:\AT\ATCS_source\lib\json_simple-1.1.jar"
-  file "C:\AT\temp\ATCS_v0.6.20\ATCS_v${VERSION}.jar"
-  file "C:\AT\ATCS_source\lib\rsyntaxtextarea.jar"
-  file "C:\AT\ATCS_source\lib\prefuse.jar"
-  file "C:\AT\ATCS_source\lib\bsh-2.0b4.jar"
-  file "C:\AT\ATCS_source\lib\jsoup-1.10.2.jar"
+
+  file "${ATCS_SOURCE_DIR}\lib\jide-oss.jar"
+  file "${ATCS_SOURCE_DIR}\lib\ui.jar"
+  file "${ATCS_SOURCE_DIR}\lib\AndorsTrainer_v${TRAINER_VERSION}.jar"
+  file "${ATCS_SOURCE_DIR}\lib\junit-4.10.jar"
+  file "${ATCS_SOURCE_DIR}\lib\json_simple-1.1.jar"
+  file "${ATCS_SOURCE_DIR}\lib\rsyntaxtextarea.jar"
+  file "${ATCS_SOURCE_DIR}\lib\prefuse.jar"
+  file "${ATCS_SOURCE_DIR}\lib\bsh-2.0b4.jar"
+  file "${ATCS_SOURCE_DIR}\lib\jsoup-1.10.2.jar"
 
   SetOutPath $INSTDIR
   
@@ -101,7 +106,7 @@ Section install
   
   !insertmacro MUI_STARTMENU_WRITE_BEGIN "ATCS"
     
-    ;Create shortcuts
+    ;--- Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Andor's Trail Content Studio.lnk" "$INSTDIR\ATCS.cmd" "" "$INSTDIR\ATCS.ico"
     CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
@@ -110,6 +115,8 @@ Section install
   
 SectionEnd
 
+
+;------------------------------------------------------------------------------------
 Section uninstall
   
   Delete "$INSTDIR\lib\jide-oss.jar"
@@ -117,18 +124,17 @@ Section uninstall
   Delete "$INSTDIR\lib\junit-4.10.jar"
   Delete "$INSTDIR\lib\json_simple-1.1.jar"
   Delete "$INSTDIR\lib\AndorsTrainer_v${TRAINER_VERSION}.jar"
-  Delete "$INSTDIR\lib\ATCS_v${VERSION}.jar"
   Delete "$INSTDIR\lib\rsyntaxtextarea.jar"
   Delete "$INSTDIR\lib\prefuse.jar"
   Delete "$INSTDIR\lib\bsh-2.0b4.jar"
   Delete "$INSTDIR\lib\jsoup-1.10.2.jar"
   RMDir "$INSTDIR\lib\"
+
   Delete "$INSTDIR\ATCS.ico"
   Delete "$INSTDIR\ATCS.cmd"
   Delete "$INSTDIR\ATCS.env.bat"
-  
+  Delete "$INSTDIR\ATCS.jar"
   Delete "$INSTDIR\Uninstall.exe"
-
   RMDir "$INSTDIR"
   
   !insertmacro MUI_STARTMENU_GETFOLDER "ATCS" $StartMenuFolder
@@ -140,19 +146,20 @@ Section uninstall
 SectionEnd
 
 
+;------------------------------------------------------------------------------------
 Function GetJRE
 ;
-;  Find JRE (javaw.exe)
+;  Find JRE (java.exe)
 ;  DISABLED 1 - in .\jre directory (JRE Installed with application)
 ;  2 - in JAVA_HOME environment variable
 ;  3 - in the registry
-;  4 - assume javaw.exe in current dir or PATH
+;  4 - assume java.exe in current dir or PATH
  
   Push $R0
   Push $R1
  
   ;ClearErrors
-  ;StrCpy $R0 "$EXEDIR\jre\bin\javaw.exe"
+  ;StrCpy $R0 "$EXEDIR\jre\bin\java.exe"
   ;IfFileExists $R0 JreFound
   ;StrCpy $R0 ""
  
