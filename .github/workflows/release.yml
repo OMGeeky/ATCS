@@ -15,10 +15,9 @@ jobs:
       id: get_version
       shell: bash
       run: |
-        pwd
         echo "Reading version from file:"
         cat packaging/ATCS_latest
-        VERSION=$(cat packaging/ATCS_latest | sed 's/^v//')
+        VERSION=$(cat packaging/ATCS_latest | sed 's/^v//' | sed 's/[^0-9.]//g')
         echo "Processed version: $VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "Environment variable set to: $VERSION"
@@ -35,22 +34,23 @@ jobs:
     - name: Build JAR
       shell: bash
       run: |
-        pwd
         cd packaging
-        pwd
         chmod +x package.sh
+        echo "Building JAR and ZIP for version: ${{ env.VERSION }}"
         ./package.sh -windows
+        echo "Created artifacts:"
+        ls -la ATCS_${{ env.VERSION }}.zip
+        ls -la common/ATCS.jar
 
     - name: Create Installer
       shell: bash
       run: |
-        pwd
         cd packaging/Windows
-        pwd
         ls -la
-        makensis ATCS_Installer.nsi
-        echo "Checking installer artifacts:"
-        ls -la
+        echo "Building installer for version: ${{ env.VERSION }}"
+        makensis /DVERSION="${{ env.VERSION }}" ATCS_Installer.nsi
+        echo "Created installer:"
+        ls -la ATCS_v${{ env.VERSION }}_Setup.exe
 
     - name: Upload ZIP to Release
       uses: actions/upload-release-asset@v1
