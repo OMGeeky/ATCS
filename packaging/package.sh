@@ -7,18 +7,16 @@
 if [ "$1" = "-windows" ]; then
     echo "Got '-windows' flag. Running Windows version"
     PLATFORM="WINDOWS"
-    PATH_SEPARATOR=";" # Windows classpath separator
 else
     echo "No '-windows' flag. Running Linux version"
     PLATFORM="LINUX"
-    PATH_SEPARATOR=":" # Linux classpath separator
 fi
 
 # --- Configuration ---
 PACKAGING_DIR=$(dirname "$(readlink -f "$0" || greadlink -f "$0" || stat -f "$0")")
 ATCS_SOURCE_DIR=$(dirname "${PACKAGING_DIR}")
 TEMP_DIR="${PACKAGING_DIR}/tmp"
-JAR_LOCATION="${PACKAGING_DIR}/common/ATCS.jar" # Output JAR location as per script
+JAR_LOCATION="${PACKAGING_DIR}/ATCS.jar" # Output JAR location as per script
 MANIFEST_LOCATION="${PACKAGING_DIR}/Manifest.txt"
 VERSION_FILE="${PACKAGING_DIR}/ATCS_latest"
 SOURCE_BASE_DIR="${ATCS_SOURCE_DIR}/src" # Base directory for standard source code
@@ -54,13 +52,7 @@ echo "Got version ${VERSION}"
 echo "Removing tmp folder"
 rm -rf "${TEMP_DIR}"
 echo "Recreating tmp folder"
-mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio" # create package structure in temp dir
-# NO mkdir -p "${TEMP_DIR}/lib" - we are extracting to TEMP_DIR root now
-
-# --- Copy manifest to temp folder for editing ---
-echo "Copying manifest to temp folder"
-cp "${MANIFEST_LOCATION}" "${TEMP_DIR}"
-MANIFEST_LOCATION="${TEMP_DIR}/Manifest.txt" # Update MANIFEST_LOCATION to the temp one
+mkdir -p "${TEMP_DIR}"
 
 # --- **EXTRACT lib files directly to TEMP_DIR** ---
 echo 'Extracting lib files to TEMP_DIR'
@@ -70,38 +62,29 @@ for LIB in "${LIBRARIES[@]}"; do
 done
 
 # --- Set ClassPath ---
-echo 'Setting class path'
-CP="${TEMP_DIR}${PATH_SEPARATOR}${SOURCE_BASE_DIR}" # Classpath is simplified - only source path needed for compilation
-
-# --- **Construct Source Path for Compilation** ---
-SOURCE_PATH="${SOURCE_BASE_DIR}" # Start with the standard source path
-for EXTRA_SOURCE_DIR in "${EXTRA_SOURCE_DIRS[@]}"; do
-  SOURCE_PATH="${SOURCE_PATH}${PATH_SEPARATOR}${ATCS_SOURCE_DIR}/${EXTRA_SOURCE_DIR}" # Add extra source dirs
-done
-
-echo "ClassPath: ${CP}"
-echo "SourcePath: ${SOURCE_PATH}"
+echo "Getting source files"
+# Find all java files in source directories and compile them
+SOURCE_FILES=$(find "${SOURCE_BASE_DIR}" "${EXTRA_SOURCE_DIRS[@]/#/${ATCS_SOURCE_DIR}/}" -name "*.java" -print)
+#echo "SourceFiles: ${SOURCE_FILES}"
 echo ""
 
 # --- Build Java classes ---
 echo 'Building java classes'
 
-# Find all java files in source directories and compile them
-SOURCE_FILES=$(find "${SOURCE_BASE_DIR}" "${ATCS_SOURCE_DIR}/hacked-libtiled" "${ATCS_SOURCE_DIR}/minify" "${ATCS_SOURCE_DIR}/siphash-zackehh/src/main/java" -name "*.java" -print)
-
-javac -cp "$CP" -sourcepath "${SOURCE_PATH}" -d "${TEMP_DIR}" $SOURCE_FILES
+javac -cp "${TEMP_DIR}" -d "${TEMP_DIR}" ${SOURCE_FILES}
 if [ $? -ne 0 ]; then
     echo "Compilation failed. Please check errors above."
     exit 1
 fi
+echo "Compilation successful"
 
 # --- Copy res stuff to temp folder ---
+echo "Copying some stuff to temp folder"
 cp -r "${ATCS_SOURCE_DIR}"/res/* "${TEMP_DIR}/"
 mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img"
 mkdir -p "${TEMP_DIR}/tiled/io/resources/"
 cp -r "${ATCS_SOURCE_DIR}"/src/com/gpl/rpg/atcontentstudio/img/* "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img/" # some icons
 cp -r "${ATCS_SOURCE_DIR}"/hacked-libtiled/tiled/io/resources/* "${TEMP_DIR}/tiled/io/resources/" # dtd file for tmx maps
-
 
 # --- Create JAR file ---
 echo ""
@@ -110,7 +93,7 @@ echo "Creating jar at location: ${JAR_LOCATION}"
 cd "${TEMP_DIR}" || exit # Change to temp dir for JAR command
 
 # JAR command WITHOUT lib directory
-jar cfm "${OUTPUT_JAR_DIR}/ATCS.jar" "${MANIFEST_LOCATION}"  -C . .
+jar cfm "${JAR_LOCATION}" "${MANIFEST_LOCATION}"  -C . .
 if [ $? -ne 0 ]; then
     echo "JAR creation failed."
     exit 1
@@ -119,8 +102,8 @@ fi
 cd "${PACKAGING_DIR}" || exit # Go back to packaging dir
 
 echo ''
-echo "Done creating jar at ${OUTPUT_JAR_DIR}/ATCS.jar"
-cp -f "${OUTPUT_JAR_DIR}/ATCS.jar" "${OUTPUT_JAR_DIR}/common/ATCS.jar" # Copy JAR to versioned name
+echo "Done creating jar at ${JAR_LOCATION}"
+cp -f "${JAR_LOCATION}" "${OUTPUT_JAR_DIR}/common/ATCS.jar" # Copy JAR to versioned name
 
 # --- Create archive ---
 if [ "$PLATFORM" = "LINUX" ]; then
