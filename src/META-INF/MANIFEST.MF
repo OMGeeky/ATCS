@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: com.gpl.rpg.atcontentstudio.ATContentStudio
+Class-Path: jide-oss.jar jsoup-1.10.2.jar ui.jar junit-4.10.jar AndorsTr
+ ainer_v0.1.5.jar prefuse.jar rsyntaxtextarea.jar bsh-2.0b4.jar json_sim
+ ple-1.1.jar
+

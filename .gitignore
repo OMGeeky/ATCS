@@ -1,3 +1,10 @@
 /ATCS_v*.jar
 /Project
 /bin
+/packaging/tmp/
+/out
+packaging/common/lib
+packaging/common/ATCS.jar
+packaging/ATCS_*.zip
+ATCS_v*.tar.gz
+ATCS.jar
