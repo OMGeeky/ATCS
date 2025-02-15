@@ -1,7 +1,6 @@
 !include MUI2.nsh
 
-!system 'for /f "delims=" %%a in ('type ..\ATCS_latest') do set "VERSION=%%a" && exit'
-!define VERSION "$%VERSION:~1%"
+; Version will be passed as /DVERSION=x.x.x
 !define TRAINER_VERSION "0.1.5"
 !define JAVA_BIN "java"
 !define ATCS_SOURCE_DIR "..\..\"
