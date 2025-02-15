@@ -98,10 +98,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# --- Copy res folder to temp folder ---
-cp "${ATCS_SOURCE_DIR}"/res/* "${TEMP_DIR}/"
+# --- Copy res stuff to temp folder ---
+cp -r "${ATCS_SOURCE_DIR}"/res/* "${TEMP_DIR}/"
 mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img"
-cp -r "${ATCS_SOURCE_DIR}"/src/com/gpl/rpg/atcontentstudio/img/* "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img/"
+mkdir -p "${TEMP_DIR}/tiled/io/resources/"
+cp -r "${ATCS_SOURCE_DIR}"/src/com/gpl/rpg/atcontentstudio/img/* "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img/" # some icons
+cp -r "${ATCS_SOURCE_DIR}"/hacked-libtiled/tiled/io/resources/* "${TEMP_DIR}/tiled/io/resources/" # dtd file for tmx maps
 
 
 # --- Create JAR file ---
