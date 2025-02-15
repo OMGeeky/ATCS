@@ -10,3 +10,4 @@ ATCS_v*.tar.gz
 ATCS.jar
 /packaging/common/ATCS.env.bat
 /packaging/common/ATCS.env
+/packaging/common/ATCS_v*.zip

@@ -66,7 +66,7 @@ Section install
   FileWrite $9 '@echo off$\r$\n'
   FileWrite $9 '$\r$\n'
   FileWrite $9 'set "ATCS_DIR=%~dp0"$\r$\n'
-  FileWrite $9 'set "MAX_MEM=512M"$\r$\n'
+  FileWrite $9 'set "MAX_MEM=1024M"$\r$\n'
   FileWrite $9 'set "CP=%ATCS_DIR%lib\*"$\r$\n'
   FileWrite $9 'set "JAVA=$R0"$\r$\n'
   FileWrite $9 'set "JAVA_OPTS="$\r$\n'
@@ -85,22 +85,6 @@ Section install
   FileWrite $9 'start "" "%JAVA%" %JAVA_OPTS% -Xmx%MAX_MEM% -jar ATCS.jar$\r$\n'
   FileClose $9
 
-  ;--- Create in ...\lib\   jide-oss.jar  and other libs.
-  Delete "$INSTDIR\lib\*"
-  SetOutPath "$INSTDIR\lib\"
-
-  file "${ATCS_SOURCE_DIR}\lib\jide-oss.jar"
-  file "${ATCS_SOURCE_DIR}\lib\ui.jar"
-  file "${ATCS_SOURCE_DIR}\lib\AndorsTrainer_v${TRAINER_VERSION}.jar"
-  file "${ATCS_SOURCE_DIR}\lib\junit-4.10.jar"
-  file "${ATCS_SOURCE_DIR}\lib\json_simple-1.1.jar"
-  file "${ATCS_SOURCE_DIR}\lib\rsyntaxtextarea.jar"
-  file "${ATCS_SOURCE_DIR}\lib\prefuse.jar"
-  file "${ATCS_SOURCE_DIR}\lib\bsh-2.0b4.jar"
-  file "${ATCS_SOURCE_DIR}\lib\jsoup-1.10.2.jar"
-
-  SetOutPath $INSTDIR
-  
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
   
