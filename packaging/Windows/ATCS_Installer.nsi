@@ -1,6 +1,6 @@
 !include MUI2.nsh
 
-!define VERSION "0.6.20"
+!define VERSION "0.6.21"
 !define TRAINER_VERSION "0.1.5"
 !define JAVA_BIN "java"
 !define ATCS_SOURCE_DIR "C:\ATCS"
