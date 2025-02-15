@@ -107,7 +107,13 @@ cp -f "${JAR_LOCATION}" "${PACKAGING_DIR}/common/ATCS.jar" # Copy JAR to version
 # --- Create archive ---
 cd "${PACKAGING_DIR}" || exit
 echo "Creating archive"
-zip -r "ATCS_${VERSION}.zip" common/* # archive the 'common' folder which now contains the JAR and libs
+if [ "$PLATFORM" = "WINDOWS" ]; then
+    # Use PowerShell's Compress-Archive which is available by default on Windows
+    powershell.exe -Command "Compress-Archive -Path './common/*' -DestinationPath './ATCS_${VERSION}.zip' -Force"
+else
+    # Use zip command on Linux
+    zip -r "ATCS_${VERSION}.zip" common/* # archive the 'common' folder which now contains the JAR and libs
+fi
 echo "Created archive at ${PACKAGING_DIR}/ATCS_${VERSION}.zip"
 cd "${PACKAGING_DIR}" || exit
 
