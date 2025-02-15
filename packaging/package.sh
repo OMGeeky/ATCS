@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to build ATContentStudio.jar, replicating IntelliJ artifact definition (EXTRACT LIBS)
-# Linux and Windows compatible - NO GRADLE - Includes extra source code folders - EXTRACT LIBS
+# Script to build ATCS.jar, replicating IntelliJ artifact definition
+# Linux and Windows compatible
 
 # --- Platform Detection ---
 if [ "$1" = "-windows" ]; then
@@ -23,7 +23,7 @@ MANIFEST_LOCATION="${PACKAGING_DIR}/Manifest.txt"
 VERSION_FILE="${PACKAGING_DIR}/ATCS_latest"
 SOURCE_BASE_DIR="${ATCS_SOURCE_DIR}/src" # Base directory for standard source code
 LIB_BASE_DIR="${ATCS_SOURCE_DIR}/lib"     # Base directory for libraries
-OUTPUT_JAR_DIR="${PACKAGING_DIR}/common"  # Directory where the final JAR will be placed - as per script
+OUTPUT_JAR_DIR="${PACKAGING_DIR}"  # Directory where the final JAR will be placed - as per script
 
 # --- **ADDITIONAL SOURCE CODE FOLDERS** ---
 EXTRA_SOURCE_DIRS=(
@@ -66,7 +66,7 @@ MANIFEST_LOCATION="${TEMP_DIR}/Manifest.txt" # Update MANIFEST_LOCATION to the t
 echo 'Extracting lib files to TEMP_DIR'
 for LIB in "${LIBRARIES[@]}"; do
     echo "Extracting library: ${LIB}"
-    unzip -o "${LIB_BASE_DIR}/${LIB}" -d "${TEMP_DIR}" # Extract JAR contents to TEMP_DIR root
+    unzip -qo "${LIB_BASE_DIR}/${LIB}" -d "${TEMP_DIR}" # Extract JAR contents to TEMP_DIR root
 done
 
 # --- Set ClassPath ---
@@ -90,9 +90,6 @@ echo 'Building java classes'
 SOURCE_FILES=$(find "${SOURCE_BASE_DIR}" "${ATCS_SOURCE_DIR}/hacked-libtiled" "${ATCS_SOURCE_DIR}/minify" "${ATCS_SOURCE_DIR}/siphash-zackehh/src/main/java" -name "*.java" -print)
 
 javac -cp "$CP" -sourcepath "${SOURCE_PATH}" -d "${TEMP_DIR}" $SOURCE_FILES
-echo "javac -cp \"${CP}\" -sourcepath \"${SOURCE_PATH}\" -d \"${TEMP_DIR}\" $SOURCE_FILES"
-
-
 if [ $? -ne 0 ]; then
     echo "Compilation failed. Please check errors above."
     exit 1
@@ -114,7 +111,6 @@ cd "${TEMP_DIR}" || exit # Change to temp dir for JAR command
 
 # JAR command WITHOUT lib directory
 jar cfm "${OUTPUT_JAR_DIR}/ATCS.jar" "${MANIFEST_LOCATION}"  -C . .
-
 if [ $? -ne 0 ]; then
     echo "JAR creation failed."
     exit 1
@@ -124,12 +120,13 @@ cd "${PACKAGING_DIR}" || exit # Go back to packaging dir
 
 echo ''
 echo "Done creating jar at ${OUTPUT_JAR_DIR}/ATCS.jar"
+cp -f "${OUTPUT_JAR_DIR}/ATCS.jar" "${OUTPUT_JAR_DIR}/common/ATCS.jar" # Copy JAR to versioned name
 
 # --- Create archive ---
 if [ "$PLATFORM" = "LINUX" ]; then
     cd "${OUTPUT_JAR_DIR}" || exit
     echo "Creating archive"
-    tar caf "ATCS_${VERSION}.tar.gz" ./* # archive the 'common' folder which now contains the JAR and libs
+    tar caf "ATCS_${VERSION}.tar.gz" common/* # archive the 'common' folder which now contains the JAR and libs
     echo "Created archive at ${OUTPUT_JAR_DIR}/ATCS_${VERSION}.tar.gz"
     cd "${PACKAGING_DIR}" || exit
 else
