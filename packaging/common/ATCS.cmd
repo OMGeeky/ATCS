@@ -1,8 +1,8 @@
 @echo off
 
 set "ATCS_DIR=%~dp0"
-set "MAX_MEM=512M"
-set "JAVA=javaw.exe"
+set "MAX_MEM=1024M"
+set "JAVA=java.exe"
 set "JAVA_OPTS=-DFONT_SCALE=1.0 -Dswing.aatext=true"
 set "ENV_FILE=%ATCS_DIR%ATCS.env.bat"
 
