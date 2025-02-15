@@ -1,9 +1,10 @@
 !include MUI2.nsh
 
-!define VERSION "0.6.21"
+!system 'for /f "delims=" %%a in ('type ..\ATCS_latest') do set "VERSION=%%a" && exit'
+!define VERSION "$%VERSION:~1%"
 !define TRAINER_VERSION "0.1.5"
 !define JAVA_BIN "java"
-!define ATCS_SOURCE_DIR "C:\ATCS"
+!define ATCS_SOURCE_DIR "..\..\"
 
 Name "Andor's Trail Content Studio v${VERSION}"
 OutFile "ATCS_v${VERSION}_Setup.exe"
@@ -86,23 +87,23 @@ Section install
   FileClose $9
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-  
-  
+
+
   !insertmacro MUI_STARTMENU_WRITE_BEGIN "ATCS"
-    
+
     ;--- Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Andor's Trail Content Studio.lnk" "$INSTDIR\ATCS.cmd" "" "$INSTDIR\ATCS.ico"
     CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-  
+
   !insertmacro MUI_STARTMENU_WRITE_END
-  
+
 SectionEnd
 
 
 ;------------------------------------------------------------------------------------
 Section uninstall
-  
+
   Delete "$INSTDIR\lib\jide-oss.jar"
   Delete "$INSTDIR\lib\ui.jar"
   Delete "$INSTDIR\lib\junit-4.10.jar"
@@ -120,13 +121,13 @@ Section uninstall
   Delete "$INSTDIR\ATCS.jar"
   Delete "$INSTDIR\Uninstall.exe"
   RMDir "$INSTDIR"
-  
+
   !insertmacro MUI_STARTMENU_GETFOLDER "ATCS" $StartMenuFolder
-    
+
   Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
   Delete "$SMPROGRAMS\$StartMenuFolder\Andor's Trail Content Studio.lnk"
   RMDir "$SMPROGRAMS\$StartMenuFolder"
-  
+
 SectionEnd
 
 
@@ -138,28 +139,28 @@ Function GetJRE
 ;  2 - in JAVA_HOME environment variable
 ;  3 - in the registry
 ;  4 - assume java.exe in current dir or PATH
- 
+
   Push $R0
   Push $R1
- 
+
   ;ClearErrors
   ;StrCpy $R0 "$EXEDIR\jre\bin\java.exe"
   ;IfFileExists $R0 JreFound
   ;StrCpy $R0 ""
- 
+
   ClearErrors
   ReadEnvStr $R0 "JAVA_HOME"
   StrCpy $R0 "$R0\bin\${JAVA_BIN}.exe"
   IfErrors 0 JreFound
- 
+
   ClearErrors
   ReadRegStr $R1 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" "CurrentVersion"
   ReadRegStr $R0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$R1" "JavaHome"
   StrCpy $R0 "$R0\bin\${JAVA_BIN}.exe"
- 
+
   IfErrors 0 JreFound
   StrCpy $R0 "${JAVA_BIN}.exe"
- 
+
  JreFound:
   Pop $R1
   Exch $R0
