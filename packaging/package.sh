@@ -21,7 +21,6 @@ MANIFEST_LOCATION="${PACKAGING_DIR}/Manifest.txt"
 VERSION_FILE="${PACKAGING_DIR}/ATCS_latest"
 SOURCE_BASE_DIR="${ATCS_SOURCE_DIR}/src" # Base directory for standard source code
 LIB_BASE_DIR="${ATCS_SOURCE_DIR}/lib"     # Base directory for libraries
-OUTPUT_JAR_DIR="${PACKAGING_DIR}"  # Directory where the final JAR will be placed - as per script
 
 # --- **ADDITIONAL SOURCE CODE FOLDERS** ---
 EXTRA_SOURCE_DIRS=(
@@ -103,17 +102,13 @@ cd "${PACKAGING_DIR}" || exit # Go back to packaging dir
 
 echo ''
 echo "Done creating jar at ${JAR_LOCATION}"
-cp -f "${JAR_LOCATION}" "${OUTPUT_JAR_DIR}/common/ATCS.jar" # Copy JAR to versioned name
+cp -f "${JAR_LOCATION}" "${PACKAGING_DIR}/common/ATCS.jar" # Copy JAR to versioned name
 
 # --- Create archive ---
-if [ "$PLATFORM" = "LINUX" ]; then
-    cd "${OUTPUT_JAR_DIR}" || exit
-    echo "Creating archive"
-    tar caf "ATCS_${VERSION}.tar.gz" common/* # archive the 'common' folder which now contains the JAR and libs
-    echo "Created archive at ${OUTPUT_JAR_DIR}/ATCS_${VERSION}.tar.gz"
-    cd "${PACKAGING_DIR}" || exit
-else
-  echo "Can't create zip files on windows yet. Please pack the content of the '${OUTPUT_JAR_DIR}/common/' folder yourself"
-fi
+cd "${PACKAGING_DIR}" || exit
+echo "Creating archive"
+zip -r "ATCS_${VERSION}.zip" common/* # archive the 'common' folder which now contains the JAR and libs
+echo "Created archive at ${PACKAGING_DIR}/ATCS_${VERSION}.zip"
+cd "${PACKAGING_DIR}" || exit
 
 echo "Script finished."
