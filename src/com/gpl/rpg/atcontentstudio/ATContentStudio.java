@@ -153,8 +153,7 @@ public class ATContentStudio {
 			while ((inputLine = in.readLine()) != null) {
 				lastLine = inputLine;
 			}
-			if (lastLine != null && !lastLine.equals(APP_VERSION)) {
-
+			if (lastLine != null && compareVersions(lastLine) < 0) {
 				// for copying style
 				JLabel label = new JLabel();
 				Font font = label.getFont();
@@ -231,4 +230,19 @@ public class ATContentStudio {
 			}
 		}
 	}
+
+    /// returns The difference between the the latest version and the current one (CURRENT - LATEST)
+    private static int compareVersions(String latest) {
+        String[] levels1 = ATContentStudio.APP_VERSION.substring(1).split("\\.");
+        String[] levels2 = latest.substring(1).split("\\.");
+        int length = Math.max(levels1.length, levels2.length);
+        for (int i = 0; i < length; i++) {
+            int v1 = i < levels1.length ? Integer.parseInt(levels1[i]) : 0;
+            int v2 = i < levels2.length ? Integer.parseInt(levels2[i]) : 0;
+            if (v1 != v2) {
+                return v1 - v2;
+            }
+        }
+        return 0;
+    }
 }
