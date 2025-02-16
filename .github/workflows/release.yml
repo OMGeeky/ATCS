@@ -16,9 +16,9 @@ jobs:
       shell: bash
       run: |
         echo "Reading version from file:"
-        cat packaging/ATCS_latest
+        cat res/ATCS_latest
         echo ""
-        VERSION=$(tr -d '[:space:]' < "packaging/ATCS_latest")
+        VERSION=$(tr -d '[:space:]' < "res/ATCS_latest")
         echo "Processed version: $VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "Environment variable set to: $VERSION"
