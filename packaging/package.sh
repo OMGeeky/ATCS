@@ -18,7 +18,7 @@ ATCS_SOURCE_DIR=$(dirname "${PACKAGING_DIR}")
 TEMP_DIR="${PACKAGING_DIR}/tmp"
 JAR_LOCATION="${PACKAGING_DIR}/ATCS.jar" # Output JAR location as per script
 MANIFEST_LOCATION="${PACKAGING_DIR}/Manifest.txt"
-VERSION_FILE="${PACKAGING_DIR}/ATCS_latest"
+VERSION_FILE="${ATCS_SOURCE_DIR}/res/ATCS_latest"
 SOURCE_BASE_DIR="${ATCS_SOURCE_DIR}/src" # Base directory for standard source code
 LIB_BASE_DIR="${ATCS_SOURCE_DIR}/lib"     # Base directory for libraries
 
@@ -86,6 +86,7 @@ mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img"
 mkdir -p "${TEMP_DIR}/tiled/io/resources/"
 cp -r "${ATCS_SOURCE_DIR}"/src/com/gpl/rpg/atcontentstudio/img/* "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img/" # some icons
 cp -r "${ATCS_SOURCE_DIR}"/hacked-libtiled/tiled/io/resources/* "${TEMP_DIR}/tiled/io/resources/" # dtd file for tmx maps
+cp "${PACKAGING_DIR}"/ATCS_latest "${TEMP_DIR}/" # Copy version file
 
 # --- Create JAR file ---
 echo ""
