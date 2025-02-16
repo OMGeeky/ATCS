@@ -1,12 +1,12 @@
 !include MUI2.nsh
 
-; Version will be passed as /DVERSION=x.x.x
+; Version will be passed as /DVERSION=vx.x.x
 !define TRAINER_VERSION "0.1.5"
 !define JAVA_BIN "java"
 !define ATCS_SOURCE_DIR "..\..\"
 
-Name "Andor's Trail Content Studio v${VERSION}"
-OutFile "ATCS_v${VERSION}_Setup.exe"
+Name "Andor's Trail Content Studio ${VERSION}"
+OutFile "..\ATCS_${VERSION}_Setup.exe"
 InstallDir "$PROGRAMFILES\ATCS\"
 
 ;SetCompressor /SOLID /FINAL lzma
@@ -14,10 +14,10 @@ InstallDir "$PROGRAMFILES\ATCS\"
 Var StartMenuFolder
 
 !define MUI_WELCOMEPAGE_TITLE "Welcome to Andor's Trail Content Studio installer"
-!define MUI_WELCOMEPAGE_TEXT "This will install Andor's Trail Content Studio v${VERSION}"
-!define MUI_FINISHPAGE_TEXT "Andor's Trail Content Studio v${VERSION} - Install completed !"
+!define MUI_WELCOMEPAGE_TEXT "This will install Andor's Trail Content Studio ${VERSION}"
+!define MUI_FINISHPAGE_TEXT "Andor's Trail Content Studio ${VERSION} - Install completed !"
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "Andor's Trail Content Studio"
-!define MUI_PAGE_HEADER_TEXT "Installing Andor's Trail Content Studio v${VERSION}"
+!define MUI_PAGE_HEADER_TEXT "Installing Andor's Trail Content Studio ${VERSION}"
 
 
 ;Start Menu Folder Page Configuration
