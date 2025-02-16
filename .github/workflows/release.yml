@@ -28,14 +28,6 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
 
-    - name: Install NSIS
-      uses: joncloud/makensis-action@v4
-      env:
-        VERSION: ${{ env.VERSION }}
-      with:
-        script-file: packaging/Windows/ATCS_Installer.nsi
-        arguments: /DVERSION="${{ env.VERSION }}"
-
     - name: Build JAR
       shell: bash
       run: |
@@ -46,6 +38,14 @@ jobs:
         echo "Created artifacts:"
         ls -la common/ATCS.jar
         ls -la ATCS_${{ env.VERSION }}.zip
+
+    - name: Install NSIS
+      uses: joncloud/makensis-action@v4
+      env:
+        VERSION: ${{ env.VERSION }}
+      with:
+        script-file: packaging/Windows/ATCS_Installer.nsi
+        arguments: /DVERSION="${{ env.VERSION }}"
 
     - name: Upload ZIP to Release
       uses: actions/upload-release-asset@v1
