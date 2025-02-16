@@ -86,7 +86,7 @@ mkdir -p "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img"
 mkdir -p "${TEMP_DIR}/tiled/io/resources/"
 cp -r "${ATCS_SOURCE_DIR}"/src/com/gpl/rpg/atcontentstudio/img/* "${TEMP_DIR}/com/gpl/rpg/atcontentstudio/img/" # some icons
 cp -r "${ATCS_SOURCE_DIR}"/hacked-libtiled/tiled/io/resources/* "${TEMP_DIR}/tiled/io/resources/" # dtd file for tmx maps
-cp "${PACKAGING_DIR}"/ATCS_latest "${TEMP_DIR}/" # Copy version file
+cp "${VERSION_FILE}" "${TEMP_DIR}/" # Copy version file
 
 # --- Create JAR file ---
 echo ""
