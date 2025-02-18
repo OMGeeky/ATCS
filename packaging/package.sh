@@ -29,7 +29,7 @@ EXTRA_SOURCE_DIRS=(
   "siphash-zackehh/src/main/java"
 )
 
-# --- Libraries to include (from IntelliJ artifact definition) ---
+# --- Libraries to include ---
 LIBRARIES=(
   "AndorsTrainer_v0.1.5.jar"
   "bsh-2.0b4.jar"
@@ -44,7 +44,7 @@ LIBRARIES=(
 
 # --- Get version ---
 echo "Getting version"
-VERSION=$(cat "${VERSION_FILE}")
+VERSION=$(tr -d '[:space:]' < "${VERSION_FILE}")
 echo "Got version ${VERSION}"
 
 # --- Prepare temporary directory ---
@@ -62,7 +62,7 @@ done
 
 # --- Set ClassPath ---
 echo "Getting source files"
-# Find all java files in source directories and compile them
+# Find all java files in source directories
 SOURCE_FILES=$(find "${SOURCE_BASE_DIR}" "${EXTRA_SOURCE_DIRS[@]/#/${ATCS_SOURCE_DIR}/}" -name "*.java" -print)
 #echo "SourceFiles: ${SOURCE_FILES}"
 echo ""
@@ -70,6 +70,8 @@ echo ""
 # --- Build Java classes ---
 echo 'Building java classes'
 
+# shellcheck disable=SC2086
+# (we need word splitting here to pass multiple files)
 javac -cp "${TEMP_DIR}" -d "${TEMP_DIR}" ${SOURCE_FILES}
 if [ $? -ne 0 ]; then
     echo "Compilation failed. Please check errors above."
@@ -114,7 +116,10 @@ else
     # Use zip command on Linux
     zip -r "ATCS_${VERSION}.zip" common/* # archive the 'common' folder which now contains the JAR and libs
 fi
+if [ $? -ne 0 ]; then
+    echo "Archive creation failed."
+    exit 1
+fi
 echo "Created archive at ${PACKAGING_DIR}/ATCS_${VERSION}.zip"
-cd "${PACKAGING_DIR}" || exit
 
 echo "Script finished."
