@@ -20,7 +20,7 @@ else
 fi
 
 export ENV_FILE
-exit 1
+
 # shellcheck disable=SC2086
 # (spellchecker is disabled for this line, because we want it to be split into multiple arguments)
 $JAVA ${JAVA_OPTS} -Xmx${MAX_MEM} -jar "${ATCS_DIR}/ATCS.jar"
