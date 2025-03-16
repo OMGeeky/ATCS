@@ -98,7 +98,11 @@ public class TileSet implements Iterable<Tile>
         
         File f = new File(imgFilename);
 
-        BufferedImage image = ImageIO.read(f.getCanonicalFile());
+        BufferedImage image;
+        try {
+            image = ImageIO.read(f.getCanonicalFile());
+        } catch (IOException e) { throw new IOException("Failed to load " + imgFilename);
+        }
         if (image == null) {
             throw new IOException("Failed to load " + imgFilename);
         }
