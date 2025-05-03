@@ -18,6 +18,9 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.GameSource;
 import com.gpl.rpg.atcontentstudio.model.Project;
 
+import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.parseHitReceivedEffect;
+import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.parseTimedConditionEffects;
+
 public class NPC extends JSONElement {
 
 	private static final long serialVersionUID = 1093728879485491933L;
@@ -46,9 +49,9 @@ public class NPC extends JSONElement {
 	public Double critical_multiplier = null;
 	public Integer block_chance = null;
 	public Integer damage_resistance = null;
-	public HitEffect hit_effect = null;
-	public HitReceivedEffect hit_received_effect = null;
-	public DeathEffect death_effect = null;
+	public Common.HitEffect hit_effect = null;
+	public Common.HitReceivedEffect hit_received_effect = null;
+	public Common.DeathEffect death_effect = null;
 	
 	//Available from linked state
 	public Dialogue dialogue = null;
@@ -73,40 +76,6 @@ public class NPC extends JSONElement {
         wholeMap
 	}
 
-	public static class DeathEffect {
-		//Available from parsed state
-		public Integer hp_boost_min = null;
-		public Integer hp_boost_max = null;
-		public Integer ap_boost_min = null;
-		public Integer ap_boost_max = null;
-		public List<TimedConditionEffect> conditions_source = null;
-	}
-	
-	public static class HitEffect extends DeathEffect {
-		//Available from parsed state
-		public List<TimedConditionEffect> conditions_target = null;
-	}
-	
-	public static class HitReceivedEffect extends HitEffect {
-		//Available from parsed state
-		public Integer hp_boost_min_target = null;
-		public Integer hp_boost_max_target = null;
-		public Integer ap_boost_min_target = null;
-		public Integer ap_boost_max_target = null;
-	}
-	
-	public static class TimedConditionEffect {
-		//Available from parsed state
-		public Integer magnitude = null;
-		public String condition_id = null;
-		public Integer duration = null;
-		public Double chance = null;
-		
-		//Available from linked state
-		public ActorCondition condition = null; 
-	
-	}
-	
 	@Override
 	public String getDesc() {
 		return (needsSaving() ? "*" : "")+name+" ("+id+")";
@@ -201,7 +170,7 @@ public class NPC extends JSONElement {
 		
 		Map hitEffect = (Map) npcJson.get("hitEffect");
 		if (hitEffect != null) {
-			this.hit_effect = new HitEffect();
+			this.hit_effect = new Common.HitEffect();
 			if (hitEffect.get("increaseCurrentHP") != null) {
 				this.hit_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map)hitEffect.get("increaseCurrentHP")).get("max")));
 				this.hit_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map)hitEffect.get("increaseCurrentHP")).get("min")));
@@ -211,83 +180,17 @@ public class NPC extends JSONElement {
 				this.hit_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map)hitEffect.get("increaseCurrentAP")).get("min")));
 			}
 			List conditionsSourceJson = (List) hitEffect.get("conditionsSource");
-			if (conditionsSourceJson != null && !conditionsSourceJson.isEmpty()) {
-				this.hit_effect.conditions_source = new ArrayList<NPC.TimedConditionEffect>();
-				for (Object conditionJsonObj : conditionsSourceJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					TimedConditionEffect condition = new TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.hit_effect.conditions_source.add(condition);
-				}
-			}
+			this.hit_effect.conditions_source = parseTimedConditionEffects(conditionsSourceJson);
 			List conditionsTargetJson = (List) hitEffect.get("conditionsTarget");
-			if (conditionsTargetJson != null && !conditionsTargetJson.isEmpty()) {
-				this.hit_effect.conditions_target = new ArrayList<NPC.TimedConditionEffect>();
-				for (Object conditionJsonObj : conditionsTargetJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					TimedConditionEffect condition = new TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.hit_effect.conditions_target.add(condition);
-				}
-			}
+			this.hit_effect.conditions_target = parseTimedConditionEffects(conditionsTargetJson);
 		}
 	
-		Map hitReceivedEffect = (Map) npcJson.get("hitReceivedEffect");
-		if (hitReceivedEffect != null) {
-			this.hit_received_effect = new HitReceivedEffect();
-			if (hitReceivedEffect.get("increaseCurrentHP") != null) {
-				this.hit_received_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentHP")).get("max")));
-				this.hit_received_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentHP")).get("min")));
-			}
-			if (hitReceivedEffect.get("increaseCurrentAP") != null) {
-				this.hit_received_effect.ap_boost_max = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentAP")).get("max")));
-				this.hit_received_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentAP")).get("min")));
-			}
-			if (hitReceivedEffect.get("increaseAttackerCurrentHP") != null) {
-				this.hit_received_effect.hp_boost_max_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentHP")).get("max")));
-				this.hit_received_effect.hp_boost_min_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentHP")).get("min")));
-			}
-			if (hitReceivedEffect.get("increaseAttackerCurrentAP") != null) {
-				this.hit_received_effect.ap_boost_max_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentAP")).get("max")));
-				this.hit_received_effect.ap_boost_min_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentAP")).get("min")));
-			}
-			List conditionsSourceJson = (List) hitReceivedEffect.get("conditionsSource");
-			if (conditionsSourceJson != null && !conditionsSourceJson.isEmpty()) {
-				this.hit_received_effect.conditions_source = new ArrayList<NPC.TimedConditionEffect>();
-				for (Object conditionJsonObj : conditionsSourceJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					TimedConditionEffect condition = new TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.hit_received_effect.conditions_source.add(condition);
-				}
-			}
-			List conditionsTargetJson = (List) hitReceivedEffect.get("conditionsTarget");
-			if (conditionsTargetJson != null && !conditionsTargetJson.isEmpty()) {
-				this.hit_received_effect.conditions_target = new ArrayList<NPC.TimedConditionEffect>();
-				for (Object conditionJsonObj : conditionsTargetJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					TimedConditionEffect condition = new TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.hit_received_effect.conditions_target.add(condition);
-				}
-			}
-		}
-		
+		Map hitReceivedEffect = (Map) npcJson.get("Common.HitReceivedEffect");
+		this.hit_received_effect = Common.parseHitReceivedEffect(hitReceivedEffect);
+
 		Map deathEffect = (Map) npcJson.get("deathEffect");
 		if (deathEffect != null) {
-			this.death_effect = new HitEffect();
+			this.death_effect = new Common.HitEffect();
 			if (deathEffect.get("increaseCurrentHP") != null) {
 				this.death_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map)deathEffect.get("increaseCurrentHP")).get("max")));
 				this.death_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map)deathEffect.get("increaseCurrentHP")).get("min")));
@@ -297,22 +200,11 @@ public class NPC extends JSONElement {
 				this.death_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map)deathEffect.get("increaseCurrentAP")).get("min")));
 			}
 			List conditionsSourceJson = (List) deathEffect.get("conditionsSource");
-			if (conditionsSourceJson != null && !conditionsSourceJson.isEmpty()) {
-				this.death_effect.conditions_source = new ArrayList<NPC.TimedConditionEffect>();
-				for (Object conditionJsonObj : conditionsSourceJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					TimedConditionEffect condition = new TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.death_effect.conditions_source.add(condition);
-				}
-			}
+            this.death_effect.conditions_source = parseTimedConditionEffects(conditionsSourceJson);
 		}
 		
 	}
-	
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -343,31 +235,31 @@ public class NPC extends JSONElement {
 		if (this.droplist != null) this.droplist.addBacklink(this);
 		
 		if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-			for (TimedConditionEffect ce : this.hit_effect.conditions_source) {
+			for (Common.TimedConditionEffect ce : this.hit_effect.conditions_source) {
 				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
 				if (ce.condition != null) ce.condition.addBacklink(this);
 			}
 		}
 		if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-			for (TimedConditionEffect ce : this.hit_effect.conditions_target) {
+			for (Common.TimedConditionEffect ce : this.hit_effect.conditions_target) {
 				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
 				if (ce.condition != null) ce.condition.addBacklink(this);
 			}
 		}
 		if (this.hit_received_effect != null && this.hit_received_effect.conditions_source != null) {
-			for (TimedConditionEffect ce : this.hit_received_effect.conditions_source) {
+			for (Common.TimedConditionEffect ce : this.hit_received_effect.conditions_source) {
 				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
 				if (ce.condition != null) ce.condition.addBacklink(this);
 			}
 		}
 		if (this.hit_received_effect != null && this.hit_received_effect.conditions_target != null) {
-			for (TimedConditionEffect ce : this.hit_received_effect.conditions_target) {
+			for (Common.TimedConditionEffect ce : this.hit_received_effect.conditions_target) {
 				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
 				if (ce.condition != null) ce.condition.addBacklink(this);
 			}
 		}
 		if (this.death_effect != null && this.death_effect.conditions_source != null) {
-			for (TimedConditionEffect ce : this.death_effect.conditions_source) {
+			for (Common.TimedConditionEffect ce : this.death_effect.conditions_source) {
 				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
 				if (ce.condition != null) ce.condition.addBacklink(this);
 			}
@@ -412,15 +304,15 @@ public class NPC extends JSONElement {
 		clone.droplist_id = this.droplist_id;
 		clone.faction_id = this.faction_id;
 		if (this.hit_effect != null) {
-			clone.hit_effect = new HitEffect();
+			clone.hit_effect = new Common.HitEffect();
 			clone.hit_effect.ap_boost_max = this.hit_effect.ap_boost_max;
 			clone.hit_effect.ap_boost_min = this.hit_effect.ap_boost_min;
 			clone.hit_effect.hp_boost_max = this.hit_effect.hp_boost_max;
 			clone.hit_effect.hp_boost_min = this.hit_effect.hp_boost_min;
 			if (this.hit_effect.conditions_source != null) {
-				clone.hit_effect.conditions_source = new ArrayList<TimedConditionEffect>();
-				for (TimedConditionEffect c : this.hit_effect.conditions_source) {
-					TimedConditionEffect cclone = new TimedConditionEffect();
+				clone.hit_effect.conditions_source = new ArrayList<Common.TimedConditionEffect>();
+				for (Common.TimedConditionEffect c : this.hit_effect.conditions_source) {
+					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
 					cclone.magnitude = c.magnitude;
 					cclone.condition_id = c.condition_id;
 					cclone.condition = c.condition;
@@ -433,9 +325,9 @@ public class NPC extends JSONElement {
 				}
 			}
 			if (this.hit_effect.conditions_target != null) {
-				clone.hit_effect.conditions_target = new ArrayList<TimedConditionEffect>();
-				for (TimedConditionEffect c : this.hit_effect.conditions_target) {
-					TimedConditionEffect cclone = new TimedConditionEffect();
+				clone.hit_effect.conditions_target = new ArrayList<Common.TimedConditionEffect>();
+				for (Common.TimedConditionEffect c : this.hit_effect.conditions_target) {
+					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
 					cclone.magnitude = c.magnitude;
 					cclone.condition_id = c.condition_id;
 					cclone.condition = c.condition;
@@ -449,7 +341,7 @@ public class NPC extends JSONElement {
 			}
 		}
 		if (this.hit_received_effect != null) {
-			clone.hit_received_effect = new HitReceivedEffect();
+			clone.hit_received_effect = new Common.HitReceivedEffect();
 			clone.hit_received_effect.ap_boost_max = this.hit_received_effect.ap_boost_max;
 			clone.hit_received_effect.ap_boost_min = this.hit_received_effect.ap_boost_min;
 			clone.hit_received_effect.hp_boost_max = this.hit_received_effect.hp_boost_max;
@@ -459,9 +351,9 @@ public class NPC extends JSONElement {
 			clone.hit_received_effect.hp_boost_max_target = this.hit_received_effect.hp_boost_max_target;
 			clone.hit_received_effect.hp_boost_min_target = this.hit_received_effect.hp_boost_min_target;
 			if (this.hit_received_effect.conditions_source != null) {
-				clone.hit_received_effect.conditions_source = new ArrayList<TimedConditionEffect>();
-				for (TimedConditionEffect c : this.hit_received_effect.conditions_source) {
-					TimedConditionEffect cclone = new TimedConditionEffect();
+				clone.hit_received_effect.conditions_source = new ArrayList<Common.TimedConditionEffect>();
+				for (Common.TimedConditionEffect c : this.hit_received_effect.conditions_source) {
+					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
 					cclone.magnitude = c.magnitude;
 					cclone.condition_id = c.condition_id;
 					cclone.condition = c.condition;
@@ -474,9 +366,9 @@ public class NPC extends JSONElement {
 				}
 			}
 			if (this.hit_received_effect.conditions_target != null) {
-				clone.hit_received_effect.conditions_target = new ArrayList<TimedConditionEffect>();
-				for (TimedConditionEffect c : this.hit_received_effect.conditions_target) {
-					TimedConditionEffect cclone = new TimedConditionEffect();
+				clone.hit_received_effect.conditions_target = new ArrayList<Common.TimedConditionEffect>();
+				for (Common.TimedConditionEffect c : this.hit_received_effect.conditions_target) {
+					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
 					cclone.magnitude = c.magnitude;
 					cclone.condition_id = c.condition_id;
 					cclone.condition = c.condition;
@@ -490,15 +382,15 @@ public class NPC extends JSONElement {
 			}
 		}
 		if (this.death_effect != null) {
-			clone.death_effect = new DeathEffect();
+			clone.death_effect = new Common.DeathEffect();
 			clone.death_effect.ap_boost_max = this.death_effect.ap_boost_max;
 			clone.death_effect.ap_boost_min = this.death_effect.ap_boost_min;
 			clone.death_effect.hp_boost_max = this.death_effect.hp_boost_max;
 			clone.death_effect.hp_boost_min = this.death_effect.hp_boost_min;
 			if (this.death_effect.conditions_source != null) {
-				clone.death_effect.conditions_source = new ArrayList<TimedConditionEffect>();
-				for (TimedConditionEffect c : this.death_effect.conditions_source) {
-					TimedConditionEffect cclone = new TimedConditionEffect();
+				clone.death_effect.conditions_source = new ArrayList<Common.TimedConditionEffect>();
+				for (Common.TimedConditionEffect c : this.death_effect.conditions_source) {
+					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
 					cclone.magnitude = c.magnitude;
 					cclone.condition_id = c.condition_id;
 					cclone.condition = c.condition;
@@ -534,7 +426,7 @@ public class NPC extends JSONElement {
 				if (newOne != null) newOne.addBacklink(this);
 			} else {
 				if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-					for (TimedConditionEffect tce : this.hit_effect.conditions_source) {
+					for (Common.TimedConditionEffect tce : this.hit_effect.conditions_source) {
 						if (tce.condition == oldOne) {
 							oldOne.removeBacklink(this);
 							tce.condition = (ActorCondition) newOne;
@@ -543,7 +435,7 @@ public class NPC extends JSONElement {
 					}
 				}
 				if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-					for (TimedConditionEffect tce : this.hit_effect.conditions_target) {
+					for (Common.TimedConditionEffect tce : this.hit_effect.conditions_target) {
 						if (tce.condition == oldOne) {
 							oldOne.removeBacklink(this);
 							tce.condition = (ActorCondition) newOne;
@@ -616,7 +508,7 @@ public class NPC extends JSONElement {
 			if (this.hit_effect.conditions_source != null) {
 				List conditionsSourceJson = new ArrayList();
 				hitEffectJson.put("conditionsSource", conditionsSourceJson);
-				for (TimedConditionEffect condition : this.hit_effect.conditions_source) {
+				for (Common.TimedConditionEffect condition : this.hit_effect.conditions_source) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsSourceJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -632,7 +524,7 @@ public class NPC extends JSONElement {
 			if (this.hit_effect.conditions_target != null) {
 				List conditionsTargetJson = new ArrayList();
 				hitEffectJson.put("conditionsTarget", conditionsTargetJson);
-				for (TimedConditionEffect condition : this.hit_effect.conditions_target) {
+				for (Common.TimedConditionEffect condition : this.hit_effect.conditions_target) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsTargetJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -675,7 +567,7 @@ public class NPC extends JSONElement {
 			}
 			if (this.hit_received_effect.ap_boost_min_target != null || this.hit_received_effect.ap_boost_max_target != null) {
 				Map apJson = new LinkedHashMap();
-				hitReceivedEffectJson.put("increaseAttackerCurrentAP", apJson);
+				 hitReceivedEffectJson.put("increaseAttackerCurrentAP", apJson);
 				if (this.hit_received_effect.ap_boost_min_target != null) apJson.put("min", this.hit_received_effect.ap_boost_min_target);
 				else apJson.put("min", 0);
 				if (this.hit_received_effect.ap_boost_max_target != null) apJson.put("max", this.hit_received_effect.ap_boost_max_target);
@@ -684,7 +576,7 @@ public class NPC extends JSONElement {
 			if (this.hit_received_effect.conditions_source != null) {
 				List conditionsSourceJson = new ArrayList();
 				hitReceivedEffectJson.put("conditionsSource", conditionsSourceJson);
-				for (TimedConditionEffect condition : this.hit_received_effect.conditions_source) {
+				for (Common.TimedConditionEffect condition : this.hit_received_effect.conditions_source) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsSourceJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -700,7 +592,7 @@ public class NPC extends JSONElement {
 			if (this.hit_received_effect.conditions_target != null) {
 				List conditionsTargetJson = new ArrayList();
 				hitReceivedEffectJson.put("conditionsTarget", conditionsTargetJson);
-				for (TimedConditionEffect condition : this.hit_received_effect.conditions_target) {
+				for (Common.TimedConditionEffect condition : this.hit_received_effect.conditions_target) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsTargetJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -736,7 +628,7 @@ public class NPC extends JSONElement {
 			if (this.death_effect.conditions_source != null) {
 				List conditionsSourceJson = new ArrayList();
 				deathEffectJson.put("conditionsSource", conditionsSourceJson);
-				for (TimedConditionEffect condition : this.death_effect.conditions_source) {
+				for (Common.TimedConditionEffect condition : this.death_effect.conditions_source) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsSourceJson.add(conditionJson);
 					if (condition.condition != null) {

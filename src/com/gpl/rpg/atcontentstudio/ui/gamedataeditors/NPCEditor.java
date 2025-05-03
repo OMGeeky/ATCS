@@ -32,10 +32,7 @@ import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Dialogue;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist;
-import com.gpl.rpg.atcontentstudio.model.gamedata.NPC;
+import com.gpl.rpg.atcontentstudio.model.gamedata.*;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
@@ -53,11 +50,11 @@ public class NPCEditor extends JSONElementEditor {
 	private static final String json_view_id = "JSON";
 	private static final String dialogue_tree_id = "Dialogue Tree";
 
-	private NPC.TimedConditionEffect selectedHitEffectSourceCondition;
-	private NPC.TimedConditionEffect selectedHitEffectTargetCondition;
-	private NPC.TimedConditionEffect selectedHitReceivedEffectSourceCondition;
-	private NPC.TimedConditionEffect selectedHitReceivedEffectTargetCondition;
-	private NPC.TimedConditionEffect selectedDeathEffectSourceCondition;
+	private Common.TimedConditionEffect selectedHitEffectSourceCondition;
+	private Common.TimedConditionEffect selectedHitEffectTargetCondition;
+	private Common.TimedConditionEffect selectedHitReceivedEffectSourceCondition;
+	private Common.TimedConditionEffect selectedHitReceivedEffectTargetCondition;
+	private Common.TimedConditionEffect selectedDeathEffectSourceCondition;
 	
 	private JButton npcIcon;
 	private JTextField idField;
@@ -86,7 +83,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JSpinner blockChance;
 	private JSpinner dmgRes;
 
-	private NPC.HitEffect hitEffect;
+	private Common.HitEffect hitEffect;
 	private CollapsiblePanel hitEffectPane;
 	private JSpinner hitEffectHPMin;
 	private JSpinner hitEffectHPMax;
@@ -119,7 +116,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JRadioButton hitTargetConditionForever;
 	private JSpinner hitTargetConditionDuration;
 
-	private NPC.HitReceivedEffect hitReceivedEffect;
+	private Common.HitReceivedEffect hitReceivedEffect;
 	private CollapsiblePanel hitReceivedEffectPane;
 	private JSpinner hitReceivedEffectHPMin;
 	private JSpinner hitReceivedEffectHPMax;
@@ -156,7 +153,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JRadioButton hitReceivedTargetConditionForever;
 	private JSpinner hitReceivedTargetConditionDuration;
 	
-	private NPC.DeathEffect deathEffect;
+	private Common.DeathEffect deathEffect;
 	private CollapsiblePanel deathEffectPane;
 	private JSpinner deathEffectHPMin;
 	private JSpinner deathEffectHPMax;
@@ -270,7 +267,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitEffectPane = new CollapsiblePanel("Effect on every hit: ");
 		hitEffectPane.setLayout(new JideBoxLayout(hitEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (npc.hit_effect == null) {
-			hitEffect = new NPC.HitEffect();
+			hitEffect = new Common.HitEffect();
 		} else {
 			hitEffect = npc.hit_effect;
 		}
@@ -292,7 +289,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitEffectSourceCondition = (NPC.TimedConditionEffect) hitSourceConditionsList.getSelectedValue();
+				selectedHitEffectSourceCondition = (Common.TimedConditionEffect) hitSourceConditionsList.getSelectedValue();
 				updateHitSourceTimedConditionEditorPane(hitSourceTimedConditionsEditorPane, selectedHitEffectSourceCondition, listener);
 			}
 		});
@@ -302,7 +299,7 @@ public class NPCEditor extends JSONElementEditor {
 			createHitSourceCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					NPC.TimedConditionEffect condition = new NPC.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitSourceConditionsListModel.addItem(condition);
 					hitSourceConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -344,7 +341,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitTargetConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitEffectTargetCondition = (NPC.TimedConditionEffect) hitTargetConditionsList.getSelectedValue();
+				selectedHitEffectTargetCondition = (Common.TimedConditionEffect) hitTargetConditionsList.getSelectedValue();
 				updateHitTargetTimedConditionEditorPane(hitTargetTimedConditionsEditorPane, selectedHitEffectTargetCondition, listener);
 			}
 		});
@@ -354,7 +351,7 @@ public class NPCEditor extends JSONElementEditor {
 			createHitTargetCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					NPC.TimedConditionEffect condition = new NPC.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitTargetConditionsListModel.addItem(condition);
 					hitTargetConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -388,7 +385,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
 		hitReceivedEffectPane.setLayout(new JideBoxLayout(hitReceivedEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (npc.hit_received_effect == null) {
-			hitReceivedEffect = new NPC.HitReceivedEffect();
+			hitReceivedEffect = new Common.HitReceivedEffect();
 		} else {
 			hitReceivedEffect = npc.hit_received_effect;
 		}
@@ -414,7 +411,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitReceivedEffectSourceCondition = (NPC.TimedConditionEffect) hitReceivedSourceConditionsList.getSelectedValue();
+				selectedHitReceivedEffectSourceCondition = (Common.TimedConditionEffect) hitReceivedSourceConditionsList.getSelectedValue();
 				updateHitReceivedSourceTimedConditionEditorPane(hitReceivedSourceTimedConditionsEditorPane, selectedHitReceivedEffectSourceCondition, listener);
 			}
 		});
@@ -424,7 +421,7 @@ public class NPCEditor extends JSONElementEditor {
 			createHitReceivedSourceCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					NPC.TimedConditionEffect condition = new NPC.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitReceivedSourceConditionsListModel.addItem(condition);
 					hitReceivedSourceConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitReceivedSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -466,7 +463,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedTargetConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitReceivedEffectTargetCondition = (NPC.TimedConditionEffect) hitReceivedTargetConditionsList.getSelectedValue();
+				selectedHitReceivedEffectTargetCondition = (Common.TimedConditionEffect) hitReceivedTargetConditionsList.getSelectedValue();
 				updateHitReceivedTargetTimedConditionEditorPane(hitReceivedTargetTimedConditionsEditorPane, selectedHitReceivedEffectTargetCondition, listener);
 			}
 		});
@@ -476,7 +473,7 @@ public class NPCEditor extends JSONElementEditor {
 			createHitReceivedTargetCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					NPC.TimedConditionEffect condition = new NPC.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitReceivedTargetConditionsListModel.addItem(condition);
 					hitReceivedTargetConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitReceivedTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -510,7 +507,7 @@ public class NPCEditor extends JSONElementEditor {
 		deathEffectPane = new CollapsiblePanel("Effect when killed: ");
 		deathEffectPane.setLayout(new JideBoxLayout(deathEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (npc.death_effect == null) {
-			deathEffect = new NPC.DeathEffect();
+			deathEffect = new Common.DeathEffect();
 		} else {
 			deathEffect = npc.death_effect;
 		}
@@ -532,7 +529,7 @@ public class NPCEditor extends JSONElementEditor {
 		deathSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedDeathEffectSourceCondition = (NPC.TimedConditionEffect) deathSourceConditionsList.getSelectedValue();
+				selectedDeathEffectSourceCondition = (Common.TimedConditionEffect) deathSourceConditionsList.getSelectedValue();
 				updateDeathSourceTimedConditionEditorPane(deathSourceTimedConditionsEditorPane, selectedDeathEffectSourceCondition, listener);
 			}
 		});
@@ -542,7 +539,7 @@ public class NPCEditor extends JSONElementEditor {
 			createDeathSourceCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					NPC.TimedConditionEffect condition = new NPC.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					deathSourceConditionsListModel.addItem(condition);
 					deathSourceConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(deathSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -577,7 +574,7 @@ public class NPCEditor extends JSONElementEditor {
 		pane.add(combatTraitPane, JideBoxLayout.FIX);
 	}
 	
-	public void updateHitSourceTimedConditionEditorPane(JPanel pane, NPC.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitSourceConditionBox != null) {
 			removeElementListener(hitSourceConditionBox);
@@ -649,7 +646,7 @@ public class NPCEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitSourceTimedConditionWidgets(NPC.TimedConditionEffect condition) {
+	public void updateHitSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -668,7 +665,7 @@ public class NPCEditor extends JSONElementEditor {
 	}
 
 	
-	public void updateHitTargetTimedConditionEditorPane(JPanel pane, NPC.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitTargetTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitTargetConditionBox != null) {
 			removeElementListener(hitTargetConditionBox);
@@ -739,7 +736,7 @@ public class NPCEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitTargetTimedConditionWidgets(NPC.TimedConditionEffect condition) {
+	public void updateHitTargetTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -758,7 +755,7 @@ public class NPCEditor extends JSONElementEditor {
 	}
 	
 	
-	public void updateHitReceivedSourceTimedConditionEditorPane(JPanel pane, NPC.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitReceivedSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitReceivedSourceConditionBox != null) {
 			removeElementListener(hitReceivedSourceConditionBox);
@@ -830,7 +827,7 @@ public class NPCEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitReceivedSourceTimedConditionWidgets(NPC.TimedConditionEffect condition) {
+	public void updateHitReceivedSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -849,7 +846,7 @@ public class NPCEditor extends JSONElementEditor {
 	}
 
 	
-	public void updateHitReceivedTargetTimedConditionEditorPane(JPanel pane, NPC.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitReceivedTargetTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitReceivedTargetConditionBox != null) {
 			removeElementListener(hitReceivedTargetConditionBox);
@@ -920,7 +917,7 @@ public class NPCEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitReceivedTargetTimedConditionWidgets(NPC.TimedConditionEffect condition) {
+	public void updateHitReceivedTargetTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -938,7 +935,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedTargetConditionForever.setEnabled(!clear);
 	}
 	
-	public void updateDeathSourceTimedConditionEditorPane(JPanel pane, NPC.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateDeathSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (deathSourceConditionBox != null) {
 			removeElementListener(deathSourceConditionBox);
@@ -1010,7 +1007,7 @@ public class NPCEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateDeathSourceTimedConditionWidgets(NPC.TimedConditionEffect condition) {
+	public void updateDeathSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -1028,11 +1025,11 @@ public class NPCEditor extends JSONElementEditor {
 		deathSourceConditionForever.setEnabled(!clear);
 	}
 
-	public static class TargetTimedConditionsListModel implements ListModel<NPC.TimedConditionEffect> {
+	public static class TargetTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
 		
-		NPC.HitEffect source;
+		Common.HitEffect source;
 		
-		public TargetTimedConditionsListModel(NPC.HitEffect effect) {
+		public TargetTimedConditionsListModel(Common.HitEffect effect) {
 			this.source = effect;
 		}
 
@@ -1043,14 +1040,14 @@ public class NPCEditor extends JSONElementEditor {
 		}
 		
 		@Override
-		public NPC.TimedConditionEffect getElementAt(int index) {
+		public Common.TimedConditionEffect getElementAt(int index) {
 			if (source.conditions_target == null) return null;
 			return source.conditions_target.get(index);
 		}
 
-		public void addItem(NPC.TimedConditionEffect item) {
+		public void addItem(Common.TimedConditionEffect item) {
 			if (source.conditions_target == null) {
-				source.conditions_target = new ArrayList<NPC.TimedConditionEffect>();
+				source.conditions_target = new ArrayList<Common.TimedConditionEffect>();
 			}
 			source.conditions_target.add(item);
 			int index = source.conditions_target.indexOf(item);
@@ -1059,7 +1056,7 @@ public class NPCEditor extends JSONElementEditor {
 			}
 		}
 		
-		public void removeItem(NPC.TimedConditionEffect item) {
+		public void removeItem(Common.TimedConditionEffect item) {
 			int index = source.conditions_target.indexOf(item);
 			source.conditions_target.remove(item);
 			if (source.conditions_target.isEmpty()) {
@@ -1070,7 +1067,7 @@ public class NPCEditor extends JSONElementEditor {
 			}
 		}
 
-		public void itemChanged(NPC.TimedConditionEffect item) {
+		public void itemChanged(Common.TimedConditionEffect item) {
 			int index = source.conditions_target.indexOf(item);
 			for (ListDataListener l : listeners) {
 				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
@@ -1090,11 +1087,11 @@ public class NPCEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class SourceTimedConditionsListModel implements ListModel<NPC.TimedConditionEffect> {
+	public static class SourceTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
 		
-		NPC.DeathEffect source;
+		Common.DeathEffect source;
 		
-		public SourceTimedConditionsListModel(NPC.DeathEffect effect) {
+		public SourceTimedConditionsListModel(Common.DeathEffect effect) {
 			this.source = effect;
 		}
 
@@ -1105,14 +1102,14 @@ public class NPCEditor extends JSONElementEditor {
 		}
 		
 		@Override
-		public NPC.TimedConditionEffect getElementAt(int index) {
+		public Common.TimedConditionEffect getElementAt(int index) {
 			if (source.conditions_source == null) return null;
 			return source.conditions_source.get(index);
 		}
 		
-		public void addItem(NPC.TimedConditionEffect item) {
+		public void addItem(Common.TimedConditionEffect item) {
 			if (source.conditions_source == null) {
-				source.conditions_source = new ArrayList<NPC.TimedConditionEffect>();
+				source.conditions_source = new ArrayList<Common.TimedConditionEffect>();
 			}
 			source.conditions_source.add(item);
 			int index = source.conditions_source.indexOf(item);
@@ -1121,7 +1118,7 @@ public class NPCEditor extends JSONElementEditor {
 			}
 		}
 		
-		public void removeItem(NPC.TimedConditionEffect item) {
+		public void removeItem(Common.TimedConditionEffect item) {
 			int index = source.conditions_source.indexOf(item);
 			source.conditions_source.remove(item);
 			if (source.conditions_source.isEmpty()) {
@@ -1132,7 +1129,7 @@ public class NPCEditor extends JSONElementEditor {
 			}
 		}
 
-		public void itemChanged(NPC.TimedConditionEffect item) {
+		public void itemChanged(Common.TimedConditionEffect item) {
 			int index = source.conditions_source.indexOf(item);
 			for (ListDataListener l : listeners) {
 				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
@@ -1160,7 +1157,7 @@ public class NPCEditor extends JSONElementEditor {
 			Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if (c instanceof JLabel) {
 				JLabel label = ((JLabel)c);
-				NPC.TimedConditionEffect effect = (NPC.TimedConditionEffect) value;
+				Common.TimedConditionEffect effect = (Common.TimedConditionEffect) value;
 				
 				if (effect.condition != null) {
 
@@ -1186,7 +1183,7 @@ public class NPCEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static boolean isNull(NPC.HitEffect effect) {
+	public static boolean isNull(Common.HitEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
 		if (effect.hp_boost_min != null) return false;
@@ -1196,7 +1193,7 @@ public class NPCEditor extends JSONElementEditor {
 		return true;
 	}
 	
-	public static boolean isNull(NPC.HitReceivedEffect effect) {
+	public static boolean isNull(Common.HitReceivedEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
 		if (effect.hp_boost_min != null) return false;
@@ -1210,7 +1207,7 @@ public class NPCEditor extends JSONElementEditor {
 		return true;
 	}
 	
-	public static boolean isNull(NPC.DeathEffect effect) {
+	public static boolean isNull(Common.DeathEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
 		if (effect.hp_boost_min != null) return false;

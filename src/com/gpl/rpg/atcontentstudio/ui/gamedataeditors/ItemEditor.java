@@ -32,6 +32,7 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
 import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
+import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
 import com.gpl.rpg.atcontentstudio.model.gamedata.ItemCategory;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
@@ -53,12 +54,12 @@ public class ItemEditor extends JSONElementEditor {
 	private static final String useLabel = "Effect on use: ";
 	
 	
-	private Item.ConditionEffect selectedEquipEffectCondition;
-	private Item.TimedConditionEffect selectedHitEffectSourceCondition;
-	private Item.TimedConditionEffect selectedHitEffectTargetCondition;
-	private Item.TimedConditionEffect selectedKillEffectCondition;
-	private Item.TimedConditionEffect selectedHitReceivedEffectSourceCondition;
-	private Item.TimedConditionEffect selectedHitReceivedEffectTargetCondition;
+	private Common.ConditionEffect selectedEquipEffectCondition;
+	private Common.TimedConditionEffect selectedHitEffectSourceCondition;
+	private Common.TimedConditionEffect selectedHitEffectTargetCondition;
+	private Common.TimedConditionEffect selectedKillEffectCondition;
+	private Common.TimedConditionEffect selectedHitReceivedEffectSourceCondition;
+	private Common.TimedConditionEffect selectedHitReceivedEffectTargetCondition;
 	
 	
 	private JButton itemIcon;
@@ -97,7 +98,7 @@ public class ItemEditor extends JSONElementEditor {
 	private JSpinner equipConditionMagnitude;
 
 	private CollapsiblePanel hitEffectPane;
-	private Item.HitEffect hitEffect;
+	private Common.HitEffect hitEffect;
 	private JSpinner hitHPMin;
 	private JSpinner hitHPMax;
 	private JSpinner hitAPMin;
@@ -128,7 +129,7 @@ public class ItemEditor extends JSONElementEditor {
 	private JSpinner hitTargetConditionDuration;
 	
 	private CollapsiblePanel killEffectPane;
-	private Item.KillEffect killEffect;
+	private Common.DeathEffect killEffect;
 	private JSpinner killHPMin;
 	private JSpinner killHPMax;
 	private JSpinner killAPMin;
@@ -147,7 +148,7 @@ public class ItemEditor extends JSONElementEditor {
 	private JSpinner killSourceConditionDuration;
 	
 	private CollapsiblePanel hitReceivedEffectPane;
-	private Item.HitReceivedEffect hitReceivedEffect;
+	private Common.HitReceivedEffect hitReceivedEffect;
 	private JSpinner hitReceivedHPMin;
 	private JSpinner hitReceivedHPMax;
 	private JSpinner hitReceivedAPMin;
@@ -243,7 +244,7 @@ public class ItemEditor extends JSONElementEditor {
 		equipConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedEquipEffectCondition = (Item.ConditionEffect) equipConditionsList.getSelectedValue();
+				selectedEquipEffectCondition = (Common.ConditionEffect) equipConditionsList.getSelectedValue();
 				if (selectedEquipEffectCondition == null) {
 					deleteEquipCondition.setEnabled(false);
 				} else {
@@ -258,7 +259,7 @@ public class ItemEditor extends JSONElementEditor {
 			createEquipCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Item.ConditionEffect condition = new Item.ConditionEffect();
+					Common.ConditionEffect condition = new Common.ConditionEffect();
 					equipConditionsModel.addItem(condition);
 					equipConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(equipConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -295,7 +296,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitEffectPane = new CollapsiblePanel("Effect on every hit: ");
 		hitEffectPane.setLayout(new JideBoxLayout(hitEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (item.hit_effect == null) {
-			hitEffect = new Item.HitEffect();
+			hitEffect = new Common.HitEffect();
 		} else {
 			hitEffect = item.hit_effect;
 		}
@@ -316,7 +317,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitEffectSourceCondition = (Item.TimedConditionEffect) hitSourceConditionsList.getSelectedValue();
+				selectedHitEffectSourceCondition = (Common.TimedConditionEffect) hitSourceConditionsList.getSelectedValue();
 				updateHitSourceTimedConditionEditorPane(sourceTimedConditionsEditorPane, selectedHitEffectSourceCondition, listener);
 				if (selectedHitEffectSourceCondition == null) {
 					deleteHitSourceCondition.setEnabled(false);
@@ -331,7 +332,7 @@ public class ItemEditor extends JSONElementEditor {
 			createHitSourceCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Item.TimedConditionEffect condition = new Item.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitSourceConditionsModel.addItem(condition);
 					hitSourceConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -373,7 +374,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitTargetConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitEffectTargetCondition = (Item.TimedConditionEffect) hitTargetConditionsList.getSelectedValue();
+				selectedHitEffectTargetCondition = (Common.TimedConditionEffect) hitTargetConditionsList.getSelectedValue();
 				updateHitTargetTimedConditionEditorPane(targetTimedConditionsEditorPane, selectedHitEffectTargetCondition, listener);
 				if (selectedHitEffectTargetCondition == null) {
 					deleteHitTargetCondition.setEnabled(false);
@@ -388,7 +389,7 @@ public class ItemEditor extends JSONElementEditor {
 			createHitTargetCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Item.TimedConditionEffect condition = new Item.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitTargetConditionsModel.addItem(condition);
 					hitTargetConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -427,7 +428,7 @@ public class ItemEditor extends JSONElementEditor {
 		killEffectPane = new CollapsiblePanel(killLabel);
 		killEffectPane.setLayout(new JideBoxLayout(killEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (item.kill_effect == null) {
-			killEffect = new Item.KillEffect();
+			killEffect = new Common.DeathEffect();
 		} else {
 			killEffect = item.kill_effect;
 		}
@@ -448,7 +449,7 @@ public class ItemEditor extends JSONElementEditor {
 		killSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedKillEffectCondition = (Item.TimedConditionEffect) killSourceConditionsList.getSelectedValue();
+				selectedKillEffectCondition = (Common.TimedConditionEffect) killSourceConditionsList.getSelectedValue();
 				updateKillSourceTimedConditionEditorPane(killSourceTimedConditionsEditorPane, selectedKillEffectCondition, listener);
 				if (selectedKillEffectCondition == null) {
 					deleteKillSourceCondition.setEnabled(false);
@@ -463,7 +464,7 @@ public class ItemEditor extends JSONElementEditor {
 			createKillSourceCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Item.TimedConditionEffect condition = new Item.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					killSourceConditionsModel.addItem(condition);
 					killSourceConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(killSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -501,7 +502,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
 		hitReceivedEffectPane.setLayout(new JideBoxLayout(hitReceivedEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (item.hit_received_effect == null) {
-			hitReceivedEffect = new Item.HitReceivedEffect();
+			hitReceivedEffect = new Common.HitReceivedEffect();
 		} else {
 			hitReceivedEffect = item.hit_received_effect;
 		}
@@ -526,7 +527,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitReceivedEffectSourceCondition = (Item.TimedConditionEffect) hitReceivedSourceConditionsList.getSelectedValue();
+				selectedHitReceivedEffectSourceCondition = (Common.TimedConditionEffect) hitReceivedSourceConditionsList.getSelectedValue();
 				updateHitReceivedSourceTimedConditionEditorPane(hitReceivedSourceTimedConditionsEditorPane, selectedHitReceivedEffectSourceCondition, listener);
 				if (selectedHitReceivedEffectSourceCondition == null) {
 					deleteHitReceivedSourceCondition.setEnabled(false);
@@ -541,7 +542,7 @@ public class ItemEditor extends JSONElementEditor {
 			createHitReceivedSourceCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Item.TimedConditionEffect condition = new Item.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitReceivedSourceConditionsModel.addItem(condition);
 					hitReceivedSourceConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitReceivedSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -583,7 +584,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedTargetConditionsList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selectedHitReceivedEffectTargetCondition = (Item.TimedConditionEffect) hitReceivedTargetConditionsList.getSelectedValue();
+				selectedHitReceivedEffectTargetCondition = (Common.TimedConditionEffect) hitReceivedTargetConditionsList.getSelectedValue();
 				updateHitReceivedTargetTimedConditionEditorPane(hitReceivedTargetTimedConditionsEditorPane, selectedHitReceivedEffectTargetCondition, listener);
 				if (selectedHitReceivedEffectTargetCondition == null) {
 					deleteHitReceivedTargetCondition.setEnabled(false);
@@ -598,7 +599,7 @@ public class ItemEditor extends JSONElementEditor {
 			createHitReceivedTargetCondition.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Item.TimedConditionEffect condition = new Item.TimedConditionEffect();
+					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
 					hitReceivedTargetConditionsModel.addItem(condition);
 					hitReceivedTargetConditionsList.setSelectedValue(condition, true);
 					listener.valueChanged(hitReceivedTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
@@ -655,7 +656,7 @@ public class ItemEditor extends JSONElementEditor {
 		
 	}
 	
-	public void updateHitSourceTimedConditionEditorPane(JPanel pane, Item.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitSourceConditionBox != null) {
 			removeElementListener(hitSourceConditionBox);
@@ -733,7 +734,7 @@ public class ItemEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitSourceTimedConditionWidgets(Item.TimedConditionEffect condition) {
+	public void updateHitSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -751,7 +752,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitSourceConditionForever.setEnabled(!clear);
 	}
 
-	public void updateHitTargetTimedConditionEditorPane(JPanel pane, Item.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitTargetTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitTargetConditionBox != null) {
 			removeElementListener(hitTargetConditionBox);
@@ -829,7 +830,7 @@ public class ItemEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 
-	public void updateHitTargetTimedConditionWidgets(Item.TimedConditionEffect condition) {
+	public void updateHitTargetTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -847,7 +848,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitTargetConditionForever.setEnabled(!clear);
 	}
 	
-	public void updateKillSourceTimedConditionEditorPane(JPanel pane, Item.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateKillSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (killSourceConditionBox != null) {
 			removeElementListener(killSourceConditionBox);
@@ -925,7 +926,7 @@ public class ItemEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 
-	public void updateKillSourceTimedConditionWidgets(Item.TimedConditionEffect condition) {
+	public void updateKillSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -943,7 +944,7 @@ public class ItemEditor extends JSONElementEditor {
 		killSourceConditionForever.setEnabled(!clear);
 	}
 	
-	public void updateEquipConditionEditorPane(JPanel pane, Item.ConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateEquipConditionEditorPane(JPanel pane, Common.ConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (equipConditionBox != null) {
 			removeElementListener(equipConditionBox);
@@ -991,7 +992,7 @@ public class ItemEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitReceivedSourceTimedConditionEditorPane(JPanel pane, Item.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitReceivedSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitReceivedSourceConditionBox != null) {
 			removeElementListener(hitReceivedSourceConditionBox);
@@ -1069,7 +1070,7 @@ public class ItemEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public void updateHitReceivedSourceTimedConditionWidgets(Item.TimedConditionEffect condition) {
+	public void updateHitReceivedSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -1087,7 +1088,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedSourceConditionForever.setEnabled(!clear);
 	}
 
-	public void updateHitReceivedTargetTimedConditionEditorPane(JPanel pane, Item.TimedConditionEffect condition, final FieldUpdateListener listener) {
+	public void updateHitReceivedTargetTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitReceivedTargetConditionBox != null) {
 			removeElementListener(hitReceivedTargetConditionBox);
@@ -1165,7 +1166,7 @@ public class ItemEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 
-	public void updateHitReceivedTargetTimedConditionWidgets(Item.TimedConditionEffect condition) {
+	public void updateHitReceivedTargetTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
@@ -1184,11 +1185,11 @@ public class ItemEditor extends JSONElementEditor {
 	}
 
 	
-	public static class SourceTimedConditionsListModel implements ListModel<Item.TimedConditionEffect> {
+	public static class SourceTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
 		
-		Item.KillEffect source;
+		Common.DeathEffect source;
 		
-		public SourceTimedConditionsListModel(Item.KillEffect effect) {
+		public SourceTimedConditionsListModel(Common.DeathEffect effect) {
 			this.source = effect;;
 		}
 
@@ -1199,14 +1200,14 @@ public class ItemEditor extends JSONElementEditor {
 		}
 		
 		@Override
-		public Item.TimedConditionEffect getElementAt(int index) {
+		public Common.TimedConditionEffect getElementAt(int index) {
 			if (source.conditions_source == null) return null;
 			return source.conditions_source.get(index);
 		}
 		
-		public void addItem(Item.TimedConditionEffect item) {
+		public void addItem(Common.TimedConditionEffect item) {
 			if (source.conditions_source == null) {
-				source.conditions_source = new ArrayList<Item.TimedConditionEffect>();
+				source.conditions_source = new ArrayList<Common.TimedConditionEffect>();
 			}
 			source.conditions_source.add(item);
 			int index = source.conditions_source.indexOf(item);
@@ -1215,7 +1216,7 @@ public class ItemEditor extends JSONElementEditor {
 			}
 		}
 		
-		public void removeItem(Item.TimedConditionEffect item) {
+		public void removeItem(Common.TimedConditionEffect item) {
 			int index = source.conditions_source.indexOf(item);
 			source.conditions_source.remove(item);
 			if (source.conditions_source.isEmpty()) {
@@ -1226,7 +1227,7 @@ public class ItemEditor extends JSONElementEditor {
 			}
 		}
 
-		public void itemChanged(Item.TimedConditionEffect item) {
+		public void itemChanged(Common.TimedConditionEffect item) {
 			int index = source.conditions_source.indexOf(item);
 			for (ListDataListener l : listeners) {
 				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
@@ -1246,11 +1247,11 @@ public class ItemEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class TargetTimedConditionsListModel implements ListModel<Item.TimedConditionEffect> {
+	public static class TargetTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
 		
-		Item.HitEffect source;
+		Common.HitEffect source;
 		
-		public TargetTimedConditionsListModel(Item.HitEffect effect) {
+		public TargetTimedConditionsListModel(Common.HitEffect effect) {
 			this.source = effect;;
 		}
 
@@ -1261,14 +1262,14 @@ public class ItemEditor extends JSONElementEditor {
 		}
 		
 		@Override
-		public Item.TimedConditionEffect getElementAt(int index) {
+		public Common.TimedConditionEffect getElementAt(int index) {
 			if (source.conditions_target == null) return null;
 			return source.conditions_target.get(index);
 		}
 		
-		public void addItem(Item.TimedConditionEffect item) {
+		public void addItem(Common.TimedConditionEffect item) {
 			if (source.conditions_target == null) {
-				source.conditions_target = new ArrayList<Item.TimedConditionEffect>();
+				source.conditions_target = new ArrayList<Common.TimedConditionEffect>();
 			}
 			source.conditions_target.add(item);
 			int index = source.conditions_target.indexOf(item);
@@ -1277,7 +1278,7 @@ public class ItemEditor extends JSONElementEditor {
 			}
 		}
 		
-		public void removeItem(Item.TimedConditionEffect item) {
+		public void removeItem(Common.TimedConditionEffect item) {
 			int index = source.conditions_target.indexOf(item);
 			source.conditions_target.remove(item);
 			if (source.conditions_target.isEmpty()) {
@@ -1288,7 +1289,7 @@ public class ItemEditor extends JSONElementEditor {
 			}
 		}
 
-		public void itemChanged(Item.TimedConditionEffect item) {
+		public void itemChanged(Common.TimedConditionEffect item) {
 			int index = source.conditions_target.indexOf(item);
 			for (ListDataListener l : listeners) {
 				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
@@ -1316,7 +1317,7 @@ public class ItemEditor extends JSONElementEditor {
 			Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if (c instanceof JLabel) {
 				JLabel label = ((JLabel)c);
-				Item.TimedConditionEffect effect = (Item.TimedConditionEffect) value;
+				Common.TimedConditionEffect effect = (Common.TimedConditionEffect) value;
 				
 				if (effect.condition != null) {
 					
@@ -1342,7 +1343,7 @@ public class ItemEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class ConditionsListModel implements ListModel<Item.ConditionEffect> {
+	public static class ConditionsListModel implements ListModel<Common.ConditionEffect> {
 		
 		Item.EquipEffect source;
 		
@@ -1357,14 +1358,14 @@ public class ItemEditor extends JSONElementEditor {
 		}
 		
 		@Override
-		public Item.ConditionEffect getElementAt(int index) {
+		public Common.ConditionEffect getElementAt(int index) {
 			if (source.conditions == null) return null;
 			return source.conditions.get(index);
 		}
 		
-		public void addItem(Item.ConditionEffect item) {
+		public void addItem(Common.ConditionEffect item) {
 			if (source.conditions == null) {
-				source.conditions = new ArrayList<Item.ConditionEffect>();
+				source.conditions = new ArrayList<Common.ConditionEffect>();
 			}
 			source.conditions.add(item);
 			int index = source.conditions.indexOf(item);
@@ -1373,7 +1374,7 @@ public class ItemEditor extends JSONElementEditor {
 			}
 		}
 		
-		public void removeItem(Item.ConditionEffect item) {
+		public void removeItem(Common.ConditionEffect item) {
 			int index = source.conditions.indexOf(item);
 			source.conditions.remove(item);
 			if (source.conditions.isEmpty()) {
@@ -1384,7 +1385,7 @@ public class ItemEditor extends JSONElementEditor {
 			}
 		}
 
-		public void itemChanged(Item.ConditionEffect item) {
+		public void itemChanged(Common.ConditionEffect item) {
 			int index = source.conditions.indexOf(item);
 			for (ListDataListener l : listeners) {
 				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
@@ -1412,7 +1413,7 @@ public class ItemEditor extends JSONElementEditor {
 			Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if (c instanceof JLabel) {
 				JLabel label = ((JLabel)c);
-				Item.ConditionEffect effect = (Item.ConditionEffect) value;
+				Common.ConditionEffect effect = (Common.ConditionEffect) value;
 				
 				if (effect.condition != null) {
 					if (effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) {
@@ -1450,7 +1451,7 @@ public class ItemEditor extends JSONElementEditor {
 	}
 	
 	
-	public static boolean isNull(Item.HitEffect effect) {
+	public static boolean isNull(Common.HitEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
 		if (effect.hp_boost_min != null) return false;
@@ -1461,7 +1462,7 @@ public class ItemEditor extends JSONElementEditor {
 	}
 	
 
-	public static boolean isNull(Item.KillEffect effect) {
+	public static boolean isNull(Common.DeathEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
 		if (effect.hp_boost_min != null) return false;
@@ -1470,7 +1471,7 @@ public class ItemEditor extends JSONElementEditor {
 		return true;
 	}
 	
-	public static boolean isNull(Item.HitReceivedEffect effect) {
+	public static boolean isNull(Common.HitReceivedEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
 		if (effect.hp_boost_min != null) return false;

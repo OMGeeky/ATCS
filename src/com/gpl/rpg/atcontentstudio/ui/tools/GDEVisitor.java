@@ -5,14 +5,7 @@ import java.util.List;
 
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.GameSource;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Dialogue;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ItemCategory;
-import com.gpl.rpg.atcontentstudio.model.gamedata.NPC;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Quest;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Requirement;
+import com.gpl.rpg.atcontentstudio.model.gamedata.*;
 import com.gpl.rpg.atcontentstudio.model.maps.ContainerArea;
 import com.gpl.rpg.atcontentstudio.model.maps.KeyArea;
 import com.gpl.rpg.atcontentstudio.model.maps.MapChange;
@@ -111,18 +104,18 @@ public class GDEVisitor {
 		visit(element.category, visited, includeSource);
 		if (element.icon_id != null) visit(element.getProject().getSpritesheet(element.icon_id.split(":")[0]), visited, includeSource);
 		if (element.equip_effect != null && element.equip_effect.conditions != null) {
-			for (Item.ConditionEffect condEffect : element.equip_effect.conditions) {
+			for (Common.ConditionEffect condEffect : element.equip_effect.conditions) {
 				visit(condEffect.condition, visited, includeSource);
 			}
 		}
 		if (element.hit_effect != null) { 
 			if (element.hit_effect.conditions_source != null) {
-				for (Item.ConditionEffect condEffect : element.hit_effect.conditions_source) {
+				for (Common.ConditionEffect condEffect : element.hit_effect.conditions_source) {
 					visit(condEffect.condition, visited, includeSource);
 				}
 			}
 			if (element.hit_effect.conditions_target != null) {
-				for (Item.ConditionEffect condEffect : element.hit_effect.conditions_target) {
+				for (Common.ConditionEffect condEffect : element.hit_effect.conditions_target) {
 					visit(condEffect.condition, visited, includeSource);
 				}
 			}
@@ -144,12 +137,12 @@ public class GDEVisitor {
 		if (element.icon_id != null) visit(element.getProject().getSpritesheet(element.icon_id.split(":")[0]), visited, includeSource);
 		if (element.hit_effect != null) {
 			if (element.hit_effect.conditions_source != null) {
-				for (NPC.TimedConditionEffect condEffect : element.hit_effect.conditions_source) {
+				for (Common.TimedConditionEffect condEffect : element.hit_effect.conditions_source) {
 					visit(condEffect.condition, visited, includeSource);
 				}
 			}
 			if (element.hit_effect.conditions_target != null) {
-				for (NPC.TimedConditionEffect condEffect : element.hit_effect.conditions_target) {
+				for (Common.TimedConditionEffect condEffect : element.hit_effect.conditions_target) {
 					visit(condEffect.condition, visited, includeSource);
 				}
 			}
