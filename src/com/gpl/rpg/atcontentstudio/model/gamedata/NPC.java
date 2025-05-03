@@ -18,8 +18,7 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.GameSource;
 import com.gpl.rpg.atcontentstudio.model.Project;
 
-import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.parseHitReceivedEffect;
-import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.parseTimedConditionEffects;
+import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.*;
 
 public class NPC extends JSONElement {
 
@@ -304,104 +303,16 @@ public class NPC extends JSONElement {
 		clone.droplist_id = this.droplist_id;
 		clone.faction_id = this.faction_id;
 		if (this.hit_effect != null) {
-			clone.hit_effect = new Common.HitEffect();
-			clone.hit_effect.ap_boost_max = this.hit_effect.ap_boost_max;
-			clone.hit_effect.ap_boost_min = this.hit_effect.ap_boost_min;
-			clone.hit_effect.hp_boost_max = this.hit_effect.hp_boost_max;
-			clone.hit_effect.hp_boost_min = this.hit_effect.hp_boost_min;
-			if (this.hit_effect.conditions_source != null) {
-				clone.hit_effect.conditions_source = new ArrayList<Common.TimedConditionEffect>();
-				for (Common.TimedConditionEffect c : this.hit_effect.conditions_source) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_effect.conditions_source.add(cclone);
-				}
-			}
-			if (this.hit_effect.conditions_target != null) {
-				clone.hit_effect.conditions_target = new ArrayList<Common.TimedConditionEffect>();
-				for (Common.TimedConditionEffect c : this.hit_effect.conditions_target) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_effect.conditions_target.add(cclone);
-				}
-			}
+			clone.hit_effect = new HitEffect();
+			copyHitEffectValues(clone.hit_effect, this.hit_effect, clone);
 		}
 		if (this.hit_received_effect != null) {
-			clone.hit_received_effect = new Common.HitReceivedEffect();
-			clone.hit_received_effect.ap_boost_max = this.hit_received_effect.ap_boost_max;
-			clone.hit_received_effect.ap_boost_min = this.hit_received_effect.ap_boost_min;
-			clone.hit_received_effect.hp_boost_max = this.hit_received_effect.hp_boost_max;
-			clone.hit_received_effect.hp_boost_min = this.hit_received_effect.hp_boost_min;
-			clone.hit_received_effect.ap_boost_max_target = this.hit_received_effect.ap_boost_max_target;
-			clone.hit_received_effect.ap_boost_min_target = this.hit_received_effect.ap_boost_min_target;
-			clone.hit_received_effect.hp_boost_max_target = this.hit_received_effect.hp_boost_max_target;
-			clone.hit_received_effect.hp_boost_min_target = this.hit_received_effect.hp_boost_min_target;
-			if (this.hit_received_effect.conditions_source != null) {
-				clone.hit_received_effect.conditions_source = new ArrayList<Common.TimedConditionEffect>();
-				for (Common.TimedConditionEffect c : this.hit_received_effect.conditions_source) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_received_effect.conditions_source.add(cclone);
-				}
-			}
-			if (this.hit_received_effect.conditions_target != null) {
-				clone.hit_received_effect.conditions_target = new ArrayList<Common.TimedConditionEffect>();
-				for (Common.TimedConditionEffect c : this.hit_received_effect.conditions_target) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_received_effect.conditions_target.add(cclone);
-				}
-			}
+            clone.hit_received_effect = new HitReceivedEffect();
+			copyHitReceivedEffectValues(clone.hit_received_effect, this.hit_received_effect, clone);
 		}
 		if (this.death_effect != null) {
-			clone.death_effect = new Common.DeathEffect();
-			clone.death_effect.ap_boost_max = this.death_effect.ap_boost_max;
-			clone.death_effect.ap_boost_min = this.death_effect.ap_boost_min;
-			clone.death_effect.hp_boost_max = this.death_effect.hp_boost_max;
-			clone.death_effect.hp_boost_min = this.death_effect.hp_boost_min;
-			if (this.death_effect.conditions_source != null) {
-				clone.death_effect.conditions_source = new ArrayList<Common.TimedConditionEffect>();
-				for (Common.TimedConditionEffect c : this.death_effect.conditions_source) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.death_effect.conditions_source.add(cclone);
-				}
-			}
+			clone.death_effect = new DeathEffect();
+			copyDeathEffectValues(clone.death_effect, this.death_effect, clone);
 		}
 		clone.max_ap = this.max_ap;
 		clone.max_hp = this.max_hp;
@@ -412,7 +323,7 @@ public class NPC extends JSONElement {
 		clone.unique = this.unique;
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		if (dialogue == oldOne) {

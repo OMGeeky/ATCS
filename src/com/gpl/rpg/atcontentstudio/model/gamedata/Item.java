@@ -18,6 +18,8 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.GameSource;
 import com.gpl.rpg.atcontentstudio.model.Project;
 
+import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.*;
+
 public class Item extends JSONElement {
 
 	private static final long serialVersionUID = -516874303672548638L;
@@ -33,9 +35,9 @@ public class Item extends JSONElement {
 	public Integer base_market_cost = null;
 	public String category_id = null;
 	public String description = null;
-	public Common.HitEffect hit_effect = null;
-	public Common.HitReceivedEffect hit_received_effect = null;
-	public Common.DeathEffect kill_effect = null;
+	public HitEffect hit_effect = null;
+	public HitReceivedEffect hit_received_effect = null;
+	public DeathEffect kill_effect = null;
 	public EquipEffect equip_effect = null;
 	
 	//Available from linked state
@@ -182,66 +184,12 @@ public class Item extends JSONElement {
 		
 		Map hitEffect = (Map) itemJson.get("hitEffect");
 		if (hitEffect != null) {
-			this.hit_effect = new Common.HitEffect();
-			if (hitEffect.get("increaseCurrentHP") != null) {
-				this.hit_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map)hitEffect.get("increaseCurrentHP")).get("min")));
-				this.hit_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map)hitEffect.get("increaseCurrentHP")).get("max")));
-			}
-			if (hitEffect.get("increaseCurrentAP") != null) {
-				this.hit_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map)hitEffect.get("increaseCurrentAP")).get("min")));
-				this.hit_effect.ap_boost_max = JSONElement.getInteger((Number) (((Map) hitEffect.get("increaseCurrentAP")).get("max")));
-			}
-			List conditionsSourceJson = (List) hitEffect.get("conditionsSource");
-			this.hit_effect.conditions_source = Common.parseTimedConditionEffects(conditionsSourceJson);
-			List conditionsTargetJson = (List) hitEffect.get("conditionsTarget");
-			this.hit_effect.conditions_target = Common.parseTimedConditionEffects(conditionsTargetJson);
+			this.hit_effect = Common.parseHitEffect(hitEffect);
 		}
 		
 		Map hitReceivedEffect = (Map) itemJson.get("hitReceivedEffect");
 		if (hitReceivedEffect != null) {
-			this.hit_received_effect = new Common.HitReceivedEffect();
-			if (hitReceivedEffect.get("increaseCurrentHP") != null) {
-				this.hit_received_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentHP")).get("min")));
-				this.hit_received_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentHP")).get("max")));
-			}
-			if (hitReceivedEffect.get("increaseCurrentAP") != null) {
-				this.hit_received_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentAP")).get("min")));
-				this.hit_received_effect.ap_boost_max = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseCurrentAP")).get("max")));
-			}
-			if (hitReceivedEffect.get("increaseAttackerCurrentHP") != null) {
-				this.hit_received_effect.hp_boost_min_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentHP")).get("min")));
-				this.hit_received_effect.hp_boost_max_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentHP")).get("max")));
-			}
-			if (hitReceivedEffect.get("increaseAttackerCurrentAP") != null) {
-				this.hit_received_effect.ap_boost_min_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentAP")).get("min")));
-				this.hit_received_effect.ap_boost_max_target = JSONElement.getInteger((Number) (((Map)hitReceivedEffect.get("increaseAttackerCurrentAP")).get("max")));
-			}
-			List conditionsSourceJson = (List) hitReceivedEffect.get("conditionsSource");
-			if (conditionsSourceJson != null && !conditionsSourceJson.isEmpty()) {
-				this.hit_received_effect.conditions_source = new ArrayList<>();
-				for (Object conditionJsonObj : conditionsSourceJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.hit_received_effect.conditions_source.add(condition);
-				}
-			}
-			List conditionsTargetJson = (List) hitReceivedEffect.get("conditionsTarget");
-			if (conditionsTargetJson != null && !conditionsTargetJson.isEmpty()) {
-				this.hit_received_effect.conditions_target = new ArrayList<>();
-				for (Object conditionJsonObj : conditionsTargetJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.hit_received_effect.conditions_target.add(condition);
-				}
-			}
+			this.hit_received_effect = Common.parseHitReceivedEffect(hitReceivedEffect);
 		}
 		
 		Map killEffect = (Map) itemJson.get("killEffect");
@@ -249,33 +197,13 @@ public class Item extends JSONElement {
 			killEffect = (Map) itemJson.get("useEffect");
 		}
 		if (killEffect != null) {
-			this.kill_effect = new Common.DeathEffect();
-			if (killEffect.get("increaseCurrentHP") != null) {
-				this.kill_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map)killEffect.get("increaseCurrentHP")).get("min")));
-				this.kill_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map)killEffect.get("increaseCurrentHP")).get("max")));
-			}
-			if (killEffect.get("increaseCurrentAP") != null) {
-				this.kill_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map)killEffect.get("increaseCurrentAP")).get("min")));
-				this.kill_effect.ap_boost_max = JSONElement.getInteger((Number) (((Map)killEffect.get("increaseCurrentAP")).get("max")));
-			}
-			List conditionsSourceJson = (List) killEffect.get("conditionsSource");
-			if (conditionsSourceJson != null && !conditionsSourceJson.isEmpty()) {
-				this.kill_effect.conditions_source = new ArrayList<>();
-				for (Object conditionJsonObj : conditionsSourceJson) {
-					Map conditionJson = (Map)conditionJsonObj;
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					condition.condition_id = (String) conditionJson.get("condition");
-					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
-					condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
-					if (conditionJson.get("chance") != null) condition.chance = JSONElement.parseChance(conditionJson.get("chance").toString());
-					this.kill_effect.conditions_source.add(condition);
-				}
-			}
+            this.kill_effect = Common.parseDeathEffect(killEffect);
 		}
 		this.state = State.parsed;
 	}
-	
-	
+
+
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -397,104 +325,16 @@ public class Item extends JSONElement {
 			}
 		}
 		if (this.hit_effect != null) {
-			clone.hit_effect = new Common.HitEffect();
-			clone.hit_effect.ap_boost_max = this.hit_effect.ap_boost_max;
-			clone.hit_effect.ap_boost_min = this.hit_effect.ap_boost_min;
-			clone.hit_effect.hp_boost_max = this.hit_effect.hp_boost_max;
-			clone.hit_effect.hp_boost_min = this.hit_effect.hp_boost_min;
-			if (this.hit_effect.conditions_source != null) {
-				clone.hit_effect.conditions_source = new ArrayList<>();
-				for (Common.TimedConditionEffect c : this.hit_effect.conditions_source) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_effect.conditions_source.add(cclone);
-				}
-			}
-			if (this.hit_effect.conditions_target != null) {
-				clone.hit_effect.conditions_target = new ArrayList<>();
-				for (Common.TimedConditionEffect c : this.hit_effect.conditions_target) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_effect.conditions_target.add(cclone);
-				}
-			}
+			clone.hit_effect = new HitEffect();
+			copyHitEffectValues(clone.hit_effect, this.hit_effect, clone);
 		}
 		if (this.hit_received_effect != null) {
-			clone.hit_received_effect = new Common.HitReceivedEffect();
-			clone.hit_received_effect.ap_boost_max = this.hit_received_effect.ap_boost_max;
-			clone.hit_received_effect.ap_boost_min = this.hit_received_effect.ap_boost_min;
-			clone.hit_received_effect.hp_boost_max = this.hit_received_effect.hp_boost_max;
-			clone.hit_received_effect.hp_boost_min = this.hit_received_effect.hp_boost_min;
-			clone.hit_received_effect.ap_boost_max_target = this.hit_received_effect.ap_boost_max_target;
-			clone.hit_received_effect.ap_boost_min_target = this.hit_received_effect.ap_boost_min_target;
-			clone.hit_received_effect.hp_boost_max_target = this.hit_received_effect.hp_boost_max_target;
-			clone.hit_received_effect.hp_boost_min_target = this.hit_received_effect.hp_boost_min_target;
-			if (this.hit_received_effect.conditions_source != null) {
-				clone.hit_received_effect.conditions_source = new ArrayList<>();
-				for (Common.TimedConditionEffect c : this.hit_received_effect.conditions_source) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_received_effect.conditions_source.add(cclone);
-				}
-			}
-			if (this.hit_received_effect.conditions_target != null) {
-				clone.hit_received_effect.conditions_target = new ArrayList<>();
-				for (Common.TimedConditionEffect c : this.hit_received_effect.conditions_target) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.hit_received_effect.conditions_target.add(cclone);
-				}
-			}
+			clone.hit_received_effect = new HitReceivedEffect();
+			copyHitReceivedEffectValues(clone.hit_received_effect, this.hit_received_effect, clone);
 		}
 		if (this.kill_effect != null) {
-			clone.kill_effect = new Common.DeathEffect();
-			clone.kill_effect.ap_boost_max = this.kill_effect.ap_boost_max;
-			clone.kill_effect.ap_boost_min = this.kill_effect.ap_boost_min;
-			clone.kill_effect.hp_boost_max = this.kill_effect.hp_boost_max;
-			clone.kill_effect.hp_boost_min = this.kill_effect.hp_boost_min;
-			if (this.kill_effect.conditions_source != null) {
-				clone.kill_effect.conditions_source = new ArrayList<>();
-				for (Common.TimedConditionEffect c : this.kill_effect.conditions_source) {
-					Common.TimedConditionEffect cclone = new Common.TimedConditionEffect();
-					cclone.magnitude = c.magnitude;
-					cclone.condition_id = c.condition_id;
-					cclone.condition = c.condition;
-					cclone.chance = c.chance;
-					cclone.duration = c.duration;
-					if (cclone.condition != null) {
-						cclone.condition.addBacklink(clone);
-					}
-					clone.kill_effect.conditions_source.add(cclone);
-				}
-			}
+			clone.kill_effect = new DeathEffect();
+			copyDeathEffectValues(clone.kill_effect, this.kill_effect, clone);
 		}
 		return clone;
 	}
