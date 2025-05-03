@@ -183,9 +183,11 @@ public class NPC extends JSONElement {
 			List conditionsTargetJson = (List) hitEffect.get("conditionsTarget");
 			this.hit_effect.conditions_target = parseTimedConditionEffects(conditionsTargetJson);
 		}
-	
+
 		Map hitReceivedEffect = (Map) npcJson.get("Common.HitReceivedEffect");
-		this.hit_received_effect = Common.parseHitReceivedEffect(hitReceivedEffect);
+		if (hitReceivedEffect != null) {
+			this.hit_received_effect = Common.parseHitReceivedEffect(hitReceivedEffect);
+		}
 
 		Map deathEffect = (Map) npcJson.get("deathEffect");
 		if (deathEffect != null) {
