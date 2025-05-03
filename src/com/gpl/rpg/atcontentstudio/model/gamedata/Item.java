@@ -230,40 +230,21 @@ public class Item extends JSONElement {
 		if (this.category_id != null) this.category = proj.getItemCategory(this.category_id);
 		if (this.category != null) this.category.addBacklink(this);
 		if (this.equip_effect != null && this.equip_effect.conditions != null) {
-			for (Common.ConditionEffect ce : this.equip_effect.conditions) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+			linkConditions(this.equip_effect.conditions, proj, this);
 		}
-		if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-			for (Common.TimedConditionEffect ce : this.hit_effect.conditions_source) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+
+		if (this.hit_effect != null) {
+			linkConditions(this.hit_effect.conditions_source, proj, this);
+			linkConditions(this.hit_effect.conditions_target, proj, this);
 		}
-		if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-			for (Common.TimedConditionEffect ce : this.hit_effect.conditions_target) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+
+		if (this.hit_received_effect != null) {
+			linkConditions(this.hit_received_effect.conditions_source, proj, this);
+			linkConditions(this.hit_received_effect.conditions_target, proj, this);
 		}
-		if (this.hit_received_effect != null && this.hit_received_effect.conditions_source != null) {
-			for (Common.TimedConditionEffect ce : this.hit_received_effect.conditions_source) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
-		}
-		if (this.hit_received_effect != null && this.hit_received_effect.conditions_target != null) {
-			for (Common.TimedConditionEffect ce : this.hit_received_effect.conditions_target) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
-		}
-		if (this.kill_effect != null && this.kill_effect.conditions_source != null) {
-			for (Common.TimedConditionEffect ce : this.kill_effect.conditions_source) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+
+		if (this.kill_effect != null) {
+			linkConditions(this.kill_effect.conditions_source, proj, this);
 		}
 		this.state = State.linked;
 	}

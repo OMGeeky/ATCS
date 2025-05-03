@@ -235,39 +235,20 @@ public class NPC extends JSONElement {
 		if (this.droplist_id != null) this.droplist = proj.getDroplist(this.droplist_id);
 		if (this.droplist != null) this.droplist.addBacklink(this);
 		
-		if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-			for (Common.TimedConditionEffect ce : this.hit_effect.conditions_source) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+		if (this.hit_effect != null) {
+			linkConditions(this.hit_effect.conditions_source, proj, this);
+			linkConditions(this.hit_effect.conditions_target, proj, this);
 		}
-		if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-			for (Common.TimedConditionEffect ce : this.hit_effect.conditions_target) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+		if (this.hit_received_effect != null) {
+			linkConditions(this.hit_received_effect.conditions_source, proj, this);
+			linkConditions(this.hit_received_effect.conditions_target, proj, this);
 		}
-		if (this.hit_received_effect != null && this.hit_received_effect.conditions_source != null) {
-			for (Common.TimedConditionEffect ce : this.hit_received_effect.conditions_source) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
-		}
-		if (this.hit_received_effect != null && this.hit_received_effect.conditions_target != null) {
-			for (Common.TimedConditionEffect ce : this.hit_received_effect.conditions_target) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
-		}
-		if (this.death_effect != null && this.death_effect.conditions_source != null) {
-			for (Common.TimedConditionEffect ce : this.death_effect.conditions_source) {
-				if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
-				if (ce.condition != null) ce.condition.addBacklink(this);
-			}
+		if (this.death_effect != null) {
+			linkConditions(this.death_effect.conditions_source, proj, this);
 		}
 		this.state = State.linked;
 	}
-	
+
 	@Override
 	public Image getIcon() {
 		return getProject().getIcon(icon_id);

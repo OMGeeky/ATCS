@@ -1,6 +1,7 @@
 package com.gpl.rpg.atcontentstudio.model.gamedata;
 
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
+import com.gpl.rpg.atcontentstudio.model.Project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,14 @@ import java.util.Map;
 
 public final class Common {
 
+    public static void linkConditions(List<?extends ConditionEffect> conditions, Project proj, GameDataElement backlink) {
+        if (conditions != null) {
+            for (ConditionEffect ce : conditions) {
+                if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
+                if (ce.condition != null) ce.condition.addBacklink(backlink);
+            }
+        }
+    }
     public static class TimedConditionEffect extends ConditionEffect {
         //Available from parsed state
         public Integer duration = null;
