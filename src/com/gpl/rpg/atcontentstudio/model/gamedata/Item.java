@@ -50,7 +50,7 @@ public class Item extends JSONElement {
 		public Integer damage_boost_max = null;
 		public Integer max_hp_boost = null;
 		public Integer max_ap_boost = null;
-		public List<Common.ConditionEffect> conditions = null;
+		public List<ConditionEffect> conditions = null;
 		public Integer increase_move_cost = null;
 		public Integer increase_use_item_cost = null;
 		public Integer increase_reequip_cost = null;
@@ -173,7 +173,7 @@ public class Item extends JSONElement {
 				this.equip_effect.conditions = new ArrayList<>();
 				for (Object conditionJsonObj : conditionsJson) {
 					Map conditionJson = (Map)conditionJsonObj;
-					Common.ConditionEffect condition = new Common.ConditionEffect();
+					ConditionEffect condition = new ConditionEffect();
 					condition.condition_id = (String) conditionJson.get("condition");
 					condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
 					this.equip_effect.conditions.add(condition);
@@ -184,12 +184,12 @@ public class Item extends JSONElement {
 		
 		Map hitEffect = (Map) itemJson.get("hitEffect");
 		if (hitEffect != null) {
-			this.hit_effect = Common.parseHitEffect(hitEffect);
+			this.hit_effect = parseHitEffect(hitEffect);
 		}
 		
 		Map hitReceivedEffect = (Map) itemJson.get("hitReceivedEffect");
 		if (hitReceivedEffect != null) {
-			this.hit_received_effect = Common.parseHitReceivedEffect(hitReceivedEffect);
+			this.hit_received_effect = parseHitReceivedEffect(hitReceivedEffect);
 		}
 		
 		Map killEffect = (Map) itemJson.get("killEffect");
@@ -197,7 +197,7 @@ public class Item extends JSONElement {
 			killEffect = (Map) itemJson.get("useEffect");
 		}
 		if (killEffect != null) {
-            this.kill_effect = Common.parseDeathEffect(killEffect);
+            this.kill_effect = parseDeathEffect(killEffect);
 		}
 		this.state = State.parsed;
 	}
@@ -293,8 +293,8 @@ public class Item extends JSONElement {
 			clone.equip_effect.max_hp_boost = this.equip_effect.max_hp_boost;
 			if (this.equip_effect.conditions != null) {
 				clone.equip_effect.conditions = new ArrayList<>();
-				for (Common.ConditionEffect c : this.equip_effect.conditions) {
-					Common.ConditionEffect cclone = new Common.ConditionEffect();
+				for (ConditionEffect c : this.equip_effect.conditions) {
+					ConditionEffect cclone = new ConditionEffect();
 					cclone.magnitude = c.magnitude;
 					cclone.condition_id = c.condition_id;
 					cclone.condition = c.condition;
@@ -328,7 +328,7 @@ public class Item extends JSONElement {
 			if (newOne != null) newOne.addBacklink(this);
 		} else {
 			if (this.equip_effect != null && this.equip_effect.conditions != null) {
-				for (Common.ConditionEffect c : this.equip_effect.conditions) {
+				for (ConditionEffect c : this.equip_effect.conditions) {
 					if (c.condition == oldOne) {
 						oldOne.removeBacklink(this);
 						c.condition = (ActorCondition) newOne;
@@ -337,7 +337,7 @@ public class Item extends JSONElement {
 				}
 			}
 			if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-				for (Common.TimedConditionEffect c : this.hit_effect.conditions_source) {
+				for (TimedConditionEffect c : this.hit_effect.conditions_source) {
 					if (c.condition == oldOne) {
 						oldOne.removeBacklink(this);
 						c.condition = (ActorCondition) newOne;
@@ -346,7 +346,7 @@ public class Item extends JSONElement {
 				}
 			}
 			if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-				for (Common.TimedConditionEffect c : this.hit_effect.conditions_target) {
+				for (TimedConditionEffect c : this.hit_effect.conditions_target) {
 					if (c.condition == oldOne) {
 						oldOne.removeBacklink(this);
 						c.condition = (ActorCondition) newOne;
@@ -356,7 +356,7 @@ public class Item extends JSONElement {
 			}
 
 			if (this.kill_effect != null && this.kill_effect.conditions_source != null) {
-				for (Common.TimedConditionEffect c : this.kill_effect.conditions_source) {
+				for (TimedConditionEffect c : this.kill_effect.conditions_source) {
 					if (c.condition == oldOne) {
 						oldOne.removeBacklink(this);
 						c.condition = (ActorCondition) newOne;
@@ -410,7 +410,7 @@ public class Item extends JSONElement {
 			if (this.equip_effect.conditions != null) {
 				List conditionsJson = new ArrayList();
 				equipEffectJson.put("addedConditions", conditionsJson);
-				for (Common.ConditionEffect condition : this.equip_effect.conditions) {
+				for (ConditionEffect condition : this.equip_effect.conditions) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -444,7 +444,7 @@ public class Item extends JSONElement {
 			if (this.hit_effect.conditions_source != null) {
 				List conditionsSourceJson = new ArrayList();
 				hitEffectJson.put("conditionsSource", conditionsSourceJson);
-				for (Common.TimedConditionEffect condition : this.hit_effect.conditions_source) {
+				for (TimedConditionEffect condition : this.hit_effect.conditions_source) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsSourceJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -460,7 +460,7 @@ public class Item extends JSONElement {
 			if (this.hit_effect.conditions_target != null) {
 				List conditionsTargetJson = new ArrayList();
 				hitEffectJson.put("conditionsTarget", conditionsTargetJson);
-				for (Common.TimedConditionEffect condition : this.hit_effect.conditions_target) {
+				for (TimedConditionEffect condition : this.hit_effect.conditions_target) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsTargetJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -512,7 +512,7 @@ public class Item extends JSONElement {
 			if (this.hit_received_effect.conditions_source != null) {
 				List conditionsSourceJson = new ArrayList();
 				hitReceivedEffectJson.put("conditionsSource", conditionsSourceJson);
-				for (Common.TimedConditionEffect condition : this.hit_received_effect.conditions_source) {
+				for (TimedConditionEffect condition : this.hit_received_effect.conditions_source) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsSourceJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -528,7 +528,7 @@ public class Item extends JSONElement {
 			if (this.hit_received_effect.conditions_target != null) {
 				List conditionsTargetJson = new ArrayList();
 				hitReceivedEffectJson.put("conditionsTarget", conditionsTargetJson);
-				for (Common.TimedConditionEffect condition : this.hit_received_effect.conditions_target) {
+				for (TimedConditionEffect condition : this.hit_received_effect.conditions_target) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsTargetJson.add(conditionJson);
 					if (condition.condition != null) {
@@ -568,7 +568,7 @@ public class Item extends JSONElement {
 			if (this.kill_effect.conditions_source != null) {
 				List conditionsSourceJson = new ArrayList();
 				killEffectJson.put("conditionsSource", conditionsSourceJson);
-				for (Common.TimedConditionEffect condition : this.kill_effect.conditions_source) {
+				for (TimedConditionEffect condition : this.kill_effect.conditions_source) {
 					Map conditionJson = new LinkedHashMap();
 					conditionsSourceJson.add(conditionJson);
 					if (condition.condition != null) {
