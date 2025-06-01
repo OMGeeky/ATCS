@@ -23,13 +23,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
@@ -51,6 +47,7 @@ import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
 import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
+import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class DialogueEditor extends JSONElementEditor {
@@ -174,12 +171,12 @@ public class DialogueEditor extends JSONElementEditor {
 		idField = addTextField(pane, "Internal ID: ", dialogue.id, dialogue.writable, listener);
 		messageField = addTranslatableTextArea(pane, "Message: ", dialogue.message, dialogue.writable, listener);
 		switchToNpcBox = addNPCBox(pane, dialogue.getProject(), "Switch active NPC to: ", dialogue.switch_to_npc, dialogue.writable, listener);
-		
-		CollapsiblePanel rewards = new CollapsiblePanel("Reaching this phrase gives the following rewards: ");
+
+		/*
+		CollapsiblePanel rewards = new CollapsiblePanel(titleRewards);
 		rewards.setLayout(new JideBoxLayout(rewards, JideBoxLayout.PAGE_AXIS));
-		rewardsListModel = new RewardsListModel(dialogue);
 		rewardsList = new JList(rewardsListModel);
-		rewardsList.setCellRenderer(new RewardsCellRenderer());
+		rewardsList.setCellRenderer(cellRendererRewards);
 		rewardsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		rewards.add(new JScrollPane(rewardsList), JideBoxLayout.FIX);
 		final JPanel rewardsEditorPane = new JPanel();
@@ -227,38 +224,51 @@ public class DialogueEditor extends JSONElementEditor {
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
 			rewards.add(listButtonsPane, JideBoxLayout.FIX);
 		}
+		rewardsEditorPane.setLayout(new JideBoxLayout(rewardsEditorPane, JideBoxLayout.PAGE_AXIS));
+		rewards.add(rewardsEditorPane, JideBoxLayout.FIX);
+		*/
+		RewardsCellRenderer cellRendererRewards = new RewardsCellRenderer();
+		String titleRewards = "Reaching this phrase gives the following rewards: ";
+		rewardsListModel = new RewardsListModel(dialogue);
+
+		CollapsiblePanel rewards = UiUtils.getCollapsibleItemList(
+				listener,
+				rewardsListModel,
+				() -> selectedReward = null,
+				( selectedItem) -> this.selectedReward = selectedItem,
+				() -> this.selectedReward,
+				(reward)->{},
+				(editorPane) -> updateRewardsEditorPane(editorPane, this.selectedReward, listener),
+				dialogue.writable,
+				Dialogue.Reward::new,
+				cellRendererRewards,
+				titleRewards,
+				false
+		).collapsiblePanel;
 		if (dialogue.rewards == null || dialogue.rewards.isEmpty()) {
 			rewards.collapse();
 		}
-		rewardsEditorPane.setLayout(new JideBoxLayout(rewardsEditorPane, JideBoxLayout.PAGE_AXIS));
-		rewards.add(rewardsEditorPane, JideBoxLayout.FIX);
-
 		pane.add(rewards, JideBoxLayout.FIX);
-		
-		CollapsiblePanel replies = new CollapsiblePanel("Replies / Next Phrase: ");
-		replies.setLayout(new JideBoxLayout(replies, JideBoxLayout.PAGE_AXIS));
-		repliesListModel = new RepliesListModel(dialogue);
-		repliesList = new JList(repliesListModel);
-		repliesList.setCellRenderer(new RepliesCellRenderer());
-		repliesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		replies.add(new JScrollPane(repliesList), JideBoxLayout.FIX);
-		final JPanel repliesEditorPane = new JPanel();
-		final JButton createReply = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteReply = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		final JButton moveReplyUp = new JButton(new ImageIcon(DefaultIcons.getArrowUpIcon()));
-		final JButton moveReplyDown = new JButton(new ImageIcon(DefaultIcons.getArrowDownIcon()));
-		deleteReply.setEnabled(false);
-		moveReplyUp.setEnabled(false);
-		moveReplyDown.setEnabled(false);
-		repliesList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
+
+		/*{
+			CollapsiblePanel replies = new CollapsiblePanel(title);
+			replies.setLayout(new JideBoxLayout(replies, JideBoxLayout.PAGE_AXIS));
+			repliesListModel = new RepliesListModel(dialogue);
+			repliesList = new JList(repliesListModel);
+			repliesList.setCellRenderer(cellRenderer);
+			repliesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			replies.add(new JScrollPane(repliesList), JideBoxLayout.FIX);
+			final JPanel repliesEditorPane = new JPanel();
+			final JButton createReply = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
+			final JButton deleteReply = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
+			final JButton moveReplyUp = new JButton(new ImageIcon(DefaultIcons.getArrowUpIcon()));
+			final JButton moveReplyDown = new JButton(new ImageIcon(DefaultIcons.getArrowDownIcon()));
+			deleteReply.setEnabled(false);
+			moveReplyUp.setEnabled(false);
+			moveReplyDown.setEnabled(false);
+			repliesList.addListSelectionListener(e -> {
 				selectedReply = (Dialogue.Reply) repliesList.getSelectedValue();
-				if (selectedReply != null && !Dialogue.Reply.GO_NEXT_TEXT.equals(selectedReply.text)) {
-					replyTextCache = selectedReply.text;
-				} else {
-					replyTextCache = null;
-				}
+				replyValueChanged(selectedReply);
 				if (selectedReply != null) {
 					deleteReply.setEnabled(true);
 					moveReplyUp.setEnabled(repliesList.getSelectedIndex() > 0);
@@ -269,65 +279,88 @@ public class DialogueEditor extends JSONElementEditor {
 					moveReplyDown.setEnabled(false);
 				}
 				updateRepliesEditorPane(repliesEditorPane, selectedReply, listener);
+			});
+			if (dialogue.writable) {
+				JPanel listButtonsPane = new JPanel();
+				listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
+				createReply.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						Dialogue.Reply reply = new Dialogue.Reply();
+						repliesListModel.addItem(reply);
+						repliesList.setSelectedValue(reply, true);
+						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+					}
+				});
+				deleteReply.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (selectedReply != null) {
+							repliesListModel.removeItem(selectedReply);
+							selectedReply = null;
+							repliesList.clearSelection();
+							listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+						}
+					}
+				});
+				moveReplyUp.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (selectedReply != null) {
+							repliesListModel.moveUp(selectedReply);
+							repliesList.setSelectedValue(selectedReply, true);
+							listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+						}
+					}
+				});
+				moveReplyDown.addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (selectedReply != null) {
+							repliesListModel.moveDown(selectedReply);
+							repliesList.setSelectedValue(selectedReply, true);
+							listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+						}
+					}
+				});
+				listButtonsPane.add(createReply, JideBoxLayout.FIX);
+				listButtonsPane.add(deleteReply, JideBoxLayout.FIX);
+				listButtonsPane.add(moveReplyUp, JideBoxLayout.FIX);
+				listButtonsPane.add(moveReplyDown, JideBoxLayout.FIX);
+				listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
+				replies.add(listButtonsPane, JideBoxLayout.FIX);
 			}
-		});
-		if (dialogue.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createReply.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Dialogue.Reply reply = new Dialogue.Reply();
-					repliesListModel.addItem(reply);
-					repliesList.setSelectedValue(reply, true);
-					listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteReply.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReply != null) {
-						repliesListModel.removeItem(selectedReply);
-						selectedReply = null;
-						repliesList.clearSelection();
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+			repliesEditorPane.setLayout(new JideBoxLayout(repliesEditorPane, JideBoxLayout.PAGE_AXIS));
+			replies.add(repliesEditorPane, JideBoxLayout.FIX);
+		}*/
+		RepliesCellRenderer cellRendererReplies = new RepliesCellRenderer();
+		String titleReplies = "Replies / Next Phrase: ";
+		repliesListModel = new RepliesListModel(dialogue);
+		CollapsiblePanel replies = UiUtils.getCollapsibleItemList(
+				listener,
+				repliesListModel,
+				() -> selectedReply = null,
+				( selectedItem) -> this.selectedReply = selectedItem,
+				() -> this.selectedReply,
+				(selectedReply)-> {
+					if (selectedReply != null && !Dialogue.Reply.GO_NEXT_TEXT.equals(selectedReply.text)) {
+						replyTextCache = selectedReply.text;
+					} else {
+						replyTextCache = null;
 					}
-				}
-			});
-			moveReplyUp.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReply != null) {
-						repliesListModel.moveUp(selectedReply);
-						repliesList.setSelectedValue(selectedReply, true);
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
-			moveReplyDown.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReply != null) {
-						repliesListModel.moveDown(selectedReply);
-						repliesList.setSelectedValue(selectedReply, true);
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
-			listButtonsPane.add(createReply, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteReply, JideBoxLayout.FIX);
-			listButtonsPane.add(moveReplyUp, JideBoxLayout.FIX);
-			listButtonsPane.add(moveReplyDown, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			replies.add(listButtonsPane, JideBoxLayout.FIX);
-		}
+				},
+				(editorPane) -> updateRepliesEditorPane(editorPane, this.selectedReply, listener),
+				dialogue.writable,
+				Dialogue.Reply::new,
+				cellRendererReplies,
+				titleReplies
+				, true
+		).collapsiblePanel;
 		if (dialogue.replies == null || dialogue.replies.isEmpty()) {
 			replies.collapse();
 		}
-		repliesEditorPane.setLayout(new JideBoxLayout(repliesEditorPane, JideBoxLayout.PAGE_AXIS));
-		replies.add(repliesEditorPane, JideBoxLayout.FIX);
 
 		pane.add(replies, JideBoxLayout.FIX);
 		
@@ -582,12 +615,15 @@ public class DialogueEditor extends JSONElementEditor {
 		pane.add(comboPane, JideBoxLayout.FIX);
 		updateRepliesParamsEditorPane(repliesParamsPane, reply, listener);
 		pane.add(repliesParamsPane, JideBoxLayout.FIX);
-		
-		CollapsiblePanel requirementsPane = new CollapsiblePanel("Requirements the player must fulfill to select this reply: ");
-		requirementsPane.setLayout(new JideBoxLayout(requirementsPane, JideBoxLayout.PAGE_AXIS));
+
+		String titleRequirements = "Requirements the player must fulfill to select this reply: ";
 		requirementsListModel = new ReplyRequirementsListModel(reply);
+		ReplyRequirementsCellRenderer cellRendererRequirements = new ReplyRequirementsCellRenderer();
+		/*
+		CollapsiblePanel requirementsPane = new CollapsiblePanel(titleRequirements);
+		requirementsPane.setLayout(new JideBoxLayout(requirementsPane, JideBoxLayout.PAGE_AXIS));
 		requirementsList = new JList(requirementsListModel);
-		requirementsList.setCellRenderer(new ReplyRequirementsCellRenderer());
+		requirementsList.setCellRenderer(cellRendererRequirements);
 		requirementsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		requirementsPane.add(new JScrollPane(requirementsList), JideBoxLayout.FIX);
 		final JPanel requirementsEditorPane = new JPanel();
@@ -656,12 +692,31 @@ public class DialogueEditor extends JSONElementEditor {
 			requirementsPane.add(listButtonsPane, JideBoxLayout.FIX);
 		}
 		requirementsEditorPane.setLayout(new JideBoxLayout(requirementsEditorPane, JideBoxLayout.PAGE_AXIS));
-		requirementsPane.add(requirementsEditorPane, JideBoxLayout.FIX);
+		requirementsPane.add(requirementsEditorPane, JideBoxLayout.FIX);*/
+
+		UiUtils.CollapsibleItemListCreation itemsPane = UiUtils.getCollapsibleItemList(
+				listener,
+				requirementsListModel,
+				() -> selectedRequirement = null,
+				(selectedItem) -> this.selectedRequirement = selectedItem,
+				() -> this.selectedRequirement,
+				(selectedItem)->{},
+				(droppedItemsEditorPane) -> updateRequirementsEditorPane(droppedItemsEditorPane, this.selectedRequirement, listener),
+				target.writable,
+				Requirement::new,
+				cellRendererRequirements,
+				titleRequirements,
+				false
+		);
+		CollapsiblePanel requirementsPane = itemsPane.collapsiblePanel;
+		requirementsList = itemsPane.list;
+
 		if (reply.requirements == null || reply.requirements.isEmpty()) {
 			requirementsPane.collapse();
 		}
+
 		pane.add(requirementsPane, JideBoxLayout.FIX);
-		
+
 		pane.revalidate();
 		pane.repaint();
 	}

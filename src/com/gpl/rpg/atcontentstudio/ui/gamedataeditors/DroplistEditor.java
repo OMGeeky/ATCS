@@ -1,24 +1,17 @@
 package com.gpl.rpg.atcontentstudio.ui.gamedataeditors;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
@@ -28,9 +21,9 @@ import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist.DroppedItem;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
-import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
+import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class DroplistEditor extends JSONElementEditor {
@@ -65,61 +58,23 @@ public class DroplistEditor extends JSONElementEditor {
 		createButtonPane(pane, droplist.getProject(), droplist, Droplist.class, Droplist.getImage(), null, listener);
 		
 		idField = addTextField(pane, "Droplist ID: ", droplist.id, droplist.writable, listener);
-		
-		CollapsiblePanel itemsPane = new CollapsiblePanel("Items in this droplist: ");
-		itemsPane.setLayout(new JideBoxLayout(itemsPane, JideBoxLayout.PAGE_AXIS));
-		droppedItemsListModel = new DroppedItemsListModel(droplist);
-		final JList itemsList = new JList(droppedItemsListModel);
-		itemsList.setCellRenderer(new DroppedItemsCellRenderer());
-		itemsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		itemsPane.add(new JScrollPane(itemsList), JideBoxLayout.FIX);
-		final JPanel droppedItemsEditorPane = new JPanel();
-		final JButton createDroppedItem = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteDroppedItem = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		deleteDroppedItem.setEnabled(false);
-		itemsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedItem = (Droplist.DroppedItem) itemsList.getSelectedValue();
-				if (selectedItem == null) {
-					deleteDroppedItem.setEnabled(false);
-				} else {
-					deleteDroppedItem.setEnabled(true);
-				}
-				updateDroppedItemsEditorPane(droppedItemsEditorPane, selectedItem, listener);
-			}
-		});
-		if (droplist.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createDroppedItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Droplist.DroppedItem tempItem = new Droplist.DroppedItem();
-					droppedItemsListModel.addItem(tempItem);
-					itemsList.setSelectedValue(tempItem, true);
-					listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteDroppedItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedItem != null) {
-						droppedItemsListModel.removeItem(selectedItem);
-						selectedItem = null;
-						itemsList.clearSelection();
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
-			
-			listButtonsPane.add(createDroppedItem, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteDroppedItem, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			itemsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		droppedItemsEditorPane.setLayout(new JideBoxLayout(droppedItemsEditorPane, JideBoxLayout.PAGE_AXIS));
-		itemsPane.add(droppedItemsEditorPane, JideBoxLayout.FIX);
+
+
+		droppedItemsListModel = new DroplistEditor.DroppedItemsListModel(droplist);
+		CollapsiblePanel itemsPane = UiUtils.getCollapsibleItemList(
+				listener,
+				droppedItemsListModel,
+				() -> selectedItem = null,
+				(selectedItem) -> this.selectedItem = selectedItem,
+				() -> this.selectedItem,
+				(selectedItem)->{},
+				(droppedItemsEditorPane) -> updateDroppedItemsEditorPane(droppedItemsEditorPane, this.selectedItem, listener),
+				droplist.writable,
+				DroppedItem::new,
+				new DroppedItemsCellRenderer(),
+				"Items in this droplist: ",
+				false
+		).collapsiblePanel;
 		if (droplist.dropped_items == null || droplist.dropped_items.isEmpty()) {
 			itemsPane.collapse();
 		}
@@ -127,7 +82,7 @@ public class DroplistEditor extends JSONElementEditor {
 		pane.add(itemsPane, JideBoxLayout.FIX);
 		
 	}
-	
+
 	public void updateDroppedItemsEditorPane(JPanel pane, DroppedItem di, FieldUpdateListener listener) {
 		boolean writable = ((Droplist)target).writable;
 		Project proj = ((Droplist)target).getProject();
