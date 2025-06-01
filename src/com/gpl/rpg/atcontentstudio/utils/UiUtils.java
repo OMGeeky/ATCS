@@ -29,6 +29,7 @@ public class UiUtils {
                                                                                                   Supplier<E> tempSupplier,
                                                                                                   DefaultListCellRenderer cellRenderer,
                                                                                                   String title,
+                                                                                                  BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj,
                                                                                                   boolean withMoveButtons) {
         CollapsiblePanel itemsPane = new CollapsiblePanel(title);
         itemsPane.setLayout(new JideBoxLayout(itemsPane, JideBoxLayout.PAGE_AXIS));
@@ -109,28 +110,8 @@ public class UiUtils {
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
             itemsPane.add(listButtonsPane, JideBoxLayout.FIX);
         }
-        //TODO: add double click to navigate to the item in the editor pane.
-        // TODO: figure out what ID is needed here
-//        itemsList.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                if (e.getClickCount() == 2) {
-//                    if (itemsList.getSelectedValue() != null && ((E)itemsList.getSelectedValue()).required_obj != null) {
-//                        ATContentStudio.frame.openEditor(((E)itemsList.getSelectedValue()).required_obj);
-//                        ATContentStudio.frame.selectInTree(((E)itemsList.getSelectedValue()).required_obj);
-//                    }
-//                }
-//            }
-//        });
-//        itemsList.addKeyListener(new KeyAdapter() {
-//            @Override
-//            public void keyReleased(KeyEvent e) {
-//                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//                    ATContentStudio.frame.openEditor(((E)itemsList.getSelectedValue()).required_obj);
-//                    ATContentStudio.frame.selectInTree(((E)itemsList.getSelectedValue()).required_obj);
-//                }
-//            }
-//        });
+
+        addNavigationListeners(getReferencedObj, itemsList);
 
         editorPane.setLayout(new JideBoxLayout(editorPane, JideBoxLayout.PAGE_AXIS));
         itemsPane.add(editorPane, JideBoxLayout.FIX);
@@ -140,6 +121,36 @@ public class UiUtils {
                 collapsiblePanel = itemsPane;
                 list = itemsList;}
         };
+    }
+
+    private static <E> void addNavigationListeners(BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj, JList<E> itemsList) {
+        // Add listeners to the list for double-click and Enter key to open the editor
+        itemsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    E selectedValue = itemsList.getSelectedValue();
+                    if (selectedValue == null) return;
+                    GameDataElement referencedObj = getReferencedObj.doIt(selectedValue);
+                    if (referencedObj != null) {
+                        ATContentStudio.frame.openEditor(referencedObj);
+                        ATContentStudio.frame.selectInTree( referencedObj);
+                    }
+                }
+            }
+        });
+        itemsList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    E selectedValue = itemsList.getSelectedValue();
+                    if (selectedValue == null) return;
+                    GameDataElement referencedObj = getReferencedObj.doIt(selectedValue);
+                    ATContentStudio.frame.openEditor(referencedObj);
+                    ATContentStudio.frame.selectInTree(referencedObj);
+                }
+            }
+        });
     }
 
 }

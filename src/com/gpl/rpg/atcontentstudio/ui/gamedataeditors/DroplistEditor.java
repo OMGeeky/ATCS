@@ -73,6 +73,7 @@ public class DroplistEditor extends JSONElementEditor {
 				DroppedItem::new,
 				new DroppedItemsCellRenderer(),
 				"Items in this droplist: ",
+				(x)-> x.item,
 				false
 		).collapsiblePanel;
 		if (droplist.dropped_items == null || droplist.dropped_items.isEmpty()) {
