@@ -113,7 +113,7 @@ public class Quest extends JSONElement {
 	
 	@Override
 	public void link() {
-		if (!this.needsToBeLinked()) return;
+		if (!this.linkCheck()) return;
 		
 		for (QuestStage stage : stages) {
 			stage.link();

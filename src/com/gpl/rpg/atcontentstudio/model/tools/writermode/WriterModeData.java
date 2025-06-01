@@ -489,10 +489,7 @@ public class WriterModeData extends GameDataElement {
 	
 	@SuppressWarnings("rawtypes")
 	public void parse() {
-		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
-			//This type of state is unrelated to parsing/linking.
-			return;
-		}
+		if (checkNotRelatedToParseOrLink()) return;
 		JSONParser parser = new JSONParser();
 		FileReader reader = null;
 		try {
@@ -526,7 +523,7 @@ public class WriterModeData extends GameDataElement {
 		}
 
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public void parse(Map json) {
 		this.id = (String) json.get("id");

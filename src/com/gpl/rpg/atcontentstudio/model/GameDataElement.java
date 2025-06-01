@@ -40,12 +40,12 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 
 	public String id = null;
 
-	protected boolean needsToBeLinked(){
-		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
+	protected boolean linkCheck(){
+		if (checkNotRelatedToParseOrLink()) {
 			//This type of state is unrelated to parsing/linking.
 			return false;
 		}
-		if (this.state == State.init) {
+		else if (this.state == State.init) {
 			//Not parsed yet.
 			this.parse();
 		} else if (this.state == State.linked) {
@@ -55,7 +55,14 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 		return true;
 
 	}
-	
+
+	protected boolean checkNotRelatedToParseOrLink() {
+		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
+			//This type of state is unrelated to parsing/linking.
+			return true;
+		}
+		return false;
+	}
 	@Override
 	public Enumeration<ProjectTreeNode> children() {
 		return null;

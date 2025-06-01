@@ -206,7 +206,7 @@ public class Dialogue extends JSONElement {
 	
 	@Override
 	public void link() {
-		if (!this.needsToBeLinked()) return;
+		if (!this.linkCheck()) return;
 		Project proj = getProject();
 		if (proj == null) {
 			Notification.addError("Error linking dialogue "+id+". No parent project found.");
