@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -28,10 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -52,6 +48,7 @@ import com.gpl.rpg.atcontentstudio.ui.BooleanBasedCheckBox;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
 import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
 import com.jidesoft.swing.JideBoxLayout;
@@ -812,65 +809,19 @@ public class DialogueEditor extends JSONElementEditor {
 	}
 	
 	
-	public static class RewardsListModel implements ListModel<Dialogue.Reward> {
-		
-		Dialogue source;
-		
+	public static class RewardsListModel extends CustomListModel<Dialogue,Dialogue.Reward> {
+		@Override
+		protected List<Dialogue.Reward> getItems() {
+			return source.rewards;
+		}
+
+		@Override
+		protected void setItems(List<Dialogue.Reward> items) {
+			source.rewards = items;
+		}
+
 		public RewardsListModel(Dialogue dialogue) {
-			this.source = dialogue;
-		}
-
-		@Override
-		public int getSize() {
-			if (source.rewards == null) return 0;
-			return source.rewards.size();
-		}
-		
-		@Override
-		public Dialogue.Reward getElementAt(int index) {
-			if (source.rewards == null) return null;
-			return source.rewards.get(index);
-		}
-		
-		public void addItem(Dialogue.Reward item) {
-			if (source.rewards == null) {
-				source.rewards = new ArrayList<Dialogue.Reward>();
-			}
-			source.rewards.add(item);
-			int index = source.rewards.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Dialogue.Reward item) {
-			int index = source.rewards.indexOf(item);
-			source.rewards.remove(item);
-			if (source.rewards.isEmpty()) {
-				source.rewards = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(Dialogue.Reward item) {
-			int index = source.rewards.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+			super(dialogue);
 		}
 	}
 	
@@ -981,87 +932,19 @@ public class DialogueEditor extends JSONElementEditor {
 	}
 	
 	
-	public static class RepliesListModel implements ListModel<Dialogue.Reply> {
+	public static class RepliesListModel extends CustomListModel<Dialogue, Dialogue.Reply> {
+		@Override
+		protected List<Dialogue.Reply> getItems() {
+			return source.replies;
+		}
 
-		Dialogue source;
+		@Override
+		protected void setItems(List<Dialogue.Reply> items) {
+			source.replies = items;
+		}
 
 		public RepliesListModel(Dialogue dialogue) {
-			this.source = dialogue;
-		}
-
-		
-		@Override
-		public int getSize() {
-			if (source.replies == null) return 0;
-			return source.replies.size();
-		}
-
-		@Override
-		public Dialogue.Reply getElementAt(int index) {
-			if (source.replies == null) return null;
-			return source.replies.get(index);
-		}
-		
-		public void addItem(Dialogue.Reply item) {
-			if (source.replies == null) {
-				source.replies = new ArrayList<Dialogue.Reply>();
-			}
-			source.replies.add(item);
-			int index = source.replies.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			source.replies.remove(item);
-			if (source.replies.isEmpty()) {
-				source.replies = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		public void moveUp(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			Dialogue.Reply exchanged = source.replies.get(index - 1);
-			source.replies.set(index, exchanged);
-			source.replies.set(index - 1, item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index - 1, index));
-			}
-		}
-
-		public void moveDown(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			Dialogue.Reply exchanged = source.replies.get(index + 1);
-			source.replies.set(index, exchanged);
-			source.replies.set(index + 1, item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index + 1));
-			}
-		}
-
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+			super(dialogue);
 		}
 	}
 
@@ -1115,69 +998,20 @@ public class DialogueEditor extends JSONElementEditor {
 		}
 	}
 
-	public static class ReplyRequirementsListModel implements ListModel<Requirement> {
+	public static class ReplyRequirementsListModel extends CustomListModel<Dialogue.Reply,Requirement> {
+		@Override
+		protected List<Requirement> getItems() {
+			return source.requirements;
+		}
 
-		Dialogue.Reply reply;
-		
+		@Override
+		protected void setItems(List<Requirement> items) {
+			source.requirements = items;
+		}
+
 		public ReplyRequirementsListModel(Dialogue.Reply reply) {
-			this.reply = reply;
+			super(reply);
 		}
-		
-		@Override
-		public int getSize() {
-			if (reply.requirements == null) return 0;
-			return reply.requirements.size();
-		}
-
-		@Override
-		public Requirement getElementAt(int index) {
-			if (reply.requirements == null) return null;
-			return reply.requirements.get(index);
-		}
-		
-
-		
-		public void addItem(Requirement item) {
-			if (reply.requirements == null) {
-				reply.requirements = new ArrayList<Requirement>();
-			}
-			reply.requirements.add(item);
-			int index = reply.requirements.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Requirement item) {
-			int index = reply.requirements.indexOf(item);
-			reply.requirements.remove(item);
-			if (reply.requirements.isEmpty()) {
-				reply.requirements = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(Requirement item) {
-			int index = reply.requirements.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
 	}
 	
 	public static class ReplyRequirementsCellRenderer extends DefaultListCellRenderer {

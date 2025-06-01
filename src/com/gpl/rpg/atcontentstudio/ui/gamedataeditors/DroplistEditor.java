@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
@@ -17,10 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -34,6 +30,7 @@ import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class DroplistEditor extends JSONElementEditor {
@@ -148,65 +145,19 @@ public class DroplistEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public class DroppedItemsListModel implements ListModel<Droplist.DroppedItem> {
-		
-		Droplist source;
-		
+	public class DroppedItemsListModel extends CustomListModel<Droplist, DroppedItem> {
 		public DroppedItemsListModel(Droplist droplist) {
-			this.source = droplist;
+			super(droplist);
 		}
 
 		@Override
-		public int getSize() {
-			if (source.dropped_items == null) return 0;
-			return source.dropped_items.size();
-		}
-		
-		@Override
-		public Droplist.DroppedItem getElementAt(int index) {
-			if (source.dropped_items == null) return null;
-			return source.dropped_items.get(index);
-		}
-		
-		public void addItem(Droplist.DroppedItem item) {
-			if (source.dropped_items == null) {
-				source.dropped_items = new ArrayList<Droplist.DroppedItem>();
-			}
-			source.dropped_items.add(item);
-			int index = source.dropped_items.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Droplist.DroppedItem item) {
-			int index = source.dropped_items.indexOf(item);
-			source.dropped_items.remove(item);
-			if (source.dropped_items.isEmpty()) {
-				source.dropped_items = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+		protected List<DroppedItem> getItems() {
+			return source.dropped_items;
 		}
 
-		public void itemChanged(Droplist.DroppedItem item) {
-			int index = source.dropped_items.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setItems(List<DroppedItem> items) {
+			source.dropped_items = items;
 		}
 	}
 	
