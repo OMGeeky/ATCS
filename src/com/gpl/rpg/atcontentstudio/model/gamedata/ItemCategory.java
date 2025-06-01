@@ -171,17 +171,7 @@ public class ItemCategory extends JSONElement {
 	
 	@Override
 	public void link() {
-		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
-			//This type of state is unrelated to parsing/linking.
-			return;
-		}
-		if (this.state == State.init) {
-			//Not parsed yet.
-			this.parse();
-		} else if (this.state == State.linked) {
-			//Already linked.
-			return;
-		}
+		if (!this.needsToBeLinked()) return;
 		
 		//Nothing to link to :D
 		this.state = State.linked;

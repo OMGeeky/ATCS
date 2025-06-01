@@ -224,17 +224,7 @@ public class ActorCondition extends JSONElement {
 	
 	@Override
 	public void link() {
-		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
-			//This type of state is unrelated to parsing/linking.
-			return;
-		}
-		if (this.state == State.init) {
-			//Not parsed yet.
-			this.parse();
-		} else if (this.state == State.linked) {
-			//Already linked.
-			return;
-		}
+		if (!this.needsToBeLinked()) return;
 		if (this.icon_id != null) {
 			String spritesheetId = this.icon_id.split(":")[0];
 			if (getProject().getSpritesheet(spritesheetId) == null) {
@@ -250,7 +240,8 @@ public class ActorCondition extends JSONElement {
 		
 		this.state = State.linked;
 	}
-	
+
+
 
 	public static String getStaticDesc() {
 		return "Actor Conditions";

@@ -39,6 +39,22 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 	private Map<GameDataElement, Integer> backlinks = new ConcurrentHashMap<GameDataElement, Integer>();
 
 	public String id = null;
+
+	protected boolean needsToBeLinked(){
+		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
+			//This type of state is unrelated to parsing/linking.
+			return false;
+		}
+		if (this.state == State.init) {
+			//Not parsed yet.
+			this.parse();
+		} else if (this.state == State.linked) {
+			//Already linked.
+			return false;
+		}
+		return true;
+
+	}
 	
 	@Override
 	public Enumeration<ProjectTreeNode> children() {
