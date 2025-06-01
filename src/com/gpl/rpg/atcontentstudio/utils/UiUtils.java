@@ -1,6 +1,7 @@
 package com.gpl.rpg.atcontentstudio.utils;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
+import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Requirement;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
@@ -68,44 +69,10 @@ public class UiUtils {
             JPanel listButtonsPane = new JPanel();
             listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
 
-            createBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    E tempItem = tempSupplier.get();
-                    itemsListModel.addItem(tempItem);
-                    itemsList.setSelectedValue(tempItem, true);
-                    listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                }
-            });
-            listButtonsPane.add(createBtn, JideBoxLayout.FIX);
+            addRemoveAndAddButtons(listener, itemsListModel, selectedItemReset, selectedItem, tempSupplier, createBtn, itemsList, listButtonsPane, deleteBtn);
 
-            deleteBtn.addActionListener(e -> {
-                if (selectedItem.doIt() != null) {
-                    itemsListModel.removeItem(selectedItem.doIt());
-                    selectedItemReset.doIt();
-                    itemsList.clearSelection();
-                    listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                }
-            });
-            listButtonsPane.add(deleteBtn, JideBoxLayout.FIX);
             if(withMoveButtons) {
-                moveUpBtn.addActionListener(e -> {
-                    if (selectedItem.doIt() != null) {
-                        itemsListModel.moveUp(selectedItem.doIt());
-                        itemsList.setSelectedValue(selectedItem.doIt(), true);
-                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                    }
-                });
-                listButtonsPane.add(moveUpBtn, JideBoxLayout.FIX);
-
-                moveDownBtn.addActionListener(e -> {
-                    if (selectedItem.doIt() != null) {
-                        itemsListModel.moveDown(selectedItem.doIt());
-                        itemsList.setSelectedValue(selectedItem.doIt(), true);
-                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                    }
-                });
-                listButtonsPane.add(moveDownBtn, JideBoxLayout.FIX);
+                addMoveButtonListeners(listener, itemsListModel, selectedItem, moveUpBtn, itemsList, listButtonsPane, moveDownBtn);
             }
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
             itemsPane.add(listButtonsPane, JideBoxLayout.FIX);
@@ -121,6 +88,46 @@ public class UiUtils {
                 collapsiblePanel = itemsPane;
                 list = itemsList;}
         };
+    }
+
+    private static <S, E, M extends CustomListModel<S, E>> void addRemoveAndAddButtons(FieldUpdateListener listener, M itemsListModel, BasicLambda selectedItemReset, BasicLambdaWithReturn<E> selectedItem, Supplier<E> tempSupplier, JButton createBtn, JList<E> itemsList, JPanel listButtonsPane, JButton deleteBtn) {
+        createBtn.addActionListener(e -> {
+            E tempItem = tempSupplier.get();
+            itemsListModel.addItem(tempItem);
+            itemsList.setSelectedValue(tempItem, true);
+            listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+        });
+        listButtonsPane.add(createBtn, JideBoxLayout.FIX);
+
+        deleteBtn.addActionListener(e -> {
+            if (selectedItem.doIt() != null) {
+                itemsListModel.removeItem(selectedItem.doIt());
+                selectedItemReset.doIt();
+                itemsList.clearSelection();
+                listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+            }
+        });
+        listButtonsPane.add(deleteBtn, JideBoxLayout.FIX);
+    }
+
+    private static <S, E, M extends CustomListModel<S, E>> void addMoveButtonListeners(FieldUpdateListener listener, M itemsListModel, BasicLambdaWithReturn<E> selectedItem, JButton moveUpBtn, JList<E> itemsList, JPanel listButtonsPane, JButton moveDownBtn) {
+        moveUpBtn.addActionListener(e -> {
+            if (selectedItem.doIt() != null) {
+                itemsListModel.moveUp(selectedItem.doIt());
+                itemsList.setSelectedValue(selectedItem.doIt(), true);
+                listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+            }
+        });
+        listButtonsPane.add(moveUpBtn, JideBoxLayout.FIX);
+
+        moveDownBtn.addActionListener(e -> {
+            if (selectedItem.doIt() != null) {
+                itemsListModel.moveDown(selectedItem.doIt());
+                itemsList.setSelectedValue(selectedItem.doIt(), true);
+                listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+            }
+        });
+        listButtonsPane.add(moveDownBtn, JideBoxLayout.FIX);
     }
 
     private static <E> void addNavigationListeners(BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj, JList<E> itemsList) {
