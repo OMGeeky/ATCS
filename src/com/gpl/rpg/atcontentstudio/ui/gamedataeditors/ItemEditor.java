@@ -31,16 +31,9 @@ import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ItemCategory;
+import com.gpl.rpg.atcontentstudio.model.gamedata.*;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
-import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
-import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
-import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
-import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
-import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
+import com.gpl.rpg.atcontentstudio.ui.*;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class ItemEditor extends JSONElementEditor {
@@ -1185,127 +1178,34 @@ public class ItemEditor extends JSONElementEditor {
 	}
 
 	
-	public static class SourceTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
-		
-		Common.DeathEffect source;
-		
+	public static class SourceTimedConditionsListModel extends CustomListModel<Common.DeathEffect , Common.TimedConditionEffect> {
 		public SourceTimedConditionsListModel(Common.DeathEffect effect) {
-			this.source = effect;;
+			super(effect);;
+		}
+		@Override
+		protected List<Common.TimedConditionEffect> getItems() {
+			return source.conditions_source;
 		}
 
 		@Override
-		public int getSize() {
-			if (source.conditions_source == null) return 0;
-			return source.conditions_source.size();
-		}
-		
-		@Override
-		public Common.TimedConditionEffect getElementAt(int index) {
-			if (source.conditions_source == null) return null;
-			return source.conditions_source.get(index);
-		}
-		
-		public void addItem(Common.TimedConditionEffect item) {
-			if (source.conditions_source == null) {
-				source.conditions_source = new ArrayList<Common.TimedConditionEffect>();
-			}
-			source.conditions_source.add(item);
-			int index = source.conditions_source.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Common.TimedConditionEffect item) {
-			int index = source.conditions_source.indexOf(item);
-			source.conditions_source.remove(item);
-			if (source.conditions_source.isEmpty()) {
-				source.conditions_source = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(Common.TimedConditionEffect item) {
-			int index = source.conditions_source.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setItems(List<Common.TimedConditionEffect> items) {
+			source.conditions_source = items;
 		}
 	}
 	
-	public static class TargetTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
-		
-		Common.HitEffect source;
-		
+	public static class TargetTimedConditionsListModel extends CustomListModel<Common.HitEffect,Common.TimedConditionEffect> {
 		public TargetTimedConditionsListModel(Common.HitEffect effect) {
-			this.source = effect;;
+			super(effect);
 		}
 
 		@Override
-		public int getSize() {
-			if (source.conditions_target == null) return 0;
-			return source.conditions_target.size();
-		}
-		
-		@Override
-		public Common.TimedConditionEffect getElementAt(int index) {
-			if (source.conditions_target == null) return null;
-			return source.conditions_target.get(index);
-		}
-		
-		public void addItem(Common.TimedConditionEffect item) {
-			if (source.conditions_target == null) {
-				source.conditions_target = new ArrayList<Common.TimedConditionEffect>();
-			}
-			source.conditions_target.add(item);
-			int index = source.conditions_target.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Common.TimedConditionEffect item) {
-			int index = source.conditions_target.indexOf(item);
-			source.conditions_target.remove(item);
-			if (source.conditions_target.isEmpty()) {
-				source.conditions_target = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+		protected List<Common.TimedConditionEffect> getItems() {
+			return source.conditions_target;
 		}
 
-		public void itemChanged(Common.TimedConditionEffect item) {
-			int index = source.conditions_target.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setItems(List<Common.TimedConditionEffect> items) {
+			source.conditions_target = items;
 		}
 	}
 	
@@ -1343,65 +1243,19 @@ public class ItemEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class ConditionsListModel implements ListModel<Common.ConditionEffect> {
-		
-		Item.EquipEffect source;
-		
+	public static class ConditionsListModel extends CustomListModel<Item.EquipEffect, Common.ConditionEffect> {
 		public ConditionsListModel(Item.EquipEffect equipEffect) {
-			this.source = equipEffect;
+			super(equipEffect);
 		}
 
 		@Override
-		public int getSize() {
-			if (source.conditions == null) return 0;
-			return source.conditions.size();
-		}
-		
-		@Override
-		public Common.ConditionEffect getElementAt(int index) {
-			if (source.conditions == null) return null;
-			return source.conditions.get(index);
-		}
-		
-		public void addItem(Common.ConditionEffect item) {
-			if (source.conditions == null) {
-				source.conditions = new ArrayList<Common.ConditionEffect>();
-			}
-			source.conditions.add(item);
-			int index = source.conditions.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Common.ConditionEffect item) {
-			int index = source.conditions.indexOf(item);
-			source.conditions.remove(item);
-			if (source.conditions.isEmpty()) {
-				source.conditions = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+		protected List<Common.ConditionEffect> getItems() {
+			return source.conditions;
 		}
 
-		public void itemChanged(Common.ConditionEffect item) {
-			int index = source.conditions.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setItems(List<Common.ConditionEffect> conditions) {
+			source.conditions = conditions;
 		}
 	}
 	

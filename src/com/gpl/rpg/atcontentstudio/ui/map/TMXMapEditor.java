@@ -62,6 +62,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import com.gpl.rpg.atcontentstudio.ui.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
@@ -95,13 +96,6 @@ import com.gpl.rpg.atcontentstudio.model.maps.SignArea;
 import com.gpl.rpg.atcontentstudio.model.maps.SpawnArea;
 import com.gpl.rpg.atcontentstudio.model.maps.TMXMap;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
-import com.gpl.rpg.atcontentstudio.ui.BooleanBasedCheckBox;
-import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
-import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
-import com.gpl.rpg.atcontentstudio.ui.Editor;
-import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
-import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
-import com.gpl.rpg.atcontentstudio.ui.ScrollablePanel;
 import com.gpl.rpg.atcontentstudio.utils.DesktopIntegration;
 import com.gpl.rpg.atcontentstudio.utils.FileUtils;
 import com.jidesoft.swing.JideBoxLayout;
@@ -1286,58 +1280,20 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class MapObjectsListModel implements ListModel<MapObject> {
-
-		public MapObjectGroup group;
-		
+	public class MapObjectsListModel extends CustomListModel<MapObjectGroup, MapObject> {
 		public MapObjectsListModel(MapObjectGroup group) {
-			this.group = group;
-		}
-		
-		@Override
-		public int getSize() {
-			return group.mapObjects.size();
+			super(group);
 		}
 
 		@Override
-		public MapObject getElementAt(int index) {
-			return group.mapObjects.get(index);
-		}
-		
-		public void objectChanged(MapObject area) {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(groupObjectsList, ListDataEvent.CONTENTS_CHANGED, group.mapObjects.indexOf(area), group.mapObjects.indexOf(area)));
-			}
-		}
-		
-		public void addObject(MapObject area) {
-			group.mapObjects.add(area);
-			int index = group.mapObjects.indexOf(area);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(groupObjectsList, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeObject(MapObject area) {
-			int index = group.mapObjects.indexOf(area);
-			group.mapObjects.remove(area);
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(groupObjectsList, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected List<MapObject> getItems() {
+			return source.mapObjects;
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setItems(List<MapObject> items) {
+			source.mapObjects = items;
 		}
-	
 	}
 
 	public class GroupObjectsRenderer extends DefaultListCellRenderer {

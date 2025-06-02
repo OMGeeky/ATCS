@@ -29,6 +29,7 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         return getItems().get(index);
     }
 
+    public void addObject(E item) {addItem(item);}
     public void addItem(E item) {
         if (getItems() == null) {
             setItems(new ArrayList<E>());
@@ -40,6 +41,7 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         }
     }
 
+    public void removeObject(E item) {removeItem(item);}
     public void removeItem(E item) {
         int index = getItems().indexOf(item);
         getItems().remove(item);
@@ -69,6 +71,7 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         }
     }
 
+    public void objectChanged(E item) {itemChanged(item);}
     public void itemChanged(E item) {
         int index = getItems().indexOf(item);
         for (ListDataListener l : listeners) {
