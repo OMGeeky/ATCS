@@ -23,6 +23,7 @@ public final class CommonEditor {
                                                           AtListModel<E, S> listModel,
                                                           boolean isCollapsed,
                                                           boolean writable,
+                                                          boolean moveUpDownEnabled,
                                                           CallWithSingleArg<E> selectedValueSetter,
                                                           CallWithReturn<E> selectedValueGetter,
                                                           CallWithThreeArgs<JPanel, E, FieldUpdateListener> updateRepliesEditorPane,
@@ -47,12 +48,16 @@ public final class CommonEditor {
             selectedValueSetter.call(selectedReply);
             if (selectedReply != null) {
                 deleteReply.setEnabled(true);
-                moveReplyUp.setEnabled(repliesList.getSelectedIndex() > 0);
-                moveReplyDown.setEnabled(repliesList.getSelectedIndex() < (listModel.getSize() - 1));
+                if(moveUpDownEnabled){
+                    moveReplyUp.setEnabled(repliesList.getSelectedIndex() > 0);
+                    moveReplyDown.setEnabled(repliesList.getSelectedIndex() < (listModel.getSize() - 1));
+                }
             } else {
                 deleteReply.setEnabled(false);
-                moveReplyUp.setEnabled(false);
-                moveReplyDown.setEnabled(false);
+                if(moveUpDownEnabled){
+                    moveReplyUp.setEnabled(false);
+                    moveReplyDown.setEnabled(false);
+                }
             }
             updateRepliesEditorPane.call(repliesEditorPane, selectedReply, listener);
         });
@@ -75,6 +80,8 @@ public final class CommonEditor {
                     listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
                 }
             });
+            if(moveUpDownEnabled){
+
             moveReplyUp.addActionListener(e -> {
                 E selected = selectedValueGetter.call();
                 if (selected != null) {
@@ -91,10 +98,13 @@ public final class CommonEditor {
                     listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
                 }
             });
+            }
             listButtonsPane.add(createReply, JideBoxLayout.FIX);
             listButtonsPane.add(deleteReply, JideBoxLayout.FIX);
-            listButtonsPane.add(moveReplyUp, JideBoxLayout.FIX);
-            listButtonsPane.add(moveReplyDown, JideBoxLayout.FIX);
+            if(moveUpDownEnabled){
+                listButtonsPane.add(moveReplyUp, JideBoxLayout.FIX);
+                listButtonsPane.add(moveReplyDown, JideBoxLayout.FIX);
+            }
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
             replies.add(listButtonsPane, JideBoxLayout.FIX);
         }

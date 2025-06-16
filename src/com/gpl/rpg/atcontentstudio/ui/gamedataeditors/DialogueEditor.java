@@ -55,6 +55,7 @@ import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
 import com.gpl.rpg.atcontentstudio.ui.tools.CommonEditor;
+import com.gpl.rpg.atcontentstudio.utils.lambda.CallWithSingleArg;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class DialogueEditor extends JSONElementEditor {
@@ -243,28 +244,30 @@ public class DialogueEditor extends JSONElementEditor {
 		RepliesCellRenderer cellRenderer = new RepliesCellRenderer();
 
 		repliesListModel = new DialogueEditor.RepliesListModel(dialogue);
+		boolean isCollapsed = dialogue.replies == null || dialogue.replies.isEmpty();
+		boolean moveUpDownEnabled = true;
+		CallWithSingleArg<Dialogue.Reply> selectedReplyChanged = e -> {
+			selectedReply = e;
+			if (selectedReply != null && !Dialogue.Reply.GO_NEXT_TEXT.equals(selectedReply.text)) {
+				replyTextCache = selectedReply.text;
+			} else {
+				replyTextCache = null;
+			}
+		};
 		CollapsiblePanel replies = CommonEditor.createListPanel(
 				title,
 				cellRenderer,
 				repliesListModel,
-				dialogue.replies == null || dialogue.replies.isEmpty(),
+				isCollapsed,
 				dialogue.writable,
-				e -> {
-					selectedReply = e;
-					if (selectedReply != null && !Dialogue.Reply.GO_NEXT_TEXT.equals(selectedReply.text)) {
-						replyTextCache = selectedReply.text;
-					} else {
-						replyTextCache = null;
-					}
-				},
+				moveUpDownEnabled,
+				selectedReplyChanged,
 				()->selectedReply,
                 this::updateRepliesEditorPane,
 				listener,
                 Dialogue.Reply::new);
 
 		pane.add(replies, JideBoxLayout.FIX);
-		
-		
 	}
 	
 	public void updateRewardsEditorPane(final JPanel pane, final Dialogue.Reward reward, final FieldUpdateListener listener) {
