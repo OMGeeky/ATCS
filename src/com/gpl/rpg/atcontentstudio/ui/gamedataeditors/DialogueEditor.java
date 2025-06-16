@@ -949,11 +949,16 @@ public class DialogueEditor extends JSONElementEditor {
 			return source.requirements;
 		}
 
-		@Override
-		protected void setInner(List<Requirement> value) {
-			source.requirements = value;
-		}
-	}
+		 @Override
+		 protected void setInner(List<Requirement> value) {
+			 source.requirements = value;
+		 }
+
+		 @Override
+		 protected GameDataElement getNavigationElement(Requirement element) {
+             return element != null ? element.required_obj : null;
+		 }
+	 }
 
 	public static class ReplyRequirementsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;

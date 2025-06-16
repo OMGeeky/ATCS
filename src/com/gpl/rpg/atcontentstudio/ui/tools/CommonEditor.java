@@ -1,5 +1,7 @@
 package com.gpl.rpg.atcontentstudio.ui.tools;
 
+import com.gpl.rpg.atcontentstudio.ATContentStudio;
+import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
@@ -11,6 +13,10 @@ import com.jidesoft.swing.JideBoxLayout;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -59,6 +65,29 @@ public final class CommonEditor {
                 }
             }
             updateRepliesEditorPane.call(repliesEditorPane, selectedReply, listener);
+        });
+
+        repliesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    GameDataElement navObj = listModel.getNavigationElement( repliesList.getSelectedValue());
+                    if (navObj != null) {
+                        ATContentStudio.frame.openEditor(navObj);
+                        ATContentStudio.frame.selectInTree(navObj);
+                    }
+                }
+            }
+        });
+        repliesList.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    GameDataElement navObj = listModel.getNavigationElement( repliesList.getSelectedValue());
+                    ATContentStudio.frame.openEditor(navObj);
+                    ATContentStudio.frame.selectInTree(navObj);
+                }
+            }
         });
         if (writable) {
             JPanel listButtonsPane = new JPanel();
@@ -138,10 +167,15 @@ public final class CommonEditor {
         protected abstract List<E> getInner();
 
         protected abstract void setInner(List<E> value);
+        protected GameDataElement getNavigationElement(E element){
+            return null;
+        }
 
         public AtListModel(S source) {
             this.source = source;
         }
+
+
 
 
         @Override
