@@ -48,13 +48,13 @@ public final class CommonEditor {
             selectedValueSetter.call(selectedReply);
             if (selectedReply != null) {
                 deleteReply.setEnabled(true);
-                if(moveUpDownEnabled){
+                if (moveUpDownEnabled) {
                     moveReplyUp.setEnabled(repliesList.getSelectedIndex() > 0);
                     moveReplyDown.setEnabled(repliesList.getSelectedIndex() < (listModel.getSize() - 1));
                 }
             } else {
                 deleteReply.setEnabled(false);
-                if(moveUpDownEnabled){
+                if (moveUpDownEnabled) {
                     moveReplyUp.setEnabled(false);
                     moveReplyDown.setEnabled(false);
                 }
@@ -80,28 +80,27 @@ public final class CommonEditor {
                     listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
                 }
             });
-            if(moveUpDownEnabled){
-
-            moveReplyUp.addActionListener(e -> {
-                E selected = selectedValueGetter.call();
-                if (selected != null) {
-                    listModel.moveUp(selected);
-                    repliesList.setSelectedValue(selected, true);
-                    listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                }
-            });
-            moveReplyDown.addActionListener(e -> {
-                E selected = selectedValueGetter.call();
-                if (selected != null) {
-                    listModel.moveDown(selected);
-                    repliesList.setSelectedValue(selected, true);
-                    listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                }
-            });
+            if (moveUpDownEnabled) {
+                moveReplyUp.addActionListener(e -> {
+                    E selected = selectedValueGetter.call();
+                    if (selected != null) {
+                        listModel.moveUp(selected);
+                        repliesList.setSelectedValue(selected, true);
+                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+                    }
+                });
+                moveReplyDown.addActionListener(e -> {
+                    E selected = selectedValueGetter.call();
+                    if (selected != null) {
+                        listModel.moveDown(selected);
+                        repliesList.setSelectedValue(selected, true);
+                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+                    }
+                });
             }
             listButtonsPane.add(createReply, JideBoxLayout.FIX);
             listButtonsPane.add(deleteReply, JideBoxLayout.FIX);
-            if(moveUpDownEnabled){
+            if (moveUpDownEnabled) {
                 listButtonsPane.add(moveReplyUp, JideBoxLayout.FIX);
                 listButtonsPane.add(moveReplyDown, JideBoxLayout.FIX);
             }
