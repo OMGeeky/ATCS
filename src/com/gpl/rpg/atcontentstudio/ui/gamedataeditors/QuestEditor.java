@@ -34,6 +34,7 @@ import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
+import com.gpl.rpg.atcontentstudio.ui.tools.CommonEditor;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class QuestEditor extends JSONElementEditor {
@@ -184,87 +185,19 @@ public class QuestEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public static class StagesListModel implements ListModel<QuestStage> {
-
-		Quest source;
-
+	public static class StagesListModel extends CommonEditor.AtListModel<QuestStage,Quest> {
 		public StagesListModel(Quest quest) {
-			this.source = quest;
-		}
-
-		
-		@Override
-		public int getSize() {
-			if (source.stages == null) return 0;
-			return source.stages.size();
+			super(quest);
 		}
 
 		@Override
-		public QuestStage getElementAt(int index) {
-			if (source.stages == null) return null;
-			return source.stages.get(index);
-		}
-		
-		public void addItem(QuestStage item) {
-			if (source.stages == null) {
-				source.stages = new ArrayList<QuestStage>();
-			}
-			source.stages.add(item);
-			int index = source.stages.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(QuestStage item) {
-			int index = source.stages.indexOf(item);
-			source.stages.remove(item);
-			if (source.stages.isEmpty()) {
-				source.stages = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(QuestStage item) {
-			int index = source.stages.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		public void moveUp(QuestStage item) {
-			int index = source.stages.indexOf(item);
-			QuestStage exchanged = source.stages.get(index - 1);
-			source.stages.set(index, exchanged);
-			source.stages.set(index - 1, item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index - 1, index));
-			}
-		}
-
-		public void moveDown(QuestStage item) {
-			int index = source.stages.indexOf(item);
-			QuestStage exchanged = source.stages.get(index + 1);
-			source.stages.set(index, exchanged);
-			source.stages.set(index + 1, item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index + 1));
-			}
-		}
-
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected List<QuestStage> getInner() {
+			return source.stages;
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<QuestStage> value) {
+			source.stages = value;
 		}
 	}
 	
