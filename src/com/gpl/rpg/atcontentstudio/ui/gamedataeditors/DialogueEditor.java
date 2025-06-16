@@ -65,12 +65,12 @@ public class DialogueEditor extends JSONElementEditor {
 	private static final String form_view_id = "Form";
 	private static final String json_view_id = "JSON";
 	private static final String graph_view_id = "Dialogue Tree";
-	
+
 	private Dialogue.Reward selectedReward;
 	private Dialogue.Reply selectedReply;
 	private Requirement selectedRequirement;
-	
-	
+
+
 	private static final String[] replyTypes = new String[]{
 			"Phrase leads to another without replies.", 
 			"NPC replies too.", 
@@ -85,11 +85,11 @@ public class DialogueEditor extends JSONElementEditor {
 	private static final int FIGHT_INDEX = 3;
 	private static final int REMOVE_INDEX = 4;
 	private static final int SHOP_INDEX = 5;
-	
+
 	private JTextField idField;
 	private JTextArea messageField;
 	private MyComboBox switchToNpcBox;
-	
+
 	private RewardsListModel rewardsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList rewardsList;
@@ -105,7 +105,7 @@ public class DialogueEditor extends JSONElementEditor {
 	private JRadioButton rewardConditionTimed;
 	private JRadioButton rewardConditionForever;
 	private JRadioButton rewardConditionClear;
-	
+
 	private RepliesListModel repliesListModel;
 	@SuppressWarnings("rawtypes")
 	private JList repliesList;
@@ -115,7 +115,7 @@ public class DialogueEditor extends JSONElementEditor {
 	private MyComboBox replyNextPhrase;
 	private String replyTextCache = null;
 	private JTextField replyText;
-	
+
 	private ReplyRequirementsListModel requirementsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList requirementsList;
@@ -128,32 +128,32 @@ public class DialogueEditor extends JSONElementEditor {
 	private JComponent requirementObjId;
 	private JComponent requirementValue;
 	private BooleanBasedCheckBox requirementNegated;
-	
+
 	private DialogueGraphView dialogueGraphView;
-	
-	
+
+
 	public DialogueEditor(Dialogue dialogue) {
 		super(dialogue, dialogue.getDesc(), dialogue.getIcon());
 		addEditorTab(form_view_id, getFormView());
 		addEditorTab(json_view_id, getJSONView());
 		addEditorTab(graph_view_id, createDialogueGraphView(dialogue));
 	}
-	
+
 	public JPanel createDialogueGraphView(final Dialogue dialogue) {
 		final JPanel pane = new JPanel();
 		pane.setLayout(new BorderLayout());
-		
+
 		dialogueGraphView = new DialogueGraphView(dialogue, null);
 		pane.add(dialogueGraphView, BorderLayout.CENTER);
-		
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new JideBoxLayout(buttonPane, JideBoxLayout.LINE_AXIS));
 		JButton reloadButton = new JButton("Refresh graph");
 		buttonPane.add(reloadButton, JideBoxLayout.FIX);
 		buttonPane.add(new JPanel(), JideBoxLayout.VARY);
 		pane.add(buttonPane, BorderLayout.NORTH);
-		
-		
+
+
 		reloadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -164,22 +164,22 @@ public class DialogueEditor extends JSONElementEditor {
 				pane.repaint();
 			}
 		});
-		
+
 		return pane;
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void insertFormViewDataField(final JPanel pane) {
-		
+
 		final Dialogue dialogue = (Dialogue) target;
 		final FieldUpdateListener listener = new DialogueFieldUpdater();
-		
+
 		createButtonPane(pane, dialogue.getProject(), dialogue, Dialogue.class, dialogue.getImage(), null, listener);
-		
+
 		idField = addTextField(pane, "Internal ID: ", dialogue.id, dialogue.writable, listener);
 		messageField = addTranslatableTextArea(pane, "Message: ", dialogue.message, dialogue.writable, listener);
 		switchToNpcBox = addNPCBox(pane, dialogue.getProject(), "Switch active NPC to: ", dialogue.switch_to_npc, dialogue.writable, listener);
-		
+
 		CollapsiblePanel rewards = new CollapsiblePanel("Reaching this phrase gives the following rewards: ");
 		rewards.setLayout(new JideBoxLayout(rewards, JideBoxLayout.PAGE_AXIS));
 		rewardsListModel = new RewardsListModel(dialogue);
@@ -226,7 +226,7 @@ public class DialogueEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createReward, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteReward, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -269,7 +269,7 @@ public class DialogueEditor extends JSONElementEditor {
 
 		pane.add(replies, JideBoxLayout.FIX);
 	}
-	
+
 	public void updateRewardsEditorPane(final JPanel pane, final Dialogue.Reward reward, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (rewardMap != null) {
@@ -278,7 +278,7 @@ public class DialogueEditor extends JSONElementEditor {
 		if (rewardObj != null) {
 			removeElementListener(rewardObj);
 		}
-		
+
 		if (reward != null) {
 			rewardTypeCombo = addEnumValueBox(pane, "Reward type: ", Dialogue.Reward.RewardType.values(), reward.type, ((Dialogue)target).writable, listener);
 			rewardsParamsPane = new JPanel();
@@ -289,7 +289,7 @@ public class DialogueEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateRewardsParamsEditorPane(final JPanel pane, final Dialogue.Reward reward, final FieldUpdateListener listener) {
 		boolean writable = ((Dialogue)target).writable;
 		pane.removeAll();
@@ -336,7 +336,7 @@ public class DialogueEditor extends JSONElementEditor {
 			case actorConditionImmunity:
 				immunity = true;
 			case actorCondition:
-				
+
 				rewardMap = null;
 				rewardObjId = null;
 				rewardObjIdCombo = null;
@@ -350,12 +350,12 @@ public class DialogueEditor extends JSONElementEditor {
 					rewardConditionClear = new JRadioButton("Clear actor condition");
 					pane.add(rewardConditionClear, JideBoxLayout.FIX);
 				}
-				
+
 				ButtonGroup radioGroup = new ButtonGroup();
 				radioGroup.add(rewardConditionTimed);
 				radioGroup.add(rewardConditionForever);
 				if (!immunity) radioGroup.add(rewardConditionClear);
-				
+
 				if (immunity) {
 					rewardConditionTimed.setSelected(reward.reward_value == null || (reward.reward_value != ActorCondition.DURATION_FOREVER && reward.reward_value != ActorCondition.MAGNITUDE_CLEAR));
 					rewardConditionForever.setSelected(reward.reward_value != null && reward.reward_value != ActorCondition.DURATION_FOREVER);
@@ -365,7 +365,7 @@ public class DialogueEditor extends JSONElementEditor {
 					rewardConditionForever.setSelected(reward.reward_value == null || reward.reward_value == ActorCondition.DURATION_FOREVER);
 				}
 				rewardValue.setEnabled(rewardConditionTimed.isSelected());
-				
+
 				rewardConditionTimed.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -440,7 +440,7 @@ public class DialogueEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updateRepliesEditorPane(final JPanel pane, final Dialogue.Reply reply, final FieldUpdateListener listener) {
 		pane.removeAll();
@@ -451,12 +451,12 @@ public class DialogueEditor extends JSONElementEditor {
 			removeElementListener(requirementObj);
 		}
 		if (reply == null) return;
-		
+
 		JPanel comboPane = new JPanel();
 		comboPane.setLayout(new BorderLayout());
 		JLabel comboLabel = new JLabel("Reply type: ");
 		comboPane.add(comboLabel, BorderLayout.WEST);
-		
+
 		replyTypeCombo = new JComboBox(replyTypes);
 		replyTypeCombo.setEnabled(((Dialogue)target).writable);
 		repliesParamsPane = new JPanel();
@@ -518,7 +518,7 @@ public class DialogueEditor extends JSONElementEditor {
 		pane.add(comboPane, JideBoxLayout.FIX);
 		updateRepliesParamsEditorPane(repliesParamsPane, reply, listener);
 		pane.add(repliesParamsPane, JideBoxLayout.FIX);
-		
+
 		CollapsiblePanel requirementsPane = new CollapsiblePanel("Requirements the player must fulfill to select this reply: ");
 		requirementsPane.setLayout(new JideBoxLayout(requirementsPane, JideBoxLayout.PAGE_AXIS));
 		requirementsListModel = new ReplyRequirementsListModel(reply);
@@ -585,7 +585,7 @@ public class DialogueEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createReq, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteReq, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -597,11 +597,11 @@ public class DialogueEditor extends JSONElementEditor {
 			requirementsPane.collapse();
 		}
 		pane.add(requirementsPane, JideBoxLayout.FIX);
-		
+
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateRepliesParamsEditorPane(final JPanel pane, final Dialogue.Reply reply, final FieldUpdateListener listener) {
 		boolean writable = ((Dialogue)target).writable;
 		pane.removeAll();
@@ -612,7 +612,7 @@ public class DialogueEditor extends JSONElementEditor {
 		if (requirementObj != null) {
 			removeElementListener(requirementObj);
 		}
-		
+
 		if (Dialogue.Reply.GO_NEXT_TEXT.equals(reply.text)) {
 			replyText = null;
 			replyNextPhrase = addDialogueBox(pane, ((Dialogue)target).getProject(), "Next phrase: ", reply.next_phrase, writable, listener);
@@ -623,7 +623,7 @@ public class DialogueEditor extends JSONElementEditor {
 			replyText = addTranslatableTextField(pane, "Reply text: ", reply.text, writable, listener);
 			replyNextPhrase = addDialogueBox(pane, ((Dialogue)target).getProject(), "Next phrase: ", reply.next_phrase, writable, listener);
 		}
-		
+
 
 		pane.revalidate();
 		pane.repaint();
@@ -636,7 +636,7 @@ public class DialogueEditor extends JSONElementEditor {
 		if (requirementObj != null) {
 			removeElementListener(requirementObj);
 		}
-		
+
 		requirementTypeCombo = addEnumValueBox(pane, "Requirement type: ", Requirement.RequirementType.values(), requirement == null ? null : requirement.type, writable, listener);
 		requirementParamsPane = new JPanel();
 		requirementParamsPane.setLayout(new JideBoxLayout(requirementParamsPane, JideBoxLayout.PAGE_AXIS));
@@ -645,7 +645,7 @@ public class DialogueEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateRequirementParamsEditorPane(final JPanel pane, final Requirement requirement, final FieldUpdateListener listener) {
 		boolean writable = ((Dialogue)target).writable;
 		Project project = ((Dialogue)target).getProject();
@@ -653,7 +653,7 @@ public class DialogueEditor extends JSONElementEditor {
 		if (requirementObj != null) {
 			removeElementListener(requirementObj);
 		}
-		
+
 		if (requirement != null && requirement.type != null) {
 			switch (requirement.type) {
 			case consumedBonemeals:
@@ -743,70 +743,25 @@ public class DialogueEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
-	
-	public static class RewardsListModel implements ListModel<Dialogue.Reward> {
-		
-		Dialogue source;
-		
+
+
+ public static class RewardsListModel extends CommonEditor.AtListModel<Dialogue.Reward, Dialogue> {
+
 		public RewardsListModel(Dialogue dialogue) {
-			this.source = dialogue;
+			super(dialogue);
 		}
 
 		@Override
-		public int getSize() {
-			if (source.rewards == null) return 0;
-			return source.rewards.size();
-		}
-		
-		@Override
-		public Dialogue.Reward getElementAt(int index) {
-			if (source.rewards == null) return null;
-			return source.rewards.get(index);
-		}
-		
-		public void addItem(Dialogue.Reward item) {
-			if (source.rewards == null) {
-				source.rewards = new ArrayList<Dialogue.Reward>();
-			}
-			source.rewards.add(item);
-			int index = source.rewards.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Dialogue.Reward item) {
-			int index = source.rewards.indexOf(item);
-			source.rewards.remove(item);
-			if (source.rewards.isEmpty()) {
-				source.rewards = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+		protected List<Dialogue.Reward> getInner() {
+			return source.rewards;
 		}
 
-		public void itemChanged(Dialogue.Reward item) {
-			int index = source.rewards.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<Dialogue.Reward> value) {
+			source.rewards = value;
 		}
 	}
-	
+
 	public static class RewardsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;
 
@@ -816,13 +771,13 @@ public class DialogueEditor extends JSONElementEditor {
 			if (c instanceof JLabel) {
 				JLabel label = ((JLabel)c);
 				Dialogue.Reward reward = (Dialogue.Reward)value;
-				
+
 				decorateRewardJLabel(label, reward);
 			}
 			return c;
 		}
 	}
-	
+
 	public static void decorateRewardJLabel(JLabel label, Dialogue.Reward reward) {
 		if (reward.type != null) {
 			String rewardObjDesc = null;
@@ -912,8 +867,8 @@ public class DialogueEditor extends JSONElementEditor {
 			label.setText("New, undefined reward");
 		}
 	}
-	
-	
+
+
 	public static class RepliesListModel extends CommonEditor.AtListModel<Dialogue.Reply, Dialogue> {
 		public RepliesListModel(Dialogue dialogue) {
 			super(dialogue);
@@ -980,71 +935,23 @@ public class DialogueEditor extends JSONElementEditor {
 		}
 	}
 
-	public static class ReplyRequirementsListModel implements ListModel<Requirement> {
+ public static class ReplyRequirementsListModel extends CommonEditor.AtListModel<Requirement, Dialogue.Reply> {
 
-		Dialogue.Reply reply;
-		
 		public ReplyRequirementsListModel(Dialogue.Reply reply) {
-			this.reply = reply;
-		}
-		
-		@Override
-		public int getSize() {
-			if (reply.requirements == null) return 0;
-			return reply.requirements.size();
+			super(reply);
 		}
 
 		@Override
-		public Requirement getElementAt(int index) {
-			if (reply.requirements == null) return null;
-			return reply.requirements.get(index);
-		}
-		
-
-		
-		public void addItem(Requirement item) {
-			if (reply.requirements == null) {
-				reply.requirements = new ArrayList<Requirement>();
-			}
-			reply.requirements.add(item);
-			int index = reply.requirements.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Requirement item) {
-			int index = reply.requirements.indexOf(item);
-			reply.requirements.remove(item);
-			if (reply.requirements.isEmpty()) {
-				reply.requirements = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+		protected List<Requirement> getInner() {
+			return source.requirements;
 		}
 
-		public void itemChanged(Requirement item) {
-			int index = reply.requirements.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected void setInner(List<Requirement> value) {
+			source.requirements = value;
 		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
 	}
-	
+
 	public static class ReplyRequirementsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;
 
@@ -1057,7 +964,7 @@ public class DialogueEditor extends JSONElementEditor {
 			return c;
 		}
 	}
-	
+
 	public static void decorateRequirementJLabel(JLabel label, Requirement req) {
 		label.setText(req.getDesc());
 		if (req.required_obj != null) {
@@ -1082,7 +989,7 @@ public class DialogueEditor extends JSONElementEditor {
 			label.setText("New, undefined requirement.");
 		}
 	}
-	
+
 	public class DialogueFieldUpdater implements FieldUpdateListener {
 		@Override
 		public void valueChanged(JComponent source, Object value) {
@@ -1094,7 +1001,7 @@ public class DialogueEditor extends JSONElementEditor {
 					return;
 				}
 				if (target.id.equals((String) value)) return;
-				
+
 				if (idChanging()) {
 					dialogue.id = (String) value;
 					DialogueEditor.this.name = dialogue.getDesc();
@@ -1257,7 +1164,7 @@ public class DialogueEditor extends JSONElementEditor {
 			} else if (source == requirementNegated) {
 				selectedRequirement.negated = (Boolean) value;
 			} 
-			
+
 			if (dialogue.state != GameDataElement.State.modified) {
 				dialogue.state = GameDataElement.State.modified;
 				DialogueEditor.this.name = dialogue.getDesc();
@@ -1267,5 +1174,5 @@ public class DialogueEditor extends JSONElementEditor {
 			updateJsonViewText(dialogue.toJsonString());
 		}
 	}
-	
+
 }

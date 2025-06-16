@@ -40,12 +40,13 @@ import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
 import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
+import com.gpl.rpg.atcontentstudio.ui.tools.CommonEditor;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class NPCEditor extends JSONElementEditor {
 
 	private static final long serialVersionUID = 4001483665523721800L;
-	
+
 	private static final String form_view_id = "Form";
 	private static final String json_view_id = "JSON";
 	private static final String dialogue_tree_id = "Dialogue Tree";
@@ -55,7 +56,7 @@ public class NPCEditor extends JSONElementEditor {
 	private Common.TimedConditionEffect selectedHitReceivedEffectSourceCondition;
 	private Common.TimedConditionEffect selectedHitReceivedEffectTargetCondition;
 	private Common.TimedConditionEffect selectedDeathEffectSourceCondition;
-	
+
 	private JButton npcIcon;
 	private JTextField idField;
 	private JTextField nameField;
@@ -69,7 +70,7 @@ public class NPCEditor extends JSONElementEditor {
 	private IntegerBasedCheckBox uniqueBox;
 	@SuppressWarnings("rawtypes")
 	private JComboBox moveTypeBox;
-	
+
 	private CollapsiblePanel combatTraitPane;
 	private JSpinner maxHP;
 	private JSpinner maxAP;
@@ -89,7 +90,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JSpinner hitEffectHPMax;
 	private JSpinner hitEffectAPMin;
 	private JSpinner hitEffectAPMax;
-	
+
 	private SourceTimedConditionsListModel hitSourceConditionsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList hitSourceConditionsList;
@@ -102,7 +103,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JRadioButton hitSourceConditionTimed;
 	private JRadioButton hitSourceConditionForever;
 	private JSpinner hitSourceConditionDuration;
-	
+
 	private TargetTimedConditionsListModel hitTargetConditionsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList hitTargetConditionsList;
@@ -126,7 +127,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JSpinner hitReceivedEffectHPMaxTarget;
 	private JSpinner hitReceivedEffectAPMinTarget;
 	private JSpinner hitReceivedEffectAPMaxTarget;
-	
+
 	private SourceTimedConditionsListModel hitReceivedSourceConditionsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList hitReceivedSourceConditionsList;
@@ -139,7 +140,7 @@ public class NPCEditor extends JSONElementEditor {
 	private JRadioButton hitReceivedSourceConditionTimed;
 	private JRadioButton hitReceivedSourceConditionForever;
 	private JSpinner hitReceivedSourceConditionDuration;
-	
+
 	private TargetTimedConditionsListModel hitReceivedTargetConditionsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList hitReceivedTargetConditionsList;
@@ -152,14 +153,14 @@ public class NPCEditor extends JSONElementEditor {
 	private JRadioButton hitReceivedTargetConditionTimed;
 	private JRadioButton hitReceivedTargetConditionForever;
 	private JSpinner hitReceivedTargetConditionDuration;
-	
+
 	private Common.DeathEffect deathEffect;
 	private CollapsiblePanel deathEffectPane;
 	private JSpinner deathEffectHPMin;
 	private JSpinner deathEffectHPMax;
 	private JSpinner deathEffectAPMin;
 	private JSpinner deathEffectAPMax;
-	
+
 	private SourceTimedConditionsListModel deathSourceConditionsListModel;
 	@SuppressWarnings("rawtypes")
 	private JList deathSourceConditionsList;
@@ -172,10 +173,10 @@ public class NPCEditor extends JSONElementEditor {
 	private JRadioButton deathSourceConditionTimed;
 	private JRadioButton deathSourceConditionForever;
 	private JSpinner deathSourceConditionDuration;
-	
+
 	private JPanel dialogueGraphPane;
 	private DialogueGraphView dialogueGraphView;
-	
+
 	public NPCEditor(NPC npc) {
 		super(npc, npc.getDesc(), npc.getIcon());
 		addEditorTab(form_view_id, getFormView());
@@ -185,32 +186,32 @@ public class NPCEditor extends JSONElementEditor {
 			addEditorTab(dialogue_tree_id, dialogueGraphPane);
 		}
 	}
-	
+
 	public JPanel createDialogueGraphView(final NPC npc) {
 		dialogueGraphPane = new JPanel();
 		dialogueGraphPane.setLayout(new BorderLayout());
-		
+
 		dialogueGraphView = new DialogueGraphView(npc.dialogue, npc);
 		dialogueGraphPane.add(dialogueGraphView, BorderLayout.CENTER);
-		
+
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new JideBoxLayout(buttonPane, JideBoxLayout.LINE_AXIS));
 		JButton reloadButton = new JButton("Refresh graph");
 		buttonPane.add(reloadButton, JideBoxLayout.FIX);
 		buttonPane.add(new JPanel(), JideBoxLayout.VARY);
 		dialogueGraphPane.add(buttonPane, BorderLayout.NORTH);
-		
-		
+
+
 		reloadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				reloadGraphView(npc);
 			}
 		});
-		
+
 		return dialogueGraphPane;
 	}
-	
+
 	public void reloadGraphView(NPC npc) {
 		if (npc.dialogue != null) {
 			if (dialogueGraphPane != null) {
@@ -231,16 +232,16 @@ public class NPCEditor extends JSONElementEditor {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void insertFormViewDataField(JPanel pane) {
 		final NPC npc = (NPC) target;
-		
+
 		final FieldUpdateListener listener = new NPCFieldUpdater();
-		
+
 		npcIcon = createButtonPane(pane, npc.getProject(), npc, NPC.class, npc.getImage(), Spritesheet.Category.monster, listener);
-		
+
 		idField = addTextField(pane, "Internal ID: ", npc.id, npc.writable, listener);
 		nameField = addTranslatableTextField(pane, "Display name: ", npc.name, npc.writable, listener);
 		spawnGroupField = addTextField(pane, "Spawn group ID: ", npc.spawngroup_id, npc.writable, listener);
@@ -275,7 +276,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitEffectHPMax = addIntegerField(hitEffectPane, "HP bonus max: ", hitEffect.hp_boost_max, true, npc.writable, listener);
 		hitEffectAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, npc.writable, listener);
 		hitEffectAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, npc.writable, listener);
-		
+
 		CollapsiblePanel hitSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to the source: ");
 		hitSourceConditionsPane.setLayout(new JideBoxLayout(hitSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
 		hitSourceConditionsListModel = new SourceTimedConditionsListModel(hitEffect);
@@ -316,7 +317,7 @@ public class NPCEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createHitSourceCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteHitSourceCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -368,7 +369,7 @@ public class NPCEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createHitTargetCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteHitTargetCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -381,7 +382,7 @@ public class NPCEditor extends JSONElementEditor {
 			hitTargetConditionsPane.collapse();
 		}
 		combatTraitPane.add(hitEffectPane, JideBoxLayout.FIX);
-		
+
 		hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
 		hitReceivedEffectPane.setLayout(new JideBoxLayout(hitReceivedEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (npc.hit_received_effect == null) {
@@ -397,7 +398,7 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedEffectHPMaxTarget = addIntegerField(hitReceivedEffectPane, "Attacker HP bonus max: ", hitReceivedEffect.hp_boost_max_target, true, npc.writable, listener);
 		hitReceivedEffectAPMinTarget = addIntegerField(hitReceivedEffectPane, "Attacker AP bonus min: ", hitReceivedEffect.ap_boost_min_target, true, npc.writable, listener);
 		hitReceivedEffectAPMaxTarget = addIntegerField(hitReceivedEffectPane, "Attacker AP bonus max: ", hitReceivedEffect.ap_boost_max_target, true, npc.writable, listener);
-		
+
 		CollapsiblePanel hitReceivedSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to this NPC: ");
 		hitReceivedSourceConditionsPane.setLayout(new JideBoxLayout(hitReceivedSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
 		hitReceivedSourceConditionsListModel = new SourceTimedConditionsListModel(hitReceivedEffect);
@@ -438,7 +439,7 @@ public class NPCEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createHitReceivedSourceCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteHitReceivedSourceCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -490,7 +491,7 @@ public class NPCEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createHitReceivedTargetCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteHitReceivedTargetCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -515,7 +516,7 @@ public class NPCEditor extends JSONElementEditor {
 		deathEffectHPMax = addIntegerField(deathEffectPane, "Killer HP bonus max: ", deathEffect.hp_boost_max, true, npc.writable, listener);
 		deathEffectAPMin = addIntegerField(deathEffectPane, "Killer AP bonus min: ", deathEffect.ap_boost_min, true, npc.writable, listener);
 		deathEffectAPMax = addIntegerField(deathEffectPane, "Killer AP bonus max: ", deathEffect.ap_boost_max, true, npc.writable, listener);
-		
+
 		CollapsiblePanel deathSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to the killer: ");
 		deathSourceConditionsPane.setLayout(new JideBoxLayout(deathSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
 		deathSourceConditionsListModel = new SourceTimedConditionsListModel(deathEffect);
@@ -556,7 +557,7 @@ public class NPCEditor extends JSONElementEditor {
 					}
 				}
 			});
-			
+
 			listButtonsPane.add(createDeathSourceCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(deleteDeathSourceCondition, JideBoxLayout.FIX);
 			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -569,23 +570,23 @@ public class NPCEditor extends JSONElementEditor {
 		}
 		deathEffectPane.add(deathSourceConditionsPane, JideBoxLayout.FIX);
 		combatTraitPane.add(deathEffectPane, JideBoxLayout.FIX);
-		
-		
+
+
 		pane.add(combatTraitPane, JideBoxLayout.FIX);
 	}
-	
+
 	public void updateHitSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitSourceConditionBox != null) {
 			removeElementListener(hitSourceConditionBox);
 		}
-		
+
 		boolean writable = ((NPC)target).writable;
 		Project proj = ((NPC)target).getProject();
-		
+
 		hitSourceConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		hitSourceConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
-		
+
 		hitSourceConditionClear = new JRadioButton("Clear active condition");
 		pane.add(hitSourceConditionClear, JideBoxLayout.FIX);
 		hitSourceConditionApply = new JRadioButton("Apply condition with magnitude");
@@ -593,24 +594,24 @@ public class NPCEditor extends JSONElementEditor {
 		hitSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
 		hitSourceConditionImmunity = new JRadioButton("Give immunity to condition");
 		pane.add(hitSourceConditionImmunity, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioEffectGroup = new ButtonGroup();
 		radioEffectGroup.add(hitSourceConditionApply);
 		radioEffectGroup.add(hitSourceConditionClear);
 		radioEffectGroup.add(hitSourceConditionImmunity);
-		
+
 		hitSourceConditionTimed = new JRadioButton("For a number of rounds");
 		pane.add(hitSourceConditionTimed, JideBoxLayout.FIX);
 		hitSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
 		hitSourceConditionForever = new JRadioButton("Forever");
 		pane.add(hitSourceConditionForever, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioDurationGroup = new ButtonGroup();
 		radioDurationGroup.add(hitSourceConditionTimed);
 		radioDurationGroup.add(hitSourceConditionForever);
-		
+
 		updateHitSourceTimedConditionWidgets(condition);
-		
+
 		hitSourceConditionClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -629,7 +630,7 @@ public class NPCEditor extends JSONElementEditor {
 				listener.valueChanged(hitSourceConditionImmunity, new Boolean(hitSourceConditionImmunity.isSelected()));
 			}
 		});
-		
+
 		hitSourceConditionTimed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -645,18 +646,18 @@ public class NPCEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateHitSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
 		boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
-		
+
 		hitSourceConditionClear.setSelected(clear);
 		hitSourceConditionApply.setSelected(!clear && !immunity);
 		hitSourceConditionMagnitude.setEnabled(!clear && !immunity);
 		hitSourceConditionImmunity.setSelected(immunity);
-		
+
 		hitSourceConditionTimed.setSelected(!forever);
 		hitSourceConditionTimed.setEnabled(!clear);
 		hitSourceConditionDuration.setEnabled(!clear && !forever);
@@ -664,16 +665,16 @@ public class NPCEditor extends JSONElementEditor {
 		hitSourceConditionForever.setEnabled(!clear);
 	}
 
-	
+
 	public void updateHitTargetTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitTargetConditionBox != null) {
 			removeElementListener(hitTargetConditionBox);
 		}
-		
+
 		boolean writable = ((NPC)target).writable;
 		Project proj = ((NPC)target).getProject();
-		
+
 		hitTargetConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		hitTargetConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
 		hitTargetConditionClear = new JRadioButton("Clear active condition");
@@ -683,24 +684,24 @@ public class NPCEditor extends JSONElementEditor {
 		hitTargetConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
 		hitTargetConditionImmunity = new JRadioButton("Give immunity to condition");
 		pane.add(hitTargetConditionImmunity, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioEffectGroup = new ButtonGroup();
 		radioEffectGroup.add(hitTargetConditionApply);
 		radioEffectGroup.add(hitTargetConditionClear);
 		radioEffectGroup.add(hitTargetConditionImmunity);
-		
+
 		hitTargetConditionTimed = new JRadioButton("For a number of rounds");
 		pane.add(hitTargetConditionTimed, JideBoxLayout.FIX);
 		hitTargetConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
 		hitTargetConditionForever = new JRadioButton("Forever");
 		pane.add(hitTargetConditionForever, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioDurationGroup = new ButtonGroup();
 		radioDurationGroup.add(hitTargetConditionTimed);
 		radioDurationGroup.add(hitTargetConditionForever);
-		
+
 		updateHitTargetTimedConditionWidgets(condition);
-		
+
 		hitTargetConditionClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -719,7 +720,7 @@ public class NPCEditor extends JSONElementEditor {
 				listener.valueChanged(hitTargetConditionImmunity, new Boolean(hitTargetConditionImmunity.isSelected()));
 			}
 		});
-		
+
 		hitTargetConditionTimed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -735,38 +736,38 @@ public class NPCEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateHitTargetTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
 		boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
-		
+
 		hitTargetConditionClear.setSelected(clear);
 		hitTargetConditionApply.setSelected(!clear && !immunity);
 		hitTargetConditionMagnitude.setEnabled(!clear && !immunity);
 		hitTargetConditionImmunity.setSelected(immunity);
-		
+
 		hitTargetConditionTimed.setSelected(!forever);
 		hitTargetConditionTimed.setEnabled(!clear);
 		hitTargetConditionDuration.setEnabled(!clear && !forever);
 		hitTargetConditionForever.setSelected(forever);
 		hitTargetConditionForever.setEnabled(!clear);
 	}
-	
-	
+
+
 	public void updateHitReceivedSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitReceivedSourceConditionBox != null) {
 			removeElementListener(hitReceivedSourceConditionBox);
 		}
-		
+
 		boolean writable = ((NPC)target).writable;
 		Project proj = ((NPC)target).getProject();
-		
+
 		hitReceivedSourceConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		hitReceivedSourceConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
-		
+
 		hitReceivedSourceConditionClear = new JRadioButton("Clear active condition");
 		pane.add(hitReceivedSourceConditionClear, JideBoxLayout.FIX);
 		hitReceivedSourceConditionApply = new JRadioButton("Apply condition with magnitude");
@@ -774,24 +775,24 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
 		hitReceivedSourceConditionImmunity = new JRadioButton("Give immunity to condition");
 		pane.add(hitReceivedSourceConditionImmunity, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioEffectGroup = new ButtonGroup();
 		radioEffectGroup.add(hitReceivedSourceConditionApply);
 		radioEffectGroup.add(hitReceivedSourceConditionClear);
 		radioEffectGroup.add(hitReceivedSourceConditionImmunity);
-		
+
 		hitReceivedSourceConditionTimed = new JRadioButton("For a number of rounds");
 		pane.add(hitReceivedSourceConditionTimed, JideBoxLayout.FIX);
 		hitReceivedSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
 		hitReceivedSourceConditionForever = new JRadioButton("Forever");
 		pane.add(hitReceivedSourceConditionForever, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioDurationGroup = new ButtonGroup();
 		radioDurationGroup.add(hitReceivedSourceConditionTimed);
 		radioDurationGroup.add(hitReceivedSourceConditionForever);
-		
+
 		updateHitReceivedSourceTimedConditionWidgets(condition);
-		
+
 		hitReceivedSourceConditionClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -810,7 +811,7 @@ public class NPCEditor extends JSONElementEditor {
 				listener.valueChanged(hitReceivedSourceConditionImmunity, new Boolean(hitReceivedSourceConditionImmunity.isSelected()));
 			}
 		});
-		
+
 		hitReceivedSourceConditionTimed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -826,18 +827,18 @@ public class NPCEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateHitReceivedSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
 		boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
-		
+
 		hitReceivedSourceConditionClear.setSelected(clear);
 		hitReceivedSourceConditionApply.setSelected(!clear && !immunity);
 		hitReceivedSourceConditionMagnitude.setEnabled(!clear && !immunity);
 		hitReceivedSourceConditionImmunity.setSelected(immunity);
-		
+
 		hitReceivedSourceConditionTimed.setSelected(!forever);
 		hitReceivedSourceConditionTimed.setEnabled(!clear);
 		hitReceivedSourceConditionDuration.setEnabled(!clear && !forever);
@@ -845,16 +846,16 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedSourceConditionForever.setEnabled(!clear);
 	}
 
-	
+
 	public void updateHitReceivedTargetTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (hitReceivedTargetConditionBox != null) {
 			removeElementListener(hitReceivedTargetConditionBox);
 		}
-		
+
 		boolean writable = ((NPC)target).writable;
 		Project proj = ((NPC)target).getProject();
-		
+
 		hitReceivedTargetConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		hitReceivedTargetConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
 		hitReceivedTargetConditionClear = new JRadioButton("Clear active condition");
@@ -864,24 +865,24 @@ public class NPCEditor extends JSONElementEditor {
 		hitReceivedTargetConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
 		hitReceivedTargetConditionImmunity = new JRadioButton("Give immunity to condition");
 		pane.add(hitReceivedTargetConditionImmunity, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioEffectGroup = new ButtonGroup();
 		radioEffectGroup.add(hitReceivedTargetConditionApply);
 		radioEffectGroup.add(hitReceivedTargetConditionClear);
 		radioEffectGroup.add(hitReceivedTargetConditionImmunity);
-		
+
 		hitReceivedTargetConditionTimed = new JRadioButton("For a number of rounds");
 		pane.add(hitReceivedTargetConditionTimed, JideBoxLayout.FIX);
 		hitReceivedTargetConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
 		hitReceivedTargetConditionForever = new JRadioButton("Forever");
 		pane.add(hitReceivedTargetConditionForever, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioDurationGroup = new ButtonGroup();
 		radioDurationGroup.add(hitReceivedTargetConditionTimed);
 		radioDurationGroup.add(hitReceivedTargetConditionForever);
-		
+
 		updateHitReceivedTargetTimedConditionWidgets(condition);
-		
+
 		hitReceivedTargetConditionClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -900,7 +901,7 @@ public class NPCEditor extends JSONElementEditor {
 				listener.valueChanged(hitReceivedTargetConditionImmunity, new Boolean(hitReceivedTargetConditionImmunity.isSelected()));
 			}
 		});
-		
+
 		hitReceivedTargetConditionTimed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -916,37 +917,37 @@ public class NPCEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateHitReceivedTargetTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
 		boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
-		
+
 		hitReceivedTargetConditionClear.setSelected(clear);
 		hitReceivedTargetConditionApply.setSelected(!clear && !immunity);
 		hitReceivedTargetConditionMagnitude.setEnabled(!clear && !immunity);
 		hitReceivedTargetConditionImmunity.setSelected(immunity);
-		
+
 		hitReceivedTargetConditionTimed.setSelected(!forever);
 		hitReceivedTargetConditionTimed.setEnabled(!clear);
 		hitReceivedTargetConditionDuration.setEnabled(!clear && !forever);
 		hitReceivedTargetConditionForever.setSelected(forever);
 		hitReceivedTargetConditionForever.setEnabled(!clear);
 	}
-	
+
 	public void updateDeathSourceTimedConditionEditorPane(JPanel pane, Common.TimedConditionEffect condition, final FieldUpdateListener listener) {
 		pane.removeAll();
 		if (deathSourceConditionBox != null) {
 			removeElementListener(deathSourceConditionBox);
 		}
-		
+
 		boolean writable = ((NPC)target).writable;
 		Project proj = ((NPC)target).getProject();
-		
+
 		deathSourceConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		deathSourceConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
-		
+
 		deathSourceConditionClear = new JRadioButton("Clear active condition");
 		pane.add(deathSourceConditionClear, JideBoxLayout.FIX);
 		deathSourceConditionApply = new JRadioButton("Apply condition with magnitude");
@@ -954,24 +955,24 @@ public class NPCEditor extends JSONElementEditor {
 		deathSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
 		deathSourceConditionImmunity = new JRadioButton("Give immunity to condition");
 		pane.add(deathSourceConditionImmunity, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioEffectGroup = new ButtonGroup();
 		radioEffectGroup.add(deathSourceConditionApply);
 		radioEffectGroup.add(deathSourceConditionClear);
 		radioEffectGroup.add(deathSourceConditionImmunity);
-		
+
 		deathSourceConditionTimed = new JRadioButton("For a number of rounds");
 		pane.add(deathSourceConditionTimed, JideBoxLayout.FIX);
 		deathSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
 		deathSourceConditionForever = new JRadioButton("Forever");
 		pane.add(deathSourceConditionForever, JideBoxLayout.FIX);
-		
+
 		ButtonGroup radioDurationGroup = new ButtonGroup();
 		radioDurationGroup.add(deathSourceConditionTimed);
 		radioDurationGroup.add(deathSourceConditionForever);
-		
+
 		updateDeathSourceTimedConditionWidgets(condition);
-		
+
 		deathSourceConditionClear.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -990,7 +991,7 @@ public class NPCEditor extends JSONElementEditor {
 				listener.valueChanged(deathSourceConditionImmunity, new Boolean(deathSourceConditionImmunity.isSelected()));
 			}
 		});
-		
+
 		deathSourceConditionTimed.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -1006,18 +1007,18 @@ public class NPCEditor extends JSONElementEditor {
 		pane.revalidate();
 		pane.repaint();
 	}
-	
+
 	public void updateDeathSourceTimedConditionWidgets(Common.TimedConditionEffect condition) {
 
 		boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
 		boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
 		boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
-		
+
 		deathSourceConditionClear.setSelected(clear);
 		deathSourceConditionApply.setSelected(!clear && !immunity);
 		deathSourceConditionMagnitude.setEnabled(!clear && !immunity);
 		deathSourceConditionImmunity.setSelected(immunity);
-		
+
 		deathSourceConditionTimed.setSelected(!forever);
 		deathSourceConditionTimed.setEnabled(!clear);
 		deathSourceConditionDuration.setEnabled(!clear && !forever);
@@ -1025,130 +1026,40 @@ public class NPCEditor extends JSONElementEditor {
 		deathSourceConditionForever.setEnabled(!clear);
 	}
 
-	public static class TargetTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
-		
-		Common.HitEffect source;
-		
+ public static class TargetTimedConditionsListModel extends CommonEditor.AtListModel<Common.TimedConditionEffect, Common.HitEffect> {
+
 		public TargetTimedConditionsListModel(Common.HitEffect effect) {
-			this.source = effect;
+			super(effect);
 		}
 
 		@Override
-		public int getSize() {
-			if (source.conditions_target == null) return 0;
-			return source.conditions_target.size();
-		}
-		
-		@Override
-		public Common.TimedConditionEffect getElementAt(int index) {
-			if (source.conditions_target == null) return null;
-			return source.conditions_target.get(index);
+		protected List<Common.TimedConditionEffect> getInner() {
+			return source.conditions_target;
 		}
 
-		public void addItem(Common.TimedConditionEffect item) {
-			if (source.conditions_target == null) {
-				source.conditions_target = new ArrayList<Common.TimedConditionEffect>();
-			}
-			source.conditions_target.add(item);
-			int index = source.conditions_target.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Common.TimedConditionEffect item) {
-			int index = source.conditions_target.indexOf(item);
-			source.conditions_target.remove(item);
-			if (source.conditions_target.isEmpty()) {
-				source.conditions_target = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(Common.TimedConditionEffect item) {
-			int index = source.conditions_target.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<Common.TimedConditionEffect> value) {
+			source.conditions_target = value;
 		}
 	}
-	
-	public static class SourceTimedConditionsListModel implements ListModel<Common.TimedConditionEffect> {
-		
-		Common.DeathEffect source;
-		
+
+ public static class SourceTimedConditionsListModel extends CommonEditor.AtListModel<Common.TimedConditionEffect, Common.DeathEffect> {
+
 		public SourceTimedConditionsListModel(Common.DeathEffect effect) {
-			this.source = effect;
+			super(effect);
 		}
 
 		@Override
-		public int getSize() {
-			if (source.conditions_source == null) return 0;
-			return source.conditions_source.size();
-		}
-		
-		@Override
-		public Common.TimedConditionEffect getElementAt(int index) {
-			if (source.conditions_source == null) return null;
-			return source.conditions_source.get(index);
-		}
-		
-		public void addItem(Common.TimedConditionEffect item) {
-			if (source.conditions_source == null) {
-				source.conditions_source = new ArrayList<Common.TimedConditionEffect>();
-			}
-			source.conditions_source.add(item);
-			int index = source.conditions_source.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Common.TimedConditionEffect item) {
-			int index = source.conditions_source.indexOf(item);
-			source.conditions_source.remove(item);
-			if (source.conditions_source.isEmpty()) {
-				source.conditions_source = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+		protected List<Common.TimedConditionEffect> getInner() {
+			return source.conditions_source;
 		}
 
-		public void itemChanged(Common.TimedConditionEffect item) {
-			int index = source.conditions_source.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<Common.TimedConditionEffect> value) {
+			source.conditions_source = value;
 		}
 	}
-	
+
 	public static class TimedConditionsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;
 
@@ -1158,13 +1069,13 @@ public class NPCEditor extends JSONElementEditor {
 			if (c instanceof JLabel) {
 				JLabel label = ((JLabel)c);
 				Common.TimedConditionEffect effect = (Common.TimedConditionEffect) value;
-				
+
 				if (effect.condition != null) {
 
 					boolean immunity = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration != null && effect.duration > ActorCondition.DURATION_NONE);
 					boolean clear = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration == null || effect.duration == ActorCondition.DURATION_NONE);
 					boolean forever = effect.duration != null && effect.duration == ActorCondition.DURATION_FOREVER;
-					
+
 					if (clear) {
 						label.setIcon(new ImageIcon(effect.condition.getIcon()));
 						label.setText(effect.chance+"% chances to clear actor condition "+effect.condition.getDesc());
@@ -1182,7 +1093,7 @@ public class NPCEditor extends JSONElementEditor {
 			return c;
 		}
 	}
-	
+
 	public static boolean isNull(Common.HitEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
@@ -1192,7 +1103,7 @@ public class NPCEditor extends JSONElementEditor {
 		if (effect.conditions_target != null) return false;
 		return true;
 	}
-	
+
 	public static boolean isNull(Common.HitReceivedEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
@@ -1206,7 +1117,7 @@ public class NPCEditor extends JSONElementEditor {
 		if (effect.conditions_target != null) return false;
 		return true;
 	}
-	
+
 	public static boolean isNull(Common.DeathEffect effect) {
 		if (effect.ap_boost_min != null) return false;
 		if (effect.ap_boost_max != null) return false;
@@ -1215,7 +1126,7 @@ public class NPCEditor extends JSONElementEditor {
 		if (effect.conditions_source != null) return false;
 		return true;
 	}
-	
+
 	public class NPCFieldUpdater implements FieldUpdateListener {
 
 		@Override
@@ -1230,7 +1141,7 @@ public class NPCEditor extends JSONElementEditor {
 					return;
 				}
 				if (target.id.equals((String) value)) return;
-				
+
 				if (idChanging()) {
 					npc.id = (String) value;
 					NPCEditor.this.name = npc.getDesc();
@@ -1689,9 +1600,9 @@ public class NPCEditor extends JSONElementEditor {
 					npc.death_effect = deathEffect;
 				}
 			}
-			
+
 			experienceField.setValue(npc.getMonsterExperience());
-			
+
 			if (npc.state != GameDataElement.State.modified) {
 				npc.state = GameDataElement.State.modified;
 				NPCEditor.this.name = npc.getDesc();
@@ -1699,9 +1610,9 @@ public class NPCEditor extends JSONElementEditor {
 				ATContentStudio.frame.editorChanged(NPCEditor.this);
 			}
 			updateJsonViewText(npc.toJsonString());
-			
+
 		}
-		
+
 	}
 
 
