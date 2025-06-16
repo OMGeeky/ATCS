@@ -232,59 +232,23 @@ public class ItemEditor extends JSONElementEditor {
 		equipIncUseCost = addIntegerField(equipEffectPane, "Increase item use cost: ", equipEffect.increase_use_item_cost, true, item.writable, listener);
 		equipIncReequipCost = addIntegerField(equipEffectPane, "Increase reequip cost: ", equipEffect.increase_reequip_cost, true, item.writable, listener);
 		equipIncAttackCost = addIntegerField(equipEffectPane, "Increase attack cost: ", equipEffect.increase_attack_cost, true, item.writable, listener);
-		CollapsiblePanel equipConditionsPane = new CollapsiblePanel("Actor Conditions applied when equipped: ");
-		equipConditionsPane.setLayout(new JideBoxLayout(equipConditionsPane, JideBoxLayout.PAGE_AXIS));
+		String title = "Actor Conditions applied when equipped: ";
+		ConditionsCellRenderer cellRenderer = new ConditionsCellRenderer();
 		equipConditionsModel = new ConditionsListModel(equipEffect);
-		equipConditionsList = new JList(equipConditionsModel);
-		equipConditionsList.setCellRenderer(new ConditionsCellRenderer());
-		equipConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		equipConditionsPane.add(new JScrollPane(equipConditionsList), JideBoxLayout.FIX);
-		final JPanel equipConditionsEditorPane = new JPanel();
-		final JButton createEquipCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteEquipCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		equipConditionsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedEquipEffectCondition = (Common.ConditionEffect) equipConditionsList.getSelectedValue();
-				if (selectedEquipEffectCondition == null) {
-					deleteEquipCondition.setEnabled(false);
-				} else {
-					deleteEquipCondition.setEnabled(true);
-				}
-				updateEquipConditionEditorPane(equipConditionsEditorPane, selectedEquipEffectCondition, listener);
-			}
-		});
-		if (item.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createEquipCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Common.ConditionEffect condition = new Common.ConditionEffect();
-					equipConditionsModel.addItem(condition);
-					equipConditionsList.setSelectedValue(condition, true);
-					listener.valueChanged(equipConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteEquipCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedEquipEffectCondition != null) {
-						equipConditionsModel.removeItem(selectedEquipEffectCondition);
-						selectedEquipEffectCondition = null;
-						equipConditionsList.clearSelection();
-						listener.valueChanged(equipConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean moveUpDownEnabled = false;
 
-			listButtonsPane.add(createEquipCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteEquipCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			equipConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		equipConditionsEditorPane.setLayout(new JideBoxLayout(equipConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-		equipConditionsPane.add(equipConditionsEditorPane, JideBoxLayout.FIX);
+		CollapsiblePanel equipConditionsPane = CommonEditor.createListPanel(
+				title,
+				cellRenderer,
+				equipConditionsModel,
+				item.writable,
+				moveUpDownEnabled,
+				(e) -> selectedEquipEffectCondition = e,
+				() -> selectedEquipEffectCondition,
+				this::updateEquipConditionEditorPane,
+				listener,
+				Common.ConditionEffect::new);
+
 		if (item.equip_effect == null || item.equip_effect.conditions == null || item.equip_effect.conditions.isEmpty()) {
 			equipConditionsPane.collapse();
 		}
@@ -305,116 +269,44 @@ public class ItemEditor extends JSONElementEditor {
 		hitHPMax = addIntegerField(hitEffectPane, "HP bonus max: ", hitEffect.hp_boost_max, true, item.writable, listener);
 		hitAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, item.writable, listener);
 		hitAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, item.writable, listener);
-		final CollapsiblePanel hitSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to the source: ");
-		hitSourceConditionsPane.setLayout(new JideBoxLayout(hitSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
+		String hitSourceTitle = "Actor Conditions applied to the source: ";
+		TimedConditionsCellRenderer hitSourceCellRenderer = new TimedConditionsCellRenderer();
 		hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
-		hitSourceConditionsList = new JList(hitSourceConditionsModel);
-		hitSourceConditionsList.setCellRenderer(new TimedConditionsCellRenderer());
-		hitSourceConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		hitSourceConditionsPane.add(new JScrollPane(hitSourceConditionsList), JideBoxLayout.FIX);
-		final JPanel sourceTimedConditionsEditorPane = new JPanel();
-		final JButton createHitSourceCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteHitSourceCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		hitSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedHitEffectSourceCondition = (Common.TimedConditionEffect) hitSourceConditionsList.getSelectedValue();
-				updateHitSourceTimedConditionEditorPane(sourceTimedConditionsEditorPane, selectedHitEffectSourceCondition, listener);
-				if (selectedHitEffectSourceCondition == null) {
-					deleteHitSourceCondition.setEnabled(false);
-				} else {
-					deleteHitSourceCondition.setEnabled(true);
-				}
-			}
-		});
-		if (item.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createHitSourceCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					hitSourceConditionsModel.addItem(condition);
-					hitSourceConditionsList.setSelectedValue(condition, true);
-					listener.valueChanged(hitSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteHitSourceCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedHitEffectSourceCondition != null) {
-						hitSourceConditionsModel.removeItem(selectedHitEffectSourceCondition);
-						selectedHitEffectSourceCondition = null;
-						hitSourceConditionsList.clearSelection();
-						listener.valueChanged(hitSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean hitSourceMoveUpDownEnabled = false;
 
-			listButtonsPane.add(createHitSourceCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteHitSourceCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			hitSourceConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		sourceTimedConditionsEditorPane.setLayout(new JideBoxLayout(sourceTimedConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-		hitSourceConditionsPane.add(sourceTimedConditionsEditorPane, JideBoxLayout.FIX);
+		final CollapsiblePanel hitSourceConditionsPane = CommonEditor.createListPanel(
+				hitSourceTitle,
+				hitSourceCellRenderer,
+				hitSourceConditionsModel,
+				item.writable,
+				hitSourceMoveUpDownEnabled,
+				(e) -> selectedHitEffectSourceCondition = e,
+				() -> selectedHitEffectSourceCondition,
+				this::updateHitSourceTimedConditionEditorPane,
+				listener,
+				Common.TimedConditionEffect::new);
+
 		if (item.hit_effect == null || item.hit_effect.conditions_source == null || item.hit_effect.conditions_source.isEmpty()) {
 			hitSourceConditionsPane.collapse();
 		}
 		hitEffectPane.add(hitSourceConditionsPane, JideBoxLayout.FIX);
-		final CollapsiblePanel hitTargetConditionsPane = new CollapsiblePanel("Actor Conditions applied to the target: ");
-		hitTargetConditionsPane.setLayout(new JideBoxLayout(hitTargetConditionsPane, JideBoxLayout.PAGE_AXIS));
+		String hitTargetTitle = "Actor Conditions applied to the target: ";
+		TimedConditionsCellRenderer hitTargetCellRenderer = new TimedConditionsCellRenderer();
 		hitTargetConditionsModel = new TargetTimedConditionsListModel(hitEffect);
-		hitTargetConditionsList = new JList(hitTargetConditionsModel);
-		hitTargetConditionsList.setCellRenderer(new TimedConditionsCellRenderer());
-		hitTargetConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		hitTargetConditionsPane.add(new JScrollPane(hitTargetConditionsList), JideBoxLayout.FIX);
-		final JPanel targetTimedConditionsEditorPane = new JPanel();
-		final JButton createHitTargetCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteHitTargetCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		hitTargetConditionsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedHitEffectTargetCondition = (Common.TimedConditionEffect) hitTargetConditionsList.getSelectedValue();
-				updateHitTargetTimedConditionEditorPane(targetTimedConditionsEditorPane, selectedHitEffectTargetCondition, listener);
-				if (selectedHitEffectTargetCondition == null) {
-					deleteHitTargetCondition.setEnabled(false);
-				} else {
-					deleteHitTargetCondition.setEnabled(true);
-				}
-			}
-		});
-		if (item.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createHitTargetCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					hitTargetConditionsModel.addItem(condition);
-					hitTargetConditionsList.setSelectedValue(condition, true);
-					listener.valueChanged(hitTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteHitTargetCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedHitEffectTargetCondition != null) {
-						hitTargetConditionsModel.removeItem(selectedHitEffectTargetCondition);
-						selectedHitEffectTargetCondition = null;
-						hitTargetConditionsList.clearSelection();
-						listener.valueChanged(hitTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean hitTargetMoveUpDownEnabled = false;
 
-			listButtonsPane.add(createHitTargetCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteHitTargetCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			hitTargetConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		targetTimedConditionsEditorPane.setLayout(new JideBoxLayout(targetTimedConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-		hitTargetConditionsPane.add(targetTimedConditionsEditorPane, JideBoxLayout.FIX);
+		final CollapsiblePanel hitTargetConditionsPane = CommonEditor.createListPanel(
+				hitTargetTitle,
+				hitTargetCellRenderer,
+				hitTargetConditionsModel,
+				item.writable,
+				hitTargetMoveUpDownEnabled,
+				(e) -> selectedHitEffectTargetCondition = e,
+				() -> selectedHitEffectTargetCondition,
+				this::updateHitTargetTimedConditionEditorPane,
+				listener,
+				Common.TimedConditionEffect::new);
+
 		if (item.hit_effect == null || item.hit_effect.conditions_target == null || item.hit_effect.conditions_target.isEmpty()) {
 			hitTargetConditionsPane.collapse();
 		}
@@ -437,59 +329,23 @@ public class ItemEditor extends JSONElementEditor {
 		killHPMax = addIntegerField(killEffectPane, "HP bonus max: ", killEffect.hp_boost_max, true, item.writable, listener);
 		killAPMin = addIntegerField(killEffectPane, "AP bonus min: ", killEffect.ap_boost_min, true, item.writable, listener);
 		killAPMax = addIntegerField(killEffectPane, "AP bonus max: ", killEffect.ap_boost_max, true, item.writable, listener);
-		final CollapsiblePanel killSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to the source: ");
-		killSourceConditionsPane.setLayout(new JideBoxLayout(killSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
+		String killSourceTitle = "Actor Conditions applied to the source: ";
+		TimedConditionsCellRenderer killSourceCellRenderer = new TimedConditionsCellRenderer();
 		killSourceConditionsModel = new SourceTimedConditionsListModel(killEffect);
-		killSourceConditionsList = new JList(killSourceConditionsModel);
-		killSourceConditionsList.setCellRenderer(new TimedConditionsCellRenderer());
-		killSourceConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		killSourceConditionsPane.add(new JScrollPane(killSourceConditionsList), JideBoxLayout.FIX);
-		final JPanel killSourceTimedConditionsEditorPane = new JPanel();
-		final JButton createKillSourceCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteKillSourceCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		killSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedKillEffectCondition = (Common.TimedConditionEffect) killSourceConditionsList.getSelectedValue();
-				updateKillSourceTimedConditionEditorPane(killSourceTimedConditionsEditorPane, selectedKillEffectCondition, listener);
-				if (selectedKillEffectCondition == null) {
-					deleteKillSourceCondition.setEnabled(false);
-				} else {
-					deleteKillSourceCondition.setEnabled(true);
-				}
-			}
-		});
-		if (item.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createKillSourceCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					killSourceConditionsModel.addItem(condition);
-					killSourceConditionsList.setSelectedValue(condition, true);
-					listener.valueChanged(killSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteKillSourceCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedKillEffectCondition != null) {
-						killSourceConditionsModel.removeItem(selectedKillEffectCondition);
-						selectedKillEffectCondition = null;
-						killSourceConditionsList.clearSelection();
-						listener.valueChanged(killSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean killSourceMoveUpDownEnabled = false;
 
-			listButtonsPane.add(createKillSourceCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteKillSourceCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			killSourceConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		killSourceTimedConditionsEditorPane.setLayout(new JideBoxLayout(killSourceTimedConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-		killSourceConditionsPane.add(killSourceTimedConditionsEditorPane, JideBoxLayout.FIX);
+		final CollapsiblePanel killSourceConditionsPane = CommonEditor.createListPanel(
+				killSourceTitle,
+				killSourceCellRenderer,
+				killSourceConditionsModel,
+				item.writable,
+				killSourceMoveUpDownEnabled,
+				(e) -> selectedKillEffectCondition = e,
+				() -> selectedKillEffectCondition,
+				this::updateKillSourceTimedConditionEditorPane,
+				listener,
+				Common.TimedConditionEffect::new);
+
 		if (item.kill_effect == null || item.kill_effect.conditions_source == null || item.kill_effect.conditions_source.isEmpty()) {
 			killSourceConditionsPane.collapse();
 		}
@@ -515,116 +371,44 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedHPMaxTarget = addIntegerField(hitReceivedEffectPane, "Attacker HP bonus max: ", hitReceivedEffect.hp_boost_max_target, true, item.writable, listener);
 		hitReceivedAPMinTarget = addIntegerField(hitReceivedEffectPane, "Attacker AP bonus min: ", hitReceivedEffect.ap_boost_min_target, true, item.writable, listener);
 		hitReceivedAPMaxTarget = addIntegerField(hitReceivedEffectPane, "Attacker AP bonus max: ", hitReceivedEffect.ap_boost_max_target, true, item.writable, listener);
-		final CollapsiblePanel hitReceivedSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to the player: ");
-		hitReceivedSourceConditionsPane.setLayout(new JideBoxLayout(hitReceivedSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
+		String hitReceivedSourceTitle = "Actor Conditions applied to the player: ";
+		TimedConditionsCellRenderer hitReceivedSourceCellRenderer = new TimedConditionsCellRenderer();
 		hitReceivedSourceConditionsModel = new SourceTimedConditionsListModel(hitReceivedEffect);
-		hitReceivedSourceConditionsList = new JList(hitReceivedSourceConditionsModel);
-		hitReceivedSourceConditionsList.setCellRenderer(new TimedConditionsCellRenderer());
-		hitReceivedSourceConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		hitReceivedSourceConditionsPane.add(new JScrollPane(hitReceivedSourceConditionsList), JideBoxLayout.FIX);
-		final JPanel hitReceivedSourceTimedConditionsEditorPane = new JPanel();
-		final JButton createHitReceivedSourceCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteHitReceivedSourceCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		hitReceivedSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedHitReceivedEffectSourceCondition = (Common.TimedConditionEffect) hitReceivedSourceConditionsList.getSelectedValue();
-				updateHitReceivedSourceTimedConditionEditorPane(hitReceivedSourceTimedConditionsEditorPane, selectedHitReceivedEffectSourceCondition, listener);
-				if (selectedHitReceivedEffectSourceCondition == null) {
-					deleteHitReceivedSourceCondition.setEnabled(false);
-				} else {
-					deleteHitReceivedSourceCondition.setEnabled(true);
-				}
-			}
-		});
-		if (item.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createHitReceivedSourceCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					hitReceivedSourceConditionsModel.addItem(condition);
-					hitReceivedSourceConditionsList.setSelectedValue(condition, true);
-					listener.valueChanged(hitReceivedSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteHitReceivedSourceCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedHitReceivedEffectSourceCondition != null) {
-						hitReceivedSourceConditionsModel.removeItem(selectedHitReceivedEffectSourceCondition);
-						selectedHitReceivedEffectSourceCondition = null;
-						hitReceivedSourceConditionsList.clearSelection();
-						listener.valueChanged(hitReceivedSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean hitReceivedSourceMoveUpDownEnabled = false;
 
-			listButtonsPane.add(createHitReceivedSourceCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteHitReceivedSourceCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			hitReceivedSourceConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		hitReceivedSourceTimedConditionsEditorPane.setLayout(new JideBoxLayout(hitReceivedSourceTimedConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-		hitReceivedSourceConditionsPane.add(hitReceivedSourceTimedConditionsEditorPane, JideBoxLayout.FIX);
+		final CollapsiblePanel hitReceivedSourceConditionsPane = CommonEditor.createListPanel(
+				hitReceivedSourceTitle,
+				hitReceivedSourceCellRenderer,
+				hitReceivedSourceConditionsModel,
+				item.writable,
+				hitReceivedSourceMoveUpDownEnabled,
+				(e) -> selectedHitReceivedEffectSourceCondition = e,
+				() -> selectedHitReceivedEffectSourceCondition,
+				this::updateHitReceivedSourceTimedConditionEditorPane,
+				listener,
+				Common.TimedConditionEffect::new);
+
 		if (item.hit_received_effect == null || item.hit_received_effect.conditions_source == null || item.hit_received_effect.conditions_source.isEmpty()) {
 			hitReceivedSourceConditionsPane.collapse();
 		}
 		hitReceivedEffectPane.add(hitReceivedSourceConditionsPane, JideBoxLayout.FIX);
-		final CollapsiblePanel hitReceivedTargetConditionsPane = new CollapsiblePanel("Actor Conditions applied to the attacker: ");
-		hitReceivedTargetConditionsPane.setLayout(new JideBoxLayout(hitReceivedTargetConditionsPane, JideBoxLayout.PAGE_AXIS));
+		String hitReceivedTargetTitle = "Actor Conditions applied to the attacker: ";
+		TimedConditionsCellRenderer hitReceivedTargetCellRenderer = new TimedConditionsCellRenderer();
 		hitReceivedTargetConditionsModel = new TargetTimedConditionsListModel(hitReceivedEffect);
-		hitReceivedTargetConditionsList = new JList(hitReceivedTargetConditionsModel);
-		hitReceivedTargetConditionsList.setCellRenderer(new TimedConditionsCellRenderer());
-		hitReceivedTargetConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		hitReceivedTargetConditionsPane.add(new JScrollPane(hitReceivedTargetConditionsList), JideBoxLayout.FIX);
-		final JPanel hitReceivedTargetTimedConditionsEditorPane = new JPanel();
-		final JButton createHitReceivedTargetCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteHitReceivedTargetCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		hitReceivedTargetConditionsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedHitReceivedEffectTargetCondition = (Common.TimedConditionEffect) hitReceivedTargetConditionsList.getSelectedValue();
-				updateHitReceivedTargetTimedConditionEditorPane(hitReceivedTargetTimedConditionsEditorPane, selectedHitReceivedEffectTargetCondition, listener);
-				if (selectedHitReceivedEffectTargetCondition == null) {
-					deleteHitReceivedTargetCondition.setEnabled(false);
-				} else {
-					deleteHitReceivedTargetCondition.setEnabled(true);
-				}
-			}
-		});
-		if (item.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createHitReceivedTargetCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-					hitReceivedTargetConditionsModel.addItem(condition);
-					hitReceivedTargetConditionsList.setSelectedValue(condition, true);
-					listener.valueChanged(hitReceivedTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteHitReceivedTargetCondition.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedHitReceivedEffectTargetCondition != null) {
-						hitReceivedTargetConditionsModel.removeItem(selectedHitReceivedEffectTargetCondition);
-						selectedHitReceivedEffectTargetCondition = null;
-						hitReceivedTargetConditionsList.clearSelection();
-						listener.valueChanged(hitReceivedTargetConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean hitReceivedTargetMoveUpDownEnabled = false;
 
-			listButtonsPane.add(createHitReceivedTargetCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteHitReceivedTargetCondition, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			hitReceivedTargetConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		hitReceivedTargetTimedConditionsEditorPane.setLayout(new JideBoxLayout(hitReceivedTargetTimedConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-		hitReceivedTargetConditionsPane.add(hitReceivedTargetTimedConditionsEditorPane, JideBoxLayout.FIX);
+		final CollapsiblePanel hitReceivedTargetConditionsPane = CommonEditor.createListPanel(
+				hitReceivedTargetTitle,
+				hitReceivedTargetCellRenderer,
+				hitReceivedTargetConditionsModel,
+				item.writable,
+				hitReceivedTargetMoveUpDownEnabled,
+				(e) -> selectedHitReceivedEffectTargetCondition = e,
+				() -> selectedHitReceivedEffectTargetCondition,
+				this::updateHitReceivedTargetTimedConditionEditorPane,
+				listener,
+				Common.TimedConditionEffect::new);
+
 		if (item.hit_received_effect == null || item.hit_received_effect.conditions_target == null || item.hit_received_effect.conditions_target.isEmpty()) {
 			hitReceivedTargetConditionsPane.collapse();
 		}
