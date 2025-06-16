@@ -81,7 +81,7 @@ public class QuestEditor extends JSONElementEditor {
 				()->selectedStage,
 				this::updateStageEditorPane,
 				listener,
-				()->new QuestStage(quest));
+				()->new QuestStage(quest)).panel;
 
 		if (quest.stages == null || quest.stages.isEmpty()) {
 			stagesPane.collapse();

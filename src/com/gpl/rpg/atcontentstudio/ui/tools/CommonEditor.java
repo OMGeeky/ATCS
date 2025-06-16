@@ -23,8 +23,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class CommonEditor {
 
-
-    public static <E, S> CollapsiblePanel createListPanel(String title,
+    public static class PanelCreateResult<E>{
+        public CollapsiblePanel panel;
+        public JList<E> list;
+    }
+    public static  <E, S> PanelCreateResult<E> createListPanel(String title,
                                                           ListCellRenderer<? super E> cellRenderer,
                                                           AtListModel<E, S> listModel,
                                                           boolean writable,
@@ -137,7 +140,10 @@ public final class CommonEditor {
         }
         repliesEditorPane.setLayout(new JideBoxLayout(repliesEditorPane, JideBoxLayout.PAGE_AXIS));
         replies.add(repliesEditorPane, JideBoxLayout.FIX);
-        return replies;
+        PanelCreateResult<E> ePanelCreateResult = new PanelCreateResult<>();
+        ePanelCreateResult.panel  =replies;
+        ePanelCreateResult.list = repliesList;
+        return ePanelCreateResult;
     }
 
 

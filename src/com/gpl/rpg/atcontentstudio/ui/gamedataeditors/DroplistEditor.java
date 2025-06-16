@@ -74,7 +74,7 @@ public class DroplistEditor extends JSONElementEditor {
 				() -> selectedItem,
 				this::updateDroppedItemsEditorPane,
 				listener,
-				Droplist.DroppedItem::new);
+				Droplist.DroppedItem::new).panel;
 
 		if (droplist.dropped_items == null || droplist.dropped_items.isEmpty()) {
 			itemsPane.collapse();

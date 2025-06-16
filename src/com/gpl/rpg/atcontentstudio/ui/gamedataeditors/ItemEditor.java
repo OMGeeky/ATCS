@@ -237,7 +237,7 @@ public class ItemEditor extends JSONElementEditor {
 		equipConditionsModel = new ConditionsListModel(equipEffect);
 		final boolean moveUpDownEnabled = false;
 
-		CollapsiblePanel equipConditionsPane = CommonEditor.createListPanel(
+		CommonEditor.PanelCreateResult<Common.ConditionEffect> equipConditionsCreation = CommonEditor.createListPanel(
 				title,
 				cellRenderer,
 				equipConditionsModel,
@@ -248,6 +248,8 @@ public class ItemEditor extends JSONElementEditor {
 				this::updateEquipConditionEditorPane,
 				listener,
 				Common.ConditionEffect::new);
+		CollapsiblePanel equipConditionsPane =  equipConditionsCreation.panel;
+		equipConditionsList = equipConditionsCreation.list;
 
 		if (item.equip_effect == null || item.equip_effect.conditions == null || item.equip_effect.conditions.isEmpty()) {
 			equipConditionsPane.collapse();
@@ -274,7 +276,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
 		final boolean hitSourceMoveUpDownEnabled = false;
 
-		final CollapsiblePanel hitSourceConditionsPane = CommonEditor.createListPanel(
+		CommonEditor.PanelCreateResult<Common.TimedConditionEffect> hitSourceConditionsCreation = CommonEditor.createListPanel(
 				hitSourceTitle,
 				hitSourceCellRenderer,
 				hitSourceConditionsModel,
@@ -285,6 +287,8 @@ public class ItemEditor extends JSONElementEditor {
 				this::updateHitSourceTimedConditionEditorPane,
 				listener,
 				Common.TimedConditionEffect::new);
+		final CollapsiblePanel hitSourceConditionsPane = hitSourceConditionsCreation.panel;
+		hitSourceConditionsList = hitSourceConditionsCreation.list;
 
 		if (item.hit_effect == null || item.hit_effect.conditions_source == null || item.hit_effect.conditions_source.isEmpty()) {
 			hitSourceConditionsPane.collapse();
@@ -295,7 +299,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitTargetConditionsModel = new TargetTimedConditionsListModel(hitEffect);
 		final boolean hitTargetMoveUpDownEnabled = false;
 
-		final CollapsiblePanel hitTargetConditionsPane = CommonEditor.createListPanel(
+		CommonEditor.PanelCreateResult<Common.TimedConditionEffect> listPanel2 = CommonEditor.createListPanel(
 				hitTargetTitle,
 				hitTargetCellRenderer,
 				hitTargetConditionsModel,
@@ -306,6 +310,8 @@ public class ItemEditor extends JSONElementEditor {
 				this::updateHitTargetTimedConditionEditorPane,
 				listener,
 				Common.TimedConditionEffect::new);
+		final CollapsiblePanel hitTargetConditionsPane = (CollapsiblePanel) listPanel2.panel;
+		hitTargetConditionsList = listPanel2.list;
 
 		if (item.hit_effect == null || item.hit_effect.conditions_target == null || item.hit_effect.conditions_target.isEmpty()) {
 			hitTargetConditionsPane.collapse();
@@ -334,7 +340,7 @@ public class ItemEditor extends JSONElementEditor {
 		killSourceConditionsModel = new SourceTimedConditionsListModel(killEffect);
 		final boolean killSourceMoveUpDownEnabled = false;
 
-		final CollapsiblePanel killSourceConditionsPane = CommonEditor.createListPanel(
+		CommonEditor.PanelCreateResult<Common.TimedConditionEffect> listPanel = CommonEditor.createListPanel(
 				killSourceTitle,
 				killSourceCellRenderer,
 				killSourceConditionsModel,
@@ -345,6 +351,8 @@ public class ItemEditor extends JSONElementEditor {
 				this::updateKillSourceTimedConditionEditorPane,
 				listener,
 				Common.TimedConditionEffect::new);
+		final CollapsiblePanel killSourceConditionsPane = listPanel.panel;
+		killSourceConditionsList = listPanel.list;
 
 		if (item.kill_effect == null || item.kill_effect.conditions_source == null || item.kill_effect.conditions_source.isEmpty()) {
 			killSourceConditionsPane.collapse();
@@ -376,7 +384,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedSourceConditionsModel = new SourceTimedConditionsListModel(hitReceivedEffect);
 		final boolean hitReceivedSourceMoveUpDownEnabled = false;
 
-		final CollapsiblePanel hitReceivedSourceConditionsPane = CommonEditor.createListPanel(
+		CommonEditor.PanelCreateResult<Common.TimedConditionEffect> listPanel1 = CommonEditor.createListPanel(
 				hitReceivedSourceTitle,
 				hitReceivedSourceCellRenderer,
 				hitReceivedSourceConditionsModel,
@@ -387,6 +395,8 @@ public class ItemEditor extends JSONElementEditor {
 				this::updateHitReceivedSourceTimedConditionEditorPane,
 				listener,
 				Common.TimedConditionEffect::new);
+		final CollapsiblePanel hitReceivedSourceConditionsPane = listPanel1.panel;
+		hitReceivedSourceConditionsList = listPanel1.list;
 
 		if (item.hit_received_effect == null || item.hit_received_effect.conditions_source == null || item.hit_received_effect.conditions_source.isEmpty()) {
 			hitReceivedSourceConditionsPane.collapse();
@@ -397,7 +407,7 @@ public class ItemEditor extends JSONElementEditor {
 		hitReceivedTargetConditionsModel = new TargetTimedConditionsListModel(hitReceivedEffect);
 		final boolean hitReceivedTargetMoveUpDownEnabled = false;
 
-		final CollapsiblePanel hitReceivedTargetConditionsPane = CommonEditor.createListPanel(
+		CommonEditor.PanelCreateResult<Common.TimedConditionEffect> listPanel3 = CommonEditor.createListPanel(
 				hitReceivedTargetTitle,
 				hitReceivedTargetCellRenderer,
 				hitReceivedTargetConditionsModel,
@@ -408,6 +418,8 @@ public class ItemEditor extends JSONElementEditor {
 				this::updateHitReceivedTargetTimedConditionEditorPane,
 				listener,
 				Common.TimedConditionEffect::new);
+		final CollapsiblePanel hitReceivedTargetConditionsPane = listPanel3.panel;
+		hitReceivedTargetConditionsList = listPanel3.list;
 
 		if (item.hit_received_effect == null || item.hit_received_effect.conditions_target == null || item.hit_received_effect.conditions_target.isEmpty()) {
 			hitReceivedTargetConditionsPane.collapse();

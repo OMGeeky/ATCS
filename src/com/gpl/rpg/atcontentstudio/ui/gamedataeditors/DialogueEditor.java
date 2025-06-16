@@ -255,7 +255,7 @@ public class DialogueEditor extends JSONElementEditor {
 				()->selectedReply,
                 this::updateRepliesEditorPane,
 				listener,
-                Dialogue.Reply::new);
+                Dialogue.Reply::new).panel;
 
 		boolean isEmpty = dialogue.replies == null || dialogue.replies.isEmpty();
 		if (isEmpty) {
@@ -530,7 +530,7 @@ public class DialogueEditor extends JSONElementEditor {
 				()->selectedRequirement,
 				this::updateRequirementsEditorPane,
 				listener,
-                Requirement::new);
+                Requirement::new).panel;
 
 		if (reply.requirements == null || reply.requirements.isEmpty()) {
 			requirementsPane.collapse();
