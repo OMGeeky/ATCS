@@ -21,15 +21,15 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 public class Quest extends JSONElement {
 
 	private static final long serialVersionUID = 2004839647483250099L;
-	
+
 	//Available from init state
 	//public String id = null; inherited.
 	public String name = null;
-	
+
 	//Available in parsed state
 	public Integer visible_in_log = null;
 	public List<QuestStage> stages = null;
-	
+
 	@Override
 	public String getDesc() {
 		return (needsSaving() ? "*" : "")+name+" ("+id+")";
@@ -38,7 +38,7 @@ public class Quest extends JSONElement {
 	public static String getStaticDesc() {
 		return "Quests";
 	}
-	
+
 
 	@SuppressWarnings("rawtypes")
 	public static void fromJson(File jsonFile, GameDataCategory<Quest> category) {
@@ -75,7 +75,7 @@ public class Quest extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Quest fromJson(String jsonString) throws ParseException {
 		Map questJson = (Map) new JSONParser().parse(jsonString);
@@ -83,7 +83,7 @@ public class Quest extends JSONElement {
 		quest.parse(questJson);
 		return quest;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Quest fromJson(Map questJson) {
 		Quest quest = new Quest();
@@ -110,7 +110,7 @@ public class Quest extends JSONElement {
 		}
 		this.state = State.parsed;
 	}
-	
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -136,11 +136,11 @@ public class Quest extends JSONElement {
 	public Image getIcon() {
 		return DefaultIcons.getQuestIcon();
 	}
-	
+
 	public Image getImage() {
 		return DefaultIcons.getQuestImage();
 	}
-	
+
 	@Override
 	public GameDataElement clone() {
 		Quest clone = new Quest();
@@ -157,12 +157,12 @@ public class Quest extends JSONElement {
 		}
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		//Nothing to link to.
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map toJson() {
@@ -179,7 +179,7 @@ public class Quest extends JSONElement {
 		}
 		return questJson;
 	}
-	
+
 
 	@Override
 	public String getProjectFilename() {
@@ -194,5 +194,5 @@ public class Quest extends JSONElement {
 		}
 		return null;
 	}
-	
+
 }

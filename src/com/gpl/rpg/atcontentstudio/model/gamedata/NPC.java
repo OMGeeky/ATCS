@@ -28,7 +28,7 @@ public class NPC extends JSONElement {
 	//public String id = null; inherited.
 	public String name = null;
 	public String icon_id = null;
-	
+
 	//Available from parsed state
 	public Integer max_hp = null;
 	public Integer max_ap = null;
@@ -51,11 +51,11 @@ public class NPC extends JSONElement {
 	public HitEffect hit_effect = null;
 	public HitReceivedEffect hit_received_effect = null;
 	public DeathEffect death_effect = null;
-	
+
 	//Available from linked state
 	public Dialogue dialogue = null;
 	public Droplist droplist = null;
-	
+
 	public enum MonsterClass {
 		humanoid,
 		insect,
@@ -67,7 +67,7 @@ public class NPC extends JSONElement {
         reptile,
         ghost
 	}
-	
+
 	public enum MovementType {
 		none,
 		helpOthers,
@@ -84,7 +84,7 @@ public class NPC extends JSONElement {
 		return "NPCs";
 	}
 
-	
+
 	@SuppressWarnings("rawtypes")
 	public static void fromJson(File jsonFile, GameDataCategory<NPC> category) {
 		JSONParser parser = new JSONParser();
@@ -120,7 +120,7 @@ public class NPC extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static NPC fromJson(String jsonString) throws ParseException {
 		Map npcJson = (Map) new JSONParser().parse(jsonString);
@@ -128,7 +128,7 @@ public class NPC extends JSONElement {
 		npc.parse(npcJson);
 		return npc;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static NPC fromJson(Map npcJson) {
 		NPC npc = new NPC();
@@ -137,8 +137,8 @@ public class NPC extends JSONElement {
 		npc.name = (String) npcJson.get("name");
 		return npc;
 	}
-	
-	
+
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void parse(Map npcJson) {
@@ -166,7 +166,7 @@ public class NPC extends JSONElement {
 
 		this.block_chance = JSONElement.getInteger((Number) npcJson.get("blockChance"));
 		this.damage_resistance = JSONElement.getInteger((Number) npcJson.get("damageResistance"));
-		
+
 		Map hitEffect = (Map) npcJson.get("hitEffect");
 		if (hitEffect != null) {
 			this.hit_effect = new HitEffect();
@@ -203,7 +203,7 @@ public class NPC extends JSONElement {
 			List conditionsSourceJson = (List) deathEffect.get("conditionsSource");
             this.death_effect.conditions_source = parseTimedConditionEffects(conditionsSourceJson);
 		}
-		
+
 	}
 
 	@Override
@@ -228,13 +228,13 @@ public class NPC extends JSONElement {
 			String spritesheetId = this.icon_id.split(":")[0];
 			proj.getSpritesheet(spritesheetId).addBacklink(this);
 		}
-		
+
 		if (this.dialogue_id != null) this.dialogue = proj.getDialogue(this.dialogue_id);
 		if (this.dialogue != null) this.dialogue.addBacklink(this);
-		
+
 		if (this.droplist_id != null) this.droplist = proj.getDroplist(this.droplist_id);
 		if (this.droplist != null) this.droplist.addBacklink(this);
-		
+
 		if (this.hit_effect != null) {
 			linkConditions(this.hit_effect.conditions_source, proj, this);
 			linkConditions(this.hit_effect.conditions_target, proj, this);
@@ -253,11 +253,11 @@ public class NPC extends JSONElement {
 	public Image getIcon() {
 		return getProject().getIcon(icon_id);
 	}
-	
+
 	public Image getImage() {
 		return getProject().getImage(icon_id);
 	}
-	
+
 	@Override
 	public GameDataElement clone() {
 		NPC clone = new NPC();
@@ -340,7 +340,7 @@ public class NPC extends JSONElement {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map toJson() {
@@ -538,13 +538,13 @@ public class NPC extends JSONElement {
 		}
 		return npcJson;
 	}
-	
+
 
 	@Override
 	public String getProjectFilename() {
 		return "monsterlist_"+getProject().name+".json";
 	}
-	
+
 	public int getMonsterExperience() {
 		double EXP_FACTOR_DAMAGERESISTANCE = 9;
 		double EXP_FACTOR_SCALING = 0.7;
@@ -569,5 +569,5 @@ public class NPC extends JSONElement {
 		return new Double(Math.ceil(experience)).intValue();
 	};
 
-	
+
 }

@@ -16,7 +16,7 @@ import com.gpl.rpg.atcontentstudio.model.bookmarks.BookmarkEntry;
 public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 
 	private static final long serialVersionUID = 2028934451226743389L;
-	
+
 	public static enum State {
 		init, // We know the object exists, and have its key/ID.
 		parsed, // We know the object's properties, but related objects are referenced by ID only.
@@ -25,21 +25,21 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 		modified, // Whether altered or created, this item has been modified since creation from scratch or from JSON.
 		saved // Whether altered or created, this item has been saved since last modification.
 	}
-	
+
 	public State state = State.init;
-	
+
 	//Available from state init.
 	public ProjectTreeNode parent;
-	
+
 	public boolean writable = false;
-	
+
 	public BookmarkEntry bookmark = null;
-	
+
 	//List of objects whose transition to "linked" state made them point to this instance.
 	private Map<GameDataElement, Integer> backlinks = new ConcurrentHashMap<GameDataElement, Integer>();
 
 	public String id = null;
-	
+
 	@Override
 	public Enumeration<ProjectTreeNode> children() {
 		return null;
@@ -91,22 +91,22 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 	}
 	@Override
 	public abstract String getDesc();
-	
+
 	public static String getStaticDesc() {
 		return "GameDataElements";
 	}
-	
+
 	public abstract void parse();
 	public abstract void link();
-	
-	
-	
+
+
+
 	@Override
 	public Project getProject() {
 		return parent == null ? null : parent.getProject();
 	}
-	
-	
+
+
 	public Image getIcon() {
 		return null;
 	}
@@ -118,13 +118,13 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 	public Image getLeafIcon() {
 		return getIcon();
 	}
-	
-	
+
+
 	public abstract GameDataElement clone();
-	
+
 	public abstract void elementChanged(GameDataElement oldOne, GameDataElement newOne);
 
-	
+
 	@Override
 	public GameSource.Type getDataType() {
 		if (parent == null) {
@@ -132,10 +132,10 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 		}
 		return parent.getDataType();
 	}
-	
-	
+
+
 	public List<BacklinksListener> backlinkListeners = new ArrayList<GameDataElement.BacklinksListener>();
-	
+
 	public void addBacklinkListener(BacklinksListener l) {
 		backlinkListeners.add(l);
 	}
@@ -143,7 +143,7 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 	public void removeBacklinkListener(BacklinksListener l) {
 		backlinkListeners.remove(l);
 	}
-	
+
 	public void addBacklink(GameDataElement gde) {
 		if (!backlinks.containsKey(gde)) {
 			backlinks.put(gde, 1);
@@ -169,25 +169,25 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 	public Set<GameDataElement> getBacklinks() {
 		return backlinks.keySet();
 	}
-	
+
 	public static interface BacklinksListener {
 		public void backlinkAdded(GameDataElement gde);
 		public void backlinkRemoved(GameDataElement gde);
 	}
-	
+
 	@Override
 	public boolean isEmpty() {
 		return false;
 	}
-	
+
 	public boolean needsSaving() {
 		return this.state == State.modified || this.state == State.created;
 	}
-	
+
 	public abstract String getProjectFilename();
-	
+
 	public abstract void save();
-	
+
 	public abstract List<SaveEvent> attemptSave();
 	
 }

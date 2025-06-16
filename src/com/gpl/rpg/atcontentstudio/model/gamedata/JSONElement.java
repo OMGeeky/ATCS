@@ -23,7 +23,7 @@ public abstract class JSONElement extends GameDataElement {
 
 	//Available from state init.
 	public File jsonFile;
-	
+
 	@SuppressWarnings("rawtypes")
 	public void parse() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -71,11 +71,11 @@ public abstract class JSONElement extends GameDataElement {
 					e.printStackTrace();
 				}
 		}
-	
+
 	}
-	
+
 	public abstract void parse(@SuppressWarnings("rawtypes") Map jsonObj);
-	
+
 	@SuppressWarnings("rawtypes")
 	public abstract Map toJson();
 	public String toJsonString() {
@@ -87,8 +87,8 @@ public abstract class JSONElement extends GameDataElement {
 		}
 		return writer.toString();
 	}
-	
-	
+
+
 	@Override
 	public GameDataSet getDataSet() {
 		if (parent == null) {
@@ -96,13 +96,13 @@ public abstract class JSONElement extends GameDataElement {
 		}
 		return parent.getDataSet();
 	}
-	
+
 	public void save() {
 		if (this.getParent() instanceof GameDataCategory<?> && writable) {
 			((GameDataCategory<?>)this.getParent()).save(this.jsonFile);
 		}
 	}
-	
+
 	/**
 	 * Returns null if save occurred (no notable events).
 	 */
@@ -125,7 +125,7 @@ public abstract class JSONElement extends GameDataElement {
 	public static Double getDouble(Number n) {
 		return n == null ? null : n.doubleValue();
 	}
-	
+
 	public static Double parseChance(String s) {
 		if (s.equals("100")) return 100d;
         else if (s.equals("70")) return 70d;
@@ -157,7 +157,7 @@ public abstract class JSONElement extends GameDataElement {
         	return a;
         }
 	}
-	
+
 	public static String printJsonChance(Double chance) {
 		if (chance.equals(100d)) return "100";
         else if (chance.equals(70d)) return "70";

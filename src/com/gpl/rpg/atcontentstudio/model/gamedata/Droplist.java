@@ -23,27 +23,27 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 public class Droplist extends JSONElement {
 
 	private static final long serialVersionUID = -2903944916807382571L;
-	
+
 	//Available from init state
 	//public String id = null; inherited.
 
 	//Available from parsed state;
 	public List<DroppedItem> dropped_items = null;
-	
+
 	//Available from linked state;
 	//None
-	
+
 	public static class DroppedItem {
 		//Available from parsed state;
 		public String item_id = null;
 		public String chance = null;
 		public Integer quantity_min = null;
 		public Integer quantity_max = null;
-		
+
 		//Available from linked state;
 		public Item item = null;
 	}
-	
+
 	@Override
 	public String getDesc() {
 		return (needsSaving() ? "*" : "")+id;
@@ -88,7 +88,7 @@ public class Droplist extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Droplist fromJson(String jsonString) throws ParseException {
 		Map droplistJson = (Map) new JSONParser().parse(jsonString);
@@ -96,14 +96,14 @@ public class Droplist extends JSONElement {
 		droplist.parse(droplistJson);
 		return droplist;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Droplist fromJson(Map droplistJson) {
 		Droplist droplist = new Droplist();
 		droplist.id = (String) droplistJson.get("id");
 		return droplist;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void parse(Map droplistJson) {
@@ -126,7 +126,7 @@ public class Droplist extends JSONElement {
 		}
 		this.state = State.parsed;
 	}
-	
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -153,18 +153,18 @@ public class Droplist extends JSONElement {
 		}
 		this.state = State.linked;
 	}
-	
+
 
 
 	public static Image getImage() {
 		return DefaultIcons.getDroplistImage();
 	}
-	
+
 	@Override
 	public Image getIcon() {
 		return DefaultIcons.getDroplistIcon();
 	}
-	
+
 	@Override
 	public GameDataElement clone() {
 		Droplist clone = new Droplist();
@@ -188,7 +188,7 @@ public class Droplist extends JSONElement {
 		}
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		if (dropped_items != null) {
@@ -201,7 +201,7 @@ public class Droplist extends JSONElement {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map toJson() {
@@ -232,11 +232,11 @@ public class Droplist extends JSONElement {
 		}
 		return droplistJson;
 	}
-	
+
 
 	@Override
 	public String getProjectFilename() {
 		return "droplists_"+getProject().name+".json";
 	}
-	
+
 }

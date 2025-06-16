@@ -8,18 +8,18 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 
 public class QuestStage extends JSONElement {
-	
+
 	private static final long serialVersionUID = 8313645819951513431L;
-	
+
 	public Integer progress = null;
 	public String log_text = null;
 	public Integer exp_reward = null;
 	public Integer finishes_quest = null;
-	
+
 	public QuestStage(Quest parent){
 		this.parent = parent;
 	}
-	
+
 	public QuestStage clone(Quest cloneParent) {
 		QuestStage clone = new QuestStage(cloneParent);
 		clone.progress = progress != null ? new Integer(progress) : null;
@@ -89,15 +89,15 @@ public class QuestStage extends JSONElement {
 	public GameDataElement clone() {
 		return null;
 	}
-	
+
 	@Override
 	public Image getIcon() {
 		return DefaultIcons.getQuestIcon();
 	}
-	
+
 	public Image getImage() {
 		return DefaultIcons.getQuestImage();
 	}
 
-	
+
 }

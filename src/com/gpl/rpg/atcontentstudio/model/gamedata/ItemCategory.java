@@ -21,7 +21,7 @@ import com.gpl.rpg.atcontentstudio.model.GameSource;
 public class ItemCategory extends JSONElement {
 
 	private static final long serialVersionUID = -348864002519568300L;
-	
+
 	public static final String ICON_NO_SLOT_RES = "/com/gpl/rpg/atcontentstudio/img/equip_square.png";
 	public static final String ICON_BODY_RES = "/com/gpl/rpg/atcontentstudio/img/equip_body.png";
 	public static final String ICON_FEET_RES = "/com/gpl/rpg/atcontentstudio/img/equip_feet.png";
@@ -58,33 +58,33 @@ public class ItemCategory extends JSONElement {
 
 	public static Image weapon_image = null;
 	public static Image weapon_icon = null;
-	
-	
+
+
 	//Available from init state
 	//public String id = null; inherited.
 	public String name = null;
 	public InventorySlot slot = null;
-	
+
 	//Available from parsed state
 	public ActionType action_type = null;
 	public Size size = null;
-	
+
 	//Available from linked state
 	//None
-	
+
 	public static enum ActionType {
 		none,
 		use,
 		equip
 	}
-	
+
 	public static enum Size {
 		none,
 		light,
 		std,
 		large
 	}
-	
+
 	public static enum InventorySlot {
 		weapon,
 		shield,
@@ -105,8 +105,8 @@ public class ItemCategory extends JSONElement {
 	public static String getStaticDesc() {
 		return "Item categories";
 	}
-	
-	
+
+
 	@SuppressWarnings("rawtypes")
 	public static void fromJson(File jsonFile, GameDataCategory<ItemCategory> category) {
 		JSONParser parser = new JSONParser();
@@ -142,7 +142,7 @@ public class ItemCategory extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static ItemCategory fromJson(String jsonString) throws ParseException {
 		Map itemCatJson = (Map) new JSONParser().parse(jsonString);
@@ -150,7 +150,7 @@ public class ItemCategory extends JSONElement {
 		item.parse(itemCatJson);
 		return item;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static ItemCategory fromJson(Map itemCatJson) {
 		ItemCategory itemCat = new ItemCategory();
@@ -159,16 +159,16 @@ public class ItemCategory extends JSONElement {
 		if (itemCatJson.get("inventorySlot") != null) itemCat.slot = InventorySlot.valueOf((String) itemCatJson.get("inventorySlot"));
 		return itemCat;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void parse(Map itemCatJson) {
 		if (itemCatJson.get("actionType") != null) action_type = ActionType.valueOf((String) itemCatJson.get("actionType"));
 		if (itemCatJson.get("size") != null) size = Size.valueOf((String) itemCatJson.get("size"));
 		this.state = State.parsed;
-	
+
 	}
-	
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -186,16 +186,16 @@ public class ItemCategory extends JSONElement {
 		//Nothing to link to :D
 		this.state = State.linked;
 	}
-	
+
 	@Override
 	public Image getIcon() {
 		return getIcon(this.slot);
 	}
-	
+
 	public Image getImage() {
 		return getImage(this.slot);
 	}
-	
+
 	public static Image getImage(InventorySlot slot) {
 		if (slot == null) {
 			return getImage(ICON_NO_SLOT_RES, no_slot_image, "no_slot_image");
@@ -222,7 +222,7 @@ public class ItemCategory extends JSONElement {
 			return getImage(ICON_NO_SLOT_RES, no_slot_image, "no_slot_image");
 		}
 	}
-	
+
 	public static Image getIcon(InventorySlot slot) {
 		if (slot == null) {
 			return getIcon(ICON_NO_SLOT_RES, no_slot_image, no_slot_icon, "no_slot_image", "no_slot_icon");
@@ -270,7 +270,7 @@ public class ItemCategory extends JSONElement {
 		}
 		return img;
 	}
-	
+
 	public static Image getIcon(String res, Image img, Image icon, String imgFieldName, String iconFieldName) {
 		if (icon == null) {
 			icon = getImage(res, img, imgFieldName).getScaledInstance(16, 16, Image.SCALE_SMOOTH);
@@ -288,7 +288,7 @@ public class ItemCategory extends JSONElement {
 		}
 		return icon;
 	}
-	
+
 	@Override
 	public GameDataElement clone() {
 		ItemCategory clone = new ItemCategory();
@@ -301,12 +301,12 @@ public class ItemCategory extends JSONElement {
 		clone.action_type = this.action_type;
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		// Nothing to link to.
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map toJson() {
@@ -318,12 +318,12 @@ public class ItemCategory extends JSONElement {
 		if (this.slot != null) itemCatJson.put("inventorySlot", this.slot.toString());
 		return itemCatJson;
 	}
-	
+
 
 	@Override
 	public String getProjectFilename() {
 		return "itemcategories_"+getProject().name+".json";
 	}
-	
-	
+
+
 }

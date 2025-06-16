@@ -18,13 +18,13 @@ import com.gpl.rpg.atcontentstudio.model.GameSource;
 
 
 public class ActorCondition extends JSONElement {
-	
+
 	private static final long serialVersionUID = -3969824899972048507L;
 
 	public static final Integer MAGNITUDE_CLEAR = -99;
 	public static final Integer DURATION_FOREVER = 999;;
 	public static final Integer DURATION_NONE = 0;
-	
+
 	// Available from init state
 	//public String id; inherited.
 	public String icon_id;
@@ -38,21 +38,21 @@ public class ActorCondition extends JSONElement {
 	public RoundEffect round_effect = null;
 	public RoundEffect full_round_effect = null;
 	public AbilityEffect constant_ability_effect = null;
-	
+
 	public enum ACCategory {
 		spiritual,
 		mental,
 		physical,
 		blood
 	}
-	
+
 	public static enum VisualEffectID {
 		redSplash
 		,blueSwirl
 		,greenSplash
 		,miss
 	}
-	
+
 	public static class RoundEffect implements Cloneable {
 		// Available from parsed state
 		public VisualEffectID visual_effect = null;
@@ -60,7 +60,7 @@ public class ActorCondition extends JSONElement {
 		public Integer hp_boost_max = null;
 		public Integer ap_boost_min = null;
 		public Integer ap_boost_max = null;
-		
+
 		public Object clone() {
 			try {
 				return super.clone();
@@ -70,7 +70,7 @@ public class ActorCondition extends JSONElement {
 			return null;
 		}
 	}
-	
+
 	public static class AbilityEffect implements Cloneable {
 		// Available from parsed state
 		public Integer max_hp_boost = null;
@@ -85,7 +85,7 @@ public class ActorCondition extends JSONElement {
 		public Integer increase_critical_skill = null;
 		public Integer increase_block_chance = null;
 		public Integer increase_damage_resistance = null;
-		
+
 		public Object clone() {
 			try {
 				return super.clone();
@@ -95,12 +95,12 @@ public class ActorCondition extends JSONElement {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public String getDesc() {
 		return (needsSaving() ? "*" : "")+display_name+" ("+id+")";
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static void fromJson(File jsonFile, GameDataCategory<ActorCondition> category) {
 		JSONParser parser = new JSONParser();
@@ -136,7 +136,7 @@ public class ActorCondition extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static ActorCondition fromJson(String jsonString) throws ParseException {
 		Map aCondJson = (Map) new JSONParser().parse(jsonString);
@@ -144,7 +144,7 @@ public class ActorCondition extends JSONElement {
 		aCond.parse(aCondJson);
 		return aCond;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static ActorCondition fromJson(Map aCondJson) {
 		ActorCondition aCond = new ActorCondition();
@@ -153,7 +153,7 @@ public class ActorCondition extends JSONElement {
 		aCond.display_name = (String) aCondJson.get("name");
 		return aCond;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void parse(Map aCondJson) {
@@ -221,7 +221,7 @@ public class ActorCondition extends JSONElement {
 		this.state = State.parsed;
 
 	}
-	
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -247,25 +247,25 @@ public class ActorCondition extends JSONElement {
 			}
 			getProject().getSpritesheet(spritesheetId).addBacklink(this);
 		}
-		
+
 		this.state = State.linked;
 	}
-	
+
 
 	public static String getStaticDesc() {
 		return "Actor Conditions";
 	}
-	
+
 
 	@Override
 	public Image getIcon() {
 		return getProject().getIcon(icon_id);
 	}
-	
+
 	public Image getImage() {
 		return getProject().getImage(icon_id);
 	}
-	
+
 	@Override
 	public JSONElement clone() {
 		ActorCondition clone = new ActorCondition();
@@ -289,12 +289,12 @@ public class ActorCondition extends JSONElement {
 		}
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		//Nothing to link to.
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map toJson() {
@@ -377,5 +377,5 @@ public class ActorCondition extends JSONElement {
 	public String getProjectFilename() {
 		return "actorconditions_"+getProject().name+".json";
 	}
-	
+
 }

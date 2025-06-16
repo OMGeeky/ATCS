@@ -29,7 +29,7 @@ public class Item extends JSONElement {
 	public String name = null;
 	public DisplayType display_type = null;
 	public String icon_id = null;
-	
+
 	//Available from parsed state
 	public Integer has_manual_price = null;
 	public Integer base_market_cost = null;
@@ -39,11 +39,11 @@ public class Item extends JSONElement {
 	public HitReceivedEffect hit_received_effect = null;
 	public DeathEffect kill_effect = null;
 	public EquipEffect equip_effect = null;
-	
+
 	//Available from linked state
 	public ItemCategory category = null;
 
-	
+
 	public static class EquipEffect {
 		//Available from parsed state
 		public Integer damage_boost_min = null;
@@ -63,7 +63,7 @@ public class Item extends JSONElement {
 		public Integer damage_modifier = null;
 	}
 
-	
+
 	public static enum DisplayType {
 		ordinary,
 		quest,
@@ -71,7 +71,7 @@ public class Item extends JSONElement {
 		legendary,
 		rare
 	}
-	
+
 	@Override
 	public String getDesc() {
 		return (needsSaving() ? "*" : "")+name+" ("+id+")";
@@ -80,7 +80,7 @@ public class Item extends JSONElement {
 	public static String getStaticDesc() {
 		return "Items";
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static void fromJson(File jsonFile, GameDataCategory<Item> category) {
 		JSONParser parser = new JSONParser();
@@ -116,7 +116,7 @@ public class Item extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Item fromJson(String jsonString) throws ParseException {
 		Map itemJson = (Map) new JSONParser().parse(jsonString);
@@ -124,7 +124,7 @@ public class Item extends JSONElement {
 		item.parse(itemJson);
 		return item;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Item fromJson(Map itemJson) {
 		Item item = new Item();
@@ -134,7 +134,7 @@ public class Item extends JSONElement {
 		if (itemJson.get("displaytype") != null) item.display_type = DisplayType.valueOf((String) itemJson.get("displaytype"));
 		return item;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void parse(Map itemJson) {
@@ -145,7 +145,7 @@ public class Item extends JSONElement {
 //		this.category_id = (String) itemJson.get("category");
 		if (itemJson.get("category") != null) this.category_id = (String) itemJson.get("category").toString();
 		this.description = (String) itemJson.get("description");
-		
+
 		Map equipEffect = (Map) itemJson.get("equipEffect");
 		if (equipEffect != null) {
 			this.equip_effect = new EquipEffect();
@@ -167,7 +167,7 @@ public class Item extends JSONElement {
 //			this.equip_effect.critical_multiplier = JSONElement.getDouble((Number) equipEffect.get("setCriticalMultiplier"));
 			if (equipEffect.get("setCriticalMultiplier") != null) this.equip_effect.critical_multiplier = JSONElement.getDouble(Double.parseDouble(equipEffect.get("setCriticalMultiplier").toString()));
 			this.equip_effect.damage_modifier = JSONElement.getInteger((Number) equipEffect.get("setNonWeaponDamageModifier"));
-			
+
 			List conditionsJson = (List) equipEffect.get("addedConditions");
 			if (conditionsJson != null && !conditionsJson.isEmpty()) {
 				this.equip_effect.conditions = new ArrayList<>();
@@ -180,18 +180,18 @@ public class Item extends JSONElement {
 				}
 			}
 		}
-		
-		
+
+
 		Map hitEffect = (Map) itemJson.get("hitEffect");
 		if (hitEffect != null) {
 			this.hit_effect = parseHitEffect(hitEffect);
 		}
-		
+
 		Map hitReceivedEffect = (Map) itemJson.get("hitReceivedEffect");
 		if (hitReceivedEffect != null) {
 			this.hit_received_effect = parseHitReceivedEffect(hitReceivedEffect);
 		}
-		
+
 		Map killEffect = (Map) itemJson.get("killEffect");
 		if (killEffect == null) {
 			killEffect = (Map) itemJson.get("useEffect");
@@ -253,11 +253,11 @@ public class Item extends JSONElement {
 	public Image getIcon() {
 		return getProject().getIcon(icon_id);
 	}
-	
+
 	public Image getImage() {
 		return getProject().getImage(icon_id);
 	}
-	
+
 	@Override
 	public GameDataElement clone() {
 		Item clone = new Item();
@@ -319,7 +319,7 @@ public class Item extends JSONElement {
 		}
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		if (this.category == oldOne) {
@@ -366,7 +366,7 @@ public class Item extends JSONElement {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Map toJson() {
@@ -375,7 +375,7 @@ public class Item extends JSONElement {
 		if (this.icon_id != null) itemJson.put("iconID", this.icon_id);
 		if (this.name != null) itemJson.put("name", this.name);
 		if(this.display_type != null) itemJson.put("displaytype", this.display_type.toString());
-		
+
 		if (this.has_manual_price != null) itemJson.put("hasManualPrice", this.has_manual_price);
 		if (this.base_market_cost != null) itemJson.put("baseMarketCost", this.base_market_cost);
 		if (this.category != null) {
@@ -603,19 +603,19 @@ public class Item extends JSONElement {
 		}
 		return Math.max(1, price);
 	}
-	
+
 	public int zeroForNull(Integer val) {
 		return val == null ? 0 : val;
 	}
-	
+
 	public double zeroForNull(Double val) {
 		return val == null ? 0 : val;
 	}
-	
+
 	public boolean isWeapon() {
 		return category != null && category.action_type != null && category.action_type == ItemCategory.ActionType.equip && category.slot != null && category.slot == ItemCategory.InventorySlot.weapon; 
 	}
-	
+
 	public int calculateUseCost() {
 		final float averageHPBoost = (zeroForNull(kill_effect.hp_boost_min) + zeroForNull(kill_effect.hp_boost_max)) / 2.0f;
 		if (averageHPBoost == 0) return 0;
@@ -648,7 +648,7 @@ public class Item extends JSONElement {
 				+ costMaxHP + costMaxAP
 				+ costMovement + costUseItem + costReequip;
 	}
-	
+
 
 	public int calculateHitCost() {
 		final float averageHPBoost = (zeroForNull(hit_effect.hp_boost_min) + zeroForNull(hit_effect.hp_boost_max)) / 2.0f;

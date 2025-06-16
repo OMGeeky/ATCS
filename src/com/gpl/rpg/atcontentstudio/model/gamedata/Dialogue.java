@@ -26,32 +26,32 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 public class Dialogue extends JSONElement {
 
 	private static final long serialVersionUID = -6872164604703134683L;
-	
+
 
 	//Available from init state
 	//public String id = null; inherited.
 	public String message = null;
-	
+
 	//Available from parsed state;
 	public List<Reward> rewards = null;
 	public List<Reply> replies = null;
 	public String switch_to_npc_id = null;
-	
+
 	//Available from linked state;
 	public NPC switch_to_npc = null;
 
 	public static class Reward {
-		
+
 		//Available from parsed state
 		public RewardType type = null;
 		public String reward_obj_id = null;
 		public Integer reward_value = null;
 		public String map_name = null;
-		
+
 		//Available from linked state
 		public GameDataElement reward_obj = null;
 		public TMXMap map = null;
-		
+
 		public enum RewardType {
 			questProgress,
 			removeQuestProgress,
@@ -72,27 +72,27 @@ public class Dialogue extends JSONElement {
 			mapchange
 		}
 	}
-	
+
 	public static class Reply {
-		
+
 		public static final String GO_NEXT_TEXT = "N";
 		public static final String SHOP_PHRASE_ID = "S";
 		public static final String FIGHT_PHRASE_ID = "F";
 		public static final String EXIT_PHRASE_ID = "X";
 		public static final String REMOVE_PHRASE_ID = "R";
-		
+
 		public static final List<String> KEY_PHRASE_ID = Arrays.asList(new String[]{SHOP_PHRASE_ID, FIGHT_PHRASE_ID, EXIT_PHRASE_ID, REMOVE_PHRASE_ID});
-		
+
 		//Available from parsed state
 		public String text = null;
 		public String next_phrase_id = null;
 		public List<Requirement> requirements = null;
-		
+
 		//Available from linked state
 		public Dialogue next_phrase = null;
-		
+
 	}
-	
+
 	@Override
 	public String getDesc() {
 		return (needsSaving() ? "*" : "")+id;
@@ -101,7 +101,7 @@ public class Dialogue extends JSONElement {
 	public static String getStaticDesc() {
 		return "Dialogues";
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static void fromJson(File jsonFile, GameDataCategory<Dialogue> category) {
 		JSONParser parser = new JSONParser();
@@ -137,7 +137,7 @@ public class Dialogue extends JSONElement {
 				}
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Dialogue fromJson(String jsonString) throws ParseException {
 		Map dialogueJson = (Map) new JSONParser().parse(jsonString);
@@ -145,7 +145,7 @@ public class Dialogue extends JSONElement {
 		dialogue.parse(dialogueJson);
 		return dialogue;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static Dialogue fromJson(Map dialogueJson) {
 		Dialogue dialogue = new Dialogue();
@@ -153,7 +153,7 @@ public class Dialogue extends JSONElement {
 		dialogue.message = (String) dialogueJson.get("message");
 		return dialogue;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void parse(Map dialogueJson) {
@@ -201,9 +201,9 @@ public class Dialogue extends JSONElement {
 		this.state = State.parsed;
 	}
 
-	
-	
-	
+
+
+
 	@Override
 	public void link() {
 		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -224,7 +224,7 @@ public class Dialogue extends JSONElement {
 		}
 		if (this.switch_to_npc_id != null) this.switch_to_npc = proj.getNPC(this.switch_to_npc_id);
 		if (this.switch_to_npc != null) this.switch_to_npc.addBacklink(this);
-		
+
 		if (replies != null) {
 			for (Reply reply : replies) {
 				if (reply.next_phrase_id != null) {
@@ -289,22 +289,22 @@ public class Dialogue extends JSONElement {
 				}
 			}
 		}
-		
+
 		this.state = State.linked;
 	}
-	
+
 
 
 	@Override
 	public Image getIcon() {
 		return DefaultIcons.getDialogueIcon();
 	}
-	
+
 
 	public Image getImage() {
 		return DefaultIcons.getDialogueImage();
 	}
-	
+
 	@Override
 	public GameDataElement clone() {
 		Dialogue clone = new Dialogue();
@@ -358,7 +358,7 @@ public class Dialogue extends JSONElement {
 		}
 		return clone;
 	}
-	
+
 	@Override
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		if (switch_to_npc == oldOne) {
@@ -466,5 +466,5 @@ public class Dialogue extends JSONElement {
 	public String getProjectFilename() {
 		return "conversationlist_"+getProject().name+".json";
 	}
-	
+
 }
