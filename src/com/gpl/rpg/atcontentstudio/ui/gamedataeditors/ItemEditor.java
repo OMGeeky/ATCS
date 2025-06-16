@@ -91,7 +91,7 @@ public class ItemEditor extends JSONElementEditor {
 	private JSpinner equipConditionMagnitude;
 
 	private CollapsiblePanel hitEffectPane;
-	private Common.HitEffect hitEffect;
+	private Common.HitEffect hitEffect;//TODO: Check if this was set anywhere before my changes
 	private JSpinner hitHPMin;
 	private JSpinner hitHPMax;
 	private JSpinner hitAPMin;
