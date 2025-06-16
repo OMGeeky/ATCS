@@ -21,7 +21,6 @@ public final class CommonEditor {
     public static <E, S> CollapsiblePanel createListPanel(String title,
                                                           ListCellRenderer<? super E> cellRenderer,
                                                           AtListModel<E, S> listModel,
-                                                          boolean isCollapsed,
                                                           boolean writable,
                                                           boolean moveUpDownEnabled,
                                                           CallWithSingleArg<E> selectedValueSetter,
@@ -106,9 +105,6 @@ public final class CommonEditor {
             }
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
             replies.add(listButtonsPane, JideBoxLayout.FIX);
-        }
-        if (isCollapsed) {
-            replies.collapse();
         }
         repliesEditorPane.setLayout(new JideBoxLayout(repliesEditorPane, JideBoxLayout.PAGE_AXIS));
         replies.add(repliesEditorPane, JideBoxLayout.FIX);

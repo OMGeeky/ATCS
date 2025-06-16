@@ -244,7 +244,6 @@ public class DialogueEditor extends JSONElementEditor {
 		RepliesCellRenderer cellRenderer = new RepliesCellRenderer();
 
 		repliesListModel = new DialogueEditor.RepliesListModel(dialogue);
-		boolean isCollapsed = dialogue.replies == null || dialogue.replies.isEmpty();
 		boolean moveUpDownEnabled = true;
 		CallWithSingleArg<Dialogue.Reply> selectedReplyChanged = e -> {
 			selectedReply = e;
@@ -258,7 +257,6 @@ public class DialogueEditor extends JSONElementEditor {
 				title,
 				cellRenderer,
 				repliesListModel,
-				isCollapsed,
 				dialogue.writable,
 				moveUpDownEnabled,
 				selectedReplyChanged,
@@ -266,6 +264,11 @@ public class DialogueEditor extends JSONElementEditor {
                 this::updateRepliesEditorPane,
 				listener,
                 Dialogue.Reply::new);
+
+		boolean isEmpty = dialogue.replies == null || dialogue.replies.isEmpty();
+		if (isEmpty) {
+			replies.collapse();
+		}
 
 		pane.add(replies, JideBoxLayout.FIX);
 	}
