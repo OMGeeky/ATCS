@@ -267,7 +267,7 @@ public final class CommonEditor {
         }
 
 
-        List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
+        List<ListDataListener> listeners = new CopyOnWriteArrayList<>();
 
         @Override
         public void addListDataListener(ListDataListener l) {

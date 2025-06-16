@@ -164,7 +164,7 @@ public class DroplistEditor extends JSONElementEditor {
 				if (idChanging()) {
 					droplist.id = (String) value;
 					DroplistEditor.this.name = droplist.getDesc();
-					droplist.childrenChanged(new ArrayList<ProjectTreeNode>());
+					droplist.childrenChanged(new ArrayList<>());
 					ATContentStudio.frame.editorChanged(DroplistEditor.this);
 				} else {
 					cancelIdEdit(idField);
@@ -196,7 +196,7 @@ public class DroplistEditor extends JSONElementEditor {
 			if (droplist.state != GameDataElement.State.modified) {
 				droplist.state = GameDataElement.State.modified;
 				DroplistEditor.this.name = droplist.getDesc();
-				droplist.childrenChanged(new ArrayList<ProjectTreeNode>());
+				droplist.childrenChanged(new ArrayList<>());
 				ATContentStudio.frame.editorChanged(DroplistEditor.this);
 			}
 			updateJsonViewText(droplist.toJsonString());
