@@ -911,87 +911,19 @@ public class DialogueEditor extends JSONElementEditor {
 	}
 	
 	
-	public static class RepliesListModel implements ListModel<Dialogue.Reply> {
-
-		Dialogue source;
-
+	public static class RepliesListModel extends CommonEditor.AtListModel<Dialogue.Reply, Dialogue> {
 		public RepliesListModel(Dialogue dialogue) {
-			this.source = dialogue;
-		}
-
-		
-		@Override
-		public int getSize() {
-			if (source.replies == null) return 0;
-			return source.replies.size();
+			super(dialogue);
 		}
 
 		@Override
-		public Dialogue.Reply getElementAt(int index) {
-			if (source.replies == null) return null;
-			return source.replies.get(index);
-		}
-		
-		public void addItem(Dialogue.Reply item) {
-			if (source.replies == null) {
-				source.replies = new ArrayList<Dialogue.Reply>();
-			}
-			source.replies.add(item);
-			int index = source.replies.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeItem(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			source.replies.remove(item);
-			if (source.replies.isEmpty()) {
-				source.replies = null;
-			}
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		public void itemChanged(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		public void moveUp(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			Dialogue.Reply exchanged = source.replies.get(index - 1);
-			source.replies.set(index, exchanged);
-			source.replies.set(index - 1, item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index - 1, index));
-			}
-		}
-
-		public void moveDown(Dialogue.Reply item) {
-			int index = source.replies.indexOf(item);
-			Dialogue.Reply exchanged = source.replies.get(index + 1);
-			source.replies.set(index, exchanged);
-			source.replies.set(index + 1, item);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index + 1));
-			}
-		}
-
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected List<Dialogue.Reply> getInner() {
+			return source.replies;
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<Dialogue.Reply> value) {
+			source.replies = value;
 		}
 	}
 
