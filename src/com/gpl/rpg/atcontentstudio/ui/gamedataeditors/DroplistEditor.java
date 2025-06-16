@@ -21,7 +21,6 @@ import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist.DroppedItem;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
-import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.tools.CommonEditor;
 import com.jidesoft.swing.JideBoxLayout;
@@ -48,7 +47,6 @@ public class DroplistEditor extends JSONElementEditor {
 		addEditorTab(json_view_id, getJSONView());
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void insertFormViewDataField(JPanel pane) {
 
@@ -85,8 +83,8 @@ public class DroplistEditor extends JSONElementEditor {
 	}
 
 	public void updateDroppedItemsEditorPane(JPanel pane, DroppedItem di, FieldUpdateListener listener) {
-		boolean writable = ((Droplist)target).writable;
-		Project proj = ((Droplist)target).getProject();
+		boolean writable = target.writable;
+		Project proj = target.getProject();
 		pane.removeAll();
 		if (itemCombo != null) {
 			removeElementListener(itemCombo);
@@ -122,7 +120,7 @@ public class DroplistEditor extends JSONElementEditor {
 		private static final long serialVersionUID = 7987880146189575234L;
 
 		@Override
-		public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if (c instanceof JLabel) {
 				JLabel label = ((JLabel)c);
@@ -161,7 +159,7 @@ public class DroplistEditor extends JSONElementEditor {
 					skipNext = false;
 					return;
 				}
-				if (target.id.equals((String) value)) return;
+				if (target.id.equals(value)) return;
 
 				if (idChanging()) {
 					droplist.id = (String) value;

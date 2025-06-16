@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -17,15 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
@@ -464,8 +456,8 @@ public class ItemEditor extends JSONElementEditor {
 			return;
 		}
 
-		boolean writable = ((Item)target).writable;
-		Project proj = ((Item)target).getProject();
+		boolean writable = target.writable;
+		Project proj = target.getProject();
 
 		hitSourceConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		hitSourceConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
@@ -560,8 +552,8 @@ public class ItemEditor extends JSONElementEditor {
 			return;
 		}
 
-		boolean writable = ((Item)target).writable;
-		Project proj = ((Item)target).getProject();
+		boolean writable = target.writable;
+		Project proj = target.getProject();
 
 		hitTargetConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
 		hitTargetConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
