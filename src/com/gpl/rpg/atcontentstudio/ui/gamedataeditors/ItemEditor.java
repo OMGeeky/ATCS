@@ -1201,7 +1201,8 @@ public class ItemEditor extends JSONElementEditor {
 		protected void setInner(List<Common.TimedConditionEffect> value) {
 			source.conditions_source = value;
 		}
-	}
+
+ }
 
  public static class TargetTimedConditionsListModel extends CommonEditor.AtListModel<Common.TimedConditionEffect, Common.HitEffect> {
 
@@ -1218,7 +1219,8 @@ public class ItemEditor extends JSONElementEditor {
 		protected void setInner(List<Common.TimedConditionEffect> value) {
 			source.conditions_target = value;
 		}
-	}
+
+ }
 
 	public static class TimedConditionsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;
@@ -1269,7 +1271,7 @@ public class ItemEditor extends JSONElementEditor {
 		protected void setInner(List<Common.ConditionEffect> value) {
 			source.conditions = value;
 		}
-	}
+ }
 
 	public static class ConditionsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;

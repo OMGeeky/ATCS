@@ -763,7 +763,8 @@ public class DialogueEditor extends JSONElementEditor {
 		protected void setInner(List<Dialogue.Reward> value) {
 			source.rewards = value;
 		}
-	}
+
+ }
 
 	public static class RewardsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;
@@ -886,6 +887,7 @@ public class DialogueEditor extends JSONElementEditor {
 		protected void setInner(List<Dialogue.Reply> value) {
 			source.replies = value;
 		}
+
 	}
 
 	public static class RepliesCellRenderer extends DefaultListCellRenderer {
@@ -938,16 +940,16 @@ public class DialogueEditor extends JSONElementEditor {
 		}
 	}
 
- public static class ReplyRequirementsListModel extends CommonEditor.AtListModel<Requirement, Dialogue.Reply> {
+	 public static class ReplyRequirementsListModel extends CommonEditor.AtListModel<Requirement, Dialogue.Reply> {
 
-		public ReplyRequirementsListModel(Dialogue.Reply reply) {
-			super(reply);
-		}
+		 public ReplyRequirementsListModel(Dialogue.Reply reply) {
+			 super(reply);
+		 }
 
-		@Override
-		protected List<Requirement> getInner() {
-			return source.requirements;
-		}
+		 @Override
+		 protected List<Requirement> getInner() {
+			 return source.requirements;
+		 }
 
 		 @Override
 		 protected void setInner(List<Requirement> value) {

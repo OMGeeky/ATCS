@@ -1041,7 +1041,8 @@ public class NPCEditor extends JSONElementEditor {
 		protected void setInner(List<Common.TimedConditionEffect> value) {
 			source.conditions_target = value;
 		}
-	}
+
+ }
 
  public static class SourceTimedConditionsListModel extends CommonEditor.AtListModel<Common.TimedConditionEffect, Common.DeathEffect> {
 
@@ -1058,7 +1059,8 @@ public class NPCEditor extends JSONElementEditor {
 		protected void setInner(List<Common.TimedConditionEffect> value) {
 			source.conditions_source = value;
 		}
-	}
+
+ }
 
 	public static class TimedConditionsCellRenderer extends DefaultListCellRenderer {
 		private static final long serialVersionUID = 7987880146189575234L;
