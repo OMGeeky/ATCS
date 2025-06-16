@@ -172,63 +172,28 @@ public class DialogueEditor extends JSONElementEditor {
 		messageField = addTranslatableTextArea(pane, "Message: ", dialogue.message, dialogue.writable, listener);
 		switchToNpcBox = addNPCBox(pane, dialogue.getProject(), "Switch active NPC to: ", dialogue.switch_to_npc, dialogue.writable, listener);
 
-		CollapsiblePanel rewards = new CollapsiblePanel("Reaching this phrase gives the following rewards: ");
-		rewards.setLayout(new JideBoxLayout(rewards, JideBoxLayout.PAGE_AXIS));
+		String rewardsTitle = "Reaching this phrase gives the following rewards: ";
+		RewardsCellRenderer rewardsCellRenderer = new RewardsCellRenderer();
 		rewardsListModel = new RewardsListModel(dialogue);
-		rewardsList = new JList(rewardsListModel);
-		rewardsList.setCellRenderer(new RewardsCellRenderer());
-		rewardsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		rewards.add(new JScrollPane(rewardsList), JideBoxLayout.FIX);
-		final JPanel rewardsEditorPane = new JPanel();
-		final JButton createReward = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteReward = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		deleteReward.setEnabled(false);
-		rewardsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedReward = (Dialogue.Reward) rewardsList.getSelectedValue();
-				if (selectedReward == null) {
-					deleteReward.setEnabled(false);
-				} else {
-					deleteReward.setEnabled(true);
-				}
-				updateRewardsEditorPane(rewardsEditorPane, selectedReward, listener);
-			}
-		});
-		if (dialogue.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createReward.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Dialogue.Reward reward = new Dialogue.Reward();
-					rewardsListModel.addItem(reward);
-					rewardsList.setSelectedValue(reward, true);
-					listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteReward.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReward != null) {
-						rewardsListModel.removeItem(selectedReward);
-						selectedReward = null;
-						rewardsList.clearSelection();
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
+		final boolean rewardsMoveUpDownEnabled = false;
 
-			listButtonsPane.add(createReward, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteReward, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			rewards.add(listButtonsPane, JideBoxLayout.FIX);
-		}
+		CommonEditor.PanelCreateResult<Dialogue.Reward> rewardsResult = CommonEditor.createListPanel(
+				rewardsTitle,
+				rewardsCellRenderer,
+				rewardsListModel,
+				dialogue.writable,
+				rewardsMoveUpDownEnabled,
+				(e) -> selectedReward = e,
+				() -> selectedReward,
+				this::updateRewardsEditorPane,
+				listener,
+				Dialogue.Reward::new);
+		CollapsiblePanel rewards = rewardsResult.panel;
+		rewardsList = rewardsResult.list;
+
 		if (dialogue.rewards == null || dialogue.rewards.isEmpty()) {
 			rewards.collapse();
 		}
-		rewardsEditorPane.setLayout(new JideBoxLayout(rewardsEditorPane, JideBoxLayout.PAGE_AXIS));
-		rewards.add(rewardsEditorPane, JideBoxLayout.FIX);
 
 		pane.add(rewards, JideBoxLayout.FIX);
 
