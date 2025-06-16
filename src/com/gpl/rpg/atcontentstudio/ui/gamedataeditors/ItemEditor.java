@@ -252,17 +252,13 @@ public class ItemEditor extends JSONElementEditor {
 			equipEffectPane.collapse();
 		}
 
-		hitEffectPane = new CollapsiblePanel("Effect on every hit: ");
-		hitEffectPane.setLayout(new JideBoxLayout(hitEffectPane, JideBoxLayout.PAGE_AXIS));
-		if (item.hit_effect == null) {
-			hitEffect = new Common.HitEffect();
-		} else {
-			hitEffect = item.hit_effect;
-		}
-		hitHPMin = addIntegerField(hitEffectPane, "HP bonus min: ", hitEffect.hp_boost_min, true, item.writable, listener);
-		hitHPMax = addIntegerField(hitEffectPane, "HP bonus max: ", hitEffect.hp_boost_max, true, item.writable, listener);
-		hitAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, item.writable, listener);
-		hitAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, item.writable, listener);
+		CommonEditor.CreateDeathEffectPanelResult hitEffectPanelResult = CommonEditor.createDeathEffectPanel(item.hit_effect, item.writable, listener, "Effect on every hit: ");
+		hitEffectPane = hitEffectPanelResult.panel;
+		hitHPMin = hitEffectPanelResult.HPMin;
+		hitHPMax = hitEffectPanelResult.HPMax;
+		hitAPMax = hitEffectPanelResult.APMax;
+		hitAPMin = hitEffectPanelResult.APMin;
+
 		String hitSourceTitle = "Actor Conditions applied to the source: ";
 		TimedConditionsCellRenderer hitSourceCellRenderer = new TimedConditionsCellRenderer();
 		hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
@@ -315,18 +311,19 @@ public class ItemEditor extends JSONElementEditor {
 		pane.add(hitEffectPane, JideBoxLayout.FIX);
 
 
-
-		killEffectPane = new CollapsiblePanel(killLabel);
-		killEffectPane.setLayout(new JideBoxLayout(killEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (item.kill_effect == null) {
 			killEffect = new Common.DeathEffect();
 		} else {
 			killEffect = item.kill_effect;
 		}
-		killHPMin = addIntegerField(killEffectPane, "HP bonus min: ", killEffect.hp_boost_min, true, item.writable, listener);
-		killHPMax = addIntegerField(killEffectPane, "HP bonus max: ", killEffect.hp_boost_max, true, item.writable, listener);
-		killAPMin = addIntegerField(killEffectPane, "AP bonus min: ", killEffect.ap_boost_min, true, item.writable, listener);
-		killAPMax = addIntegerField(killEffectPane, "AP bonus max: ", killEffect.ap_boost_max, true, item.writable, listener);
+
+		CommonEditor.CreateDeathEffectPanelResult x = CommonEditor.createDeathEffectPanel(killEffect, item.writable, listener, killLabel);
+		killEffectPane = x.panel;
+		killHPMin = x.HPMin;
+		killHPMax = x.HPMax;
+		killAPMin = x.APMin;
+		killAPMax = x.APMax;
+
 		String killSourceTitle = "Actor Conditions applied to the source: ";
 		TimedConditionsCellRenderer killSourceCellRenderer = new TimedConditionsCellRenderer();
 		killSourceConditionsModel = new SourceTimedConditionsListModel(killEffect);
@@ -356,13 +353,14 @@ public class ItemEditor extends JSONElementEditor {
 		pane.add(killEffectPane, JideBoxLayout.FIX);
 
 
-		hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
-		hitReceivedEffectPane.setLayout(new JideBoxLayout(hitReceivedEffectPane, JideBoxLayout.PAGE_AXIS));
 		if (item.hit_received_effect == null) {
 			hitReceivedEffect = new Common.HitReceivedEffect();
 		} else {
 			hitReceivedEffect = item.hit_received_effect;
 		}
+		String titleHitReceived = "Effect on every hit received: ";
+		hitReceivedEffectPane = new CollapsiblePanel(titleHitReceived);
+		hitReceivedEffectPane.setLayout(new JideBoxLayout(hitReceivedEffectPane, JideBoxLayout.PAGE_AXIS));
 		hitReceivedHPMin = addIntegerField(hitReceivedEffectPane, "Player HP bonus min: ", hitReceivedEffect.hp_boost_min, true, item.writable, listener);
 		hitReceivedHPMax = addIntegerField(hitReceivedEffectPane, "Player HP bonus max: ", hitReceivedEffect.hp_boost_max, true, item.writable, listener);
 		hitReceivedAPMin = addIntegerField(hitReceivedEffectPane, "Player AP bonus min: ", hitReceivedEffect.ap_boost_min, true, item.writable, listener);

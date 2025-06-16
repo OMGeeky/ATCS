@@ -2,8 +2,10 @@ package com.gpl.rpg.atcontentstudio.ui.tools;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
+import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
+import com.gpl.rpg.atcontentstudio.ui.Editor;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.utils.lambda.CallWithReturn;
 import com.gpl.rpg.atcontentstudio.utils.lambda.CallWithSingleArg;
@@ -147,6 +149,25 @@ public final class CommonEditor {
     }
 
 
+
+    public static class CreateDeathEffectPanelResult {
+        public CollapsiblePanel panel;
+        public JSpinner HPMin;
+        public JSpinner HPMax;
+        public JSpinner APMin;
+        public JSpinner APMax;
+    }
+    public static CreateDeathEffectPanelResult createDeathEffectPanel(Common.DeathEffect hitEffect, boolean writable, FieldUpdateListener listener, String title){
+        CreateDeathEffectPanelResult result = new CreateDeathEffectPanelResult();
+        result.panel = new CollapsiblePanel(title);
+        result.panel.setLayout(new JideBoxLayout(result.panel, JideBoxLayout.PAGE_AXIS));
+        result.HPMin = Editor.addIntegerField(result.panel, "HP bonus min: ", hitEffect.hp_boost_min, true, writable, listener);
+        result.HPMax = Editor.addIntegerField(result.panel, "HP bonus max: ", hitEffect.hp_boost_max, true, writable, listener);
+        result.APMin = Editor.addIntegerField(result.panel, "AP bonus min: ", hitEffect.ap_boost_min, true, writable, listener);
+        result.APMax = Editor.addIntegerField(result.panel, "AP bonus max: ", hitEffect.ap_boost_max, true, writable, listener);
+
+        return result;
+    }
     public static String wordWrap(String in, int length) {
         if (in == null) return null;
         final String newline = "\n";
