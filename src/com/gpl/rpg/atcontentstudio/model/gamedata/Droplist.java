@@ -129,17 +129,10 @@ public class Droplist extends JSONElement {
 
 	@Override
 	public void link() {
-		if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
-			//This type of state is unrelated to parsing/linking.
+		if (shouldSkipParseOrLink()) {
 			return;
 		}
-		if (this.state == State.init) {
-			//Not parsed yet.
-			this.parse();
-		} else if (this.state == State.linked) {
-			//Already linked.
-			return;
-		}
+		ensureParseIfNeeded();
 		Project proj = getProject();
 		if (proj == null) {
 			Notification.addError("Error linking droplist "+id+". No parent project found.");
