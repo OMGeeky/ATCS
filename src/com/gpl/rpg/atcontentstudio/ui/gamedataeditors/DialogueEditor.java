@@ -6,13 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -28,10 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -522,80 +514,24 @@ public class DialogueEditor extends JSONElementEditor {
 		updateRepliesParamsEditorPane(repliesParamsPane, reply, listener);
 		pane.add(repliesParamsPane, JideBoxLayout.FIX);
 
-		CollapsiblePanel requirementsPane = new CollapsiblePanel("Requirements the player must fulfill to select this reply: ");
-		requirementsPane.setLayout(new JideBoxLayout(requirementsPane, JideBoxLayout.PAGE_AXIS));
+		ReplyRequirementsCellRenderer cellRenderer = new ReplyRequirementsCellRenderer();
+		String title = "Requirements the player must fulfill to select this reply: ";
 		requirementsListModel = new ReplyRequirementsListModel(reply);
-		requirementsList = new JList(requirementsListModel);
-		requirementsList.setCellRenderer(new ReplyRequirementsCellRenderer());
-		requirementsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		requirementsPane.add(new JScrollPane(requirementsList), JideBoxLayout.FIX);
-		final JPanel requirementsEditorPane = new JPanel();
-		final JButton createReq = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteReq = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		deleteReq.setEnabled(false);
-		requirementsList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedRequirement = (Requirement) requirementsList.getSelectedValue();
-				if (selectedRequirement != null) {
-					deleteReq.setEnabled(true);
-				} else {
-					deleteReq.setEnabled(false);
-				}
-				updateRequirementsEditorPane(requirementsEditorPane, selectedRequirement, listener);
-			}
-		});
-		requirementsList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					if (requirementsList.getSelectedValue() != null && ((Requirement)requirementsList.getSelectedValue()).required_obj != null) {
-						ATContentStudio.frame.openEditor(((Requirement)requirementsList.getSelectedValue()).required_obj);
-						ATContentStudio.frame.selectInTree(((Requirement)requirementsList.getSelectedValue()).required_obj);
-					}
-				}
-			}
-		});
-		requirementsList.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					ATContentStudio.frame.openEditor(((Requirement)requirementsList.getSelectedValue()).required_obj);
-					ATContentStudio.frame.selectInTree(((Requirement)requirementsList.getSelectedValue()).required_obj);
-				}
-			}
-		});
-		if (((Dialogue)target).writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createReq.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Requirement req = new Requirement();
-					requirementsListModel.addItem(req);
-					requirementsList.setSelectedValue(req, true);
-					listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteReq.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedRequirement != null) {
-						requirementsListModel.removeItem(selectedRequirement);
-						selectedRequirement = null;
-						requirementsList.clearSelection();
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
 
-			listButtonsPane.add(createReq, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteReq, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			requirementsPane.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		requirementsEditorPane.setLayout(new JideBoxLayout(requirementsEditorPane, JideBoxLayout.PAGE_AXIS));
-		requirementsPane.add(requirementsEditorPane, JideBoxLayout.FIX);
+		final boolean moveUpDownEnabled = false;
+
+		CollapsiblePanel requirementsPane = CommonEditor.createListPanel(
+				title,
+				cellRenderer,
+				requirementsListModel,
+				target.writable,
+				moveUpDownEnabled,
+				(e)->selectedRequirement=e,
+				()->selectedRequirement,
+				this::updateRequirementsEditorPane,
+				listener,
+                Requirement::new);
+
 		if (reply.requirements == null || reply.requirements.isEmpty()) {
 			requirementsPane.collapse();
 		}
