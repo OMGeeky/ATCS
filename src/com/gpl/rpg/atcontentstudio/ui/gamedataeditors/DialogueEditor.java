@@ -54,6 +54,7 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
+import com.gpl.rpg.atcontentstudio.ui.tools.CommonEditor;
 import com.jidesoft.swing.JideBoxLayout;
 
 public class DialogueEditor extends JSONElementEditor {
@@ -237,100 +238,29 @@ public class DialogueEditor extends JSONElementEditor {
 		rewards.add(rewardsEditorPane, JideBoxLayout.FIX);
 
 		pane.add(rewards, JideBoxLayout.FIX);
-		
-		CollapsiblePanel replies = new CollapsiblePanel("Replies / Next Phrase: ");
-		replies.setLayout(new JideBoxLayout(replies, JideBoxLayout.PAGE_AXIS));
-		repliesListModel = new RepliesListModel(dialogue);
-		repliesList = new JList(repliesListModel);
-		repliesList.setCellRenderer(new RepliesCellRenderer());
-		repliesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		replies.add(new JScrollPane(repliesList), JideBoxLayout.FIX);
-		final JPanel repliesEditorPane = new JPanel();
-		final JButton createReply = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-		final JButton deleteReply = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-		final JButton moveReplyUp = new JButton(new ImageIcon(DefaultIcons.getArrowUpIcon()));
-		final JButton moveReplyDown = new JButton(new ImageIcon(DefaultIcons.getArrowDownIcon()));
-		deleteReply.setEnabled(false);
-		moveReplyUp.setEnabled(false);
-		moveReplyDown.setEnabled(false);
-		repliesList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedReply = (Dialogue.Reply) repliesList.getSelectedValue();
-				if (selectedReply != null && !Dialogue.Reply.GO_NEXT_TEXT.equals(selectedReply.text)) {
-					replyTextCache = selectedReply.text;
-				} else {
-					replyTextCache = null;
-				}
-				if (selectedReply != null) {
-					deleteReply.setEnabled(true);
-					moveReplyUp.setEnabled(repliesList.getSelectedIndex() > 0);
-					moveReplyDown.setEnabled(repliesList.getSelectedIndex() < (repliesListModel.getSize() - 1));
-				} else {
-					deleteReply.setEnabled(false);
-					moveReplyUp.setEnabled(false);
-					moveReplyDown.setEnabled(false);
-				}
-				updateRepliesEditorPane(repliesEditorPane, selectedReply, listener);
-			}
-		});
-		if (dialogue.writable) {
-			JPanel listButtonsPane = new JPanel();
-			listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-			createReply.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Dialogue.Reply reply = new Dialogue.Reply();
-					repliesListModel.addItem(reply);
-					repliesList.setSelectedValue(reply, true);
-					listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-				}
-			});
-			deleteReply.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReply != null) {
-						repliesListModel.removeItem(selectedReply);
-						selectedReply = null;
-						repliesList.clearSelection();
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
+
+		String title = "Replies / Next Phrase: ";
+		RepliesCellRenderer cellRenderer = new RepliesCellRenderer();
+
+		repliesListModel = new DialogueEditor.RepliesListModel(dialogue);
+		CollapsiblePanel replies = CommonEditor.createListPanel(
+				title,
+				cellRenderer,
+				repliesListModel,
+				dialogue.replies == null || dialogue.replies.isEmpty(),
+				dialogue.writable,
+				e -> {
+					selectedReply = e;
+					if (selectedReply != null && !Dialogue.Reply.GO_NEXT_TEXT.equals(selectedReply.text)) {
+						replyTextCache = selectedReply.text;
+					} else {
+						replyTextCache = null;
 					}
-				}
-			});
-			moveReplyUp.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReply != null) {
-						repliesListModel.moveUp(selectedReply);
-						repliesList.setSelectedValue(selectedReply, true);
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
-			moveReplyDown.addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (selectedReply != null) {
-						repliesListModel.moveDown(selectedReply);
-						repliesList.setSelectedValue(selectedReply, true);
-						listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-					}
-				}
-			});
-			listButtonsPane.add(createReply, JideBoxLayout.FIX);
-			listButtonsPane.add(deleteReply, JideBoxLayout.FIX);
-			listButtonsPane.add(moveReplyUp, JideBoxLayout.FIX);
-			listButtonsPane.add(moveReplyDown, JideBoxLayout.FIX);
-			listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-			replies.add(listButtonsPane, JideBoxLayout.FIX);
-		}
-		if (dialogue.replies == null || dialogue.replies.isEmpty()) {
-			replies.collapse();
-		}
-		repliesEditorPane.setLayout(new JideBoxLayout(repliesEditorPane, JideBoxLayout.PAGE_AXIS));
-		replies.add(repliesEditorPane, JideBoxLayout.FIX);
+				},
+				()->selectedReply,
+                this::updateRepliesEditorPane,
+				listener,
+                Dialogue.Reply::new);
 
 		pane.add(replies, JideBoxLayout.FIX);
 		
