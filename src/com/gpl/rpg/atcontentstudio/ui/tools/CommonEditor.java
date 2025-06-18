@@ -213,7 +213,7 @@ public final class CommonEditor {
 
         @Override
         public E getElementAt(int index) {
-            if (getInner() == null) return null;
+            if (index < 0 || index >= getSize()) return null;
             return getInner().get(index);
         }
 
