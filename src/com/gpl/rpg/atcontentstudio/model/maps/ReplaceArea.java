@@ -71,6 +71,9 @@ public class ReplaceArea extends MapObject {
 		addReplacement(repl);
 		return repl;
 	}
+	public ReplaceArea.Replacement createReplacement(String source, String target) {
+		return new Replacement(source, target);
+	}
 	
 	public void addReplacement(ReplaceArea.Replacement repl) {
 		if (replacements == null) replacements = new ArrayList<ReplaceArea.Replacement>();

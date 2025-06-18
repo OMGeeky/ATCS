@@ -62,6 +62,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import com.gpl.rpg.atcontentstudio.ui.tools.CommonEditor;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
@@ -378,7 +379,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addMapchange.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newMapchange(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newMapchange(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -391,7 +392,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addSpawn.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newSpawnArea(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newSpawnArea(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -404,7 +405,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addRest.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newRest(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newRest(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -417,7 +418,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addKey.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newKey(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newKey(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -430,7 +431,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addReplace.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newReplace(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newReplace(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -443,7 +444,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addScript.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newScript(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newScript(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -456,7 +457,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addContainer.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newContainer(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newContainer(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -469,7 +470,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addSign.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.addObject(MapObject.newSign(new tiled.core.MapObject(0, 0, 32, 32), map));
+					groupObjectsListModel.addItem(MapObject.newSign(new tiled.core.MapObject(0, 0, 32, 32), map));
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -482,7 +483,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			deleteObject.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					groupObjectsListModel.removeObject(selectedMapObject);
+					groupObjectsListModel.removeItem(selectedMapObject);
 					map.state = GameDataElement.State.modified;
 					map.childrenChanged(new ArrayList<ProjectTreeNode>());
 					ATContentStudio.frame.editorChanged(TMXMapEditor.this);
@@ -587,7 +588,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			addReplacement.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					replacementsListModel.addObject(null, null);
+					replacementsListModel.addReplacement(null, null);
 				}
 			});
 			deleteReplacement = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
@@ -596,7 +597,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			deleteReplacement.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					replacementsListModel.removeObject(selectedReplacement);
+					replacementsListModel.removeItem(selectedReplacement);
 				}
 			});
 			replacementListButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -1153,61 +1154,22 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class ReplacementsListModel implements ListModel<ReplaceArea.Replacement> {
-		
-		public ReplaceArea area;
-		
+	public class ReplacementsListModel extends CommonEditor.AtListModel<ReplaceArea.Replacement, ReplaceArea> {
 		public ReplacementsListModel(ReplaceArea area) {
-			this.area = area;
+			super(area);
 		}
-		
 		@Override
-		public int getSize() {
-			if (area.replacements == null) return 0;
-			return area.replacements.size();
+		protected List<ReplaceArea.Replacement> getInner() {
+			return source.replacements;
 		}
 
 		@Override
-		public ReplaceArea.Replacement getElementAt(int index) {
-			if (index < 0 || index > getSize()) return null;
-			if (area.replacements == null) return null;
-			return area.replacements.get(index);
+		protected void setInner(List<ReplaceArea.Replacement> value) {
+			source.replacements = value;
 		}
 
-
-		public void objectChanged(ReplaceArea.Replacement repl) {
-			int index = area.replacements.indexOf(repl);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
-		public void addObject(String source, String target) {
-			ReplaceArea.Replacement repl = area.addReplacement(source, target);
-			int index = area.replacements.indexOf(repl);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeObject(ReplaceArea.Replacement repl) {
-			int index = area.replacements.indexOf(repl);
-			area.removeReplacement(repl);
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		public void addReplacement(String source, String target) {
+			addItem(this.source.createReplacement(source, target));
 		}
 	}
 	
@@ -1286,58 +1248,20 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class MapObjectsListModel implements ListModel<MapObject> {
-
-		public MapObjectGroup group;
-		
+	public class MapObjectsListModel extends CommonEditor.AtListModel<MapObject, MapObjectGroup> {
 		public MapObjectsListModel(MapObjectGroup group) {
-			this.group = group;
-		}
-		
-		@Override
-		public int getSize() {
-			return group.mapObjects.size();
+			super(group);
 		}
 
 		@Override
-		public MapObject getElementAt(int index) {
-			return group.mapObjects.get(index);
-		}
-		
-		public void objectChanged(MapObject area) {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(groupObjectsList, ListDataEvent.CONTENTS_CHANGED, group.mapObjects.indexOf(area), group.mapObjects.indexOf(area)));
-			}
-		}
-		
-		public void addObject(MapObject area) {
-			group.mapObjects.add(area);
-			int index = group.mapObjects.indexOf(area);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(groupObjectsList, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeObject(MapObject area) {
-			int index = group.mapObjects.indexOf(area);
-			group.mapObjects.remove(area);
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(groupObjectsList, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected List<MapObject> getInner() {
+			return source.mapObjects;
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<MapObject> value) {
+			source.mapObjects = value;
 		}
-	
 	}
 
 	public class GroupObjectsRenderer extends DefaultListCellRenderer {
@@ -1353,36 +1277,20 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class SpawnGroupNpcListModel implements ListModel<NPC> {
-		
-		public SpawnArea area;
-		
+	public class SpawnGroupNpcListModel extends CommonEditor.AtListModel<NPC, SpawnArea> {
 		public SpawnGroupNpcListModel(SpawnArea area) {
-			this.area = area;
-		}
-		
-		@Override
-		public int getSize() {
-			return area.spawnGroup.size();
+			super(area);
 		}
 
 		@Override
-		public NPC getElementAt(int index) {
-			return area.spawnGroup.get(index);
-		}
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected List<NPC> getInner() {
+			return source.spawnGroup;
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setInner(List<NPC> value) {
+			source.spawnGroup = value;
 		}
-	
 	}
 	
 	
@@ -1956,7 +1864,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 							area.oldSchoolRequirement = false;
 						}
 					}
-					groupObjectsListModel.objectChanged(selectedMapObject);
+					groupObjectsListModel.itemChanged(selectedMapObject);
 				}
 			} else if (source == spawngroupField) {
 				if (selectedMapObject instanceof SpawnArea) {
@@ -1969,7 +1877,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 					area.spawngroup_id = (String) value;
 					selectedMapObject.link();
 					npcList.setModel(new SpawnGroupNpcListModel(area));
-					groupObjectsListModel.objectChanged(area);
+					groupObjectsListModel.itemChanged(area);
 					npcList.revalidate();
 					npcList.repaint();
 					tmxViewer.revalidate();
@@ -1998,7 +1906,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 					} else {
 						area.name = null;
 					}
-					groupObjectsListModel.objectChanged(area);
+					groupObjectsListModel.itemChanged(area);
 					tmxViewer.revalidate();
 					tmxViewer.repaint();
 				}
@@ -2027,7 +1935,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 					} else {
 						area.name = null;
 					}
-					groupObjectsListModel.objectChanged(area);
+					groupObjectsListModel.itemChanged(area);
 					tmxViewer.revalidate();
 					tmxViewer.repaint();
 				} else if (selectedMapObject instanceof SignArea) {
@@ -2041,7 +1949,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 					} else {
 						area.name = null;
 					}
-					groupObjectsListModel.objectChanged(area);
+					groupObjectsListModel.itemChanged(area);
 					tmxViewer.revalidate();
 					tmxViewer.repaint();
 				}
@@ -2226,12 +2134,12 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 				}
 			}  else if (source == sourceLayer) {
 				selectedReplacement.sourceLayer = (String)value;
-				replacementsListModel.objectChanged(selectedReplacement);
-				groupObjectsListModel.objectChanged(selectedMapObject);
+				replacementsListModel.itemChanged(selectedReplacement);
+				groupObjectsListModel.itemChanged(selectedMapObject);
 			} else if (source == targetLayer) {
 				selectedReplacement.targetLayer = (String)value;
-				replacementsListModel.objectChanged(selectedReplacement);
-				groupObjectsListModel.objectChanged(selectedMapObject);
+				replacementsListModel.itemChanged(selectedReplacement);
+				groupObjectsListModel.itemChanged(selectedMapObject);
 			}
 			if (modified) {
 				if (map.state != GameDataElement.State.modified) {
