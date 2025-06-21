@@ -33,7 +33,6 @@ public class WorkspaceActions {
             new ProjectCreationWizard().setVisible(true);
         }
 
-        ;
     };
 
 
@@ -44,13 +43,10 @@ public class WorkspaceActions {
             selectedNode = null;
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode instanceof Project);
         }
 
-        ;
     };
 
 
@@ -60,13 +56,10 @@ public class WorkspaceActions {
             Workspace.openProject((ClosedProject) selectedNode);
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode instanceof ClosedProject);
         }
 
-        ;
     };
 
     public ATCSAction deleteProject = new ATCSAction("Delete project", "Deletes the project, and all created/altered data, from disk") {
@@ -82,13 +75,10 @@ public class WorkspaceActions {
             }
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode instanceof Project || selectedNode instanceof ClosedProject);
         }
 
-        ;
     };
 
     public ATCSAction saveElement = new ATCSAction("Save this element", "Saves the current state of this element on disk") {
@@ -101,8 +91,6 @@ public class WorkspaceActions {
             }
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             if (selectedNode instanceof GameDataElement) {
                 setEnabled(((GameDataElement) selectedNode).needsSaving());
@@ -111,7 +99,6 @@ public class WorkspaceActions {
             }
         }
 
-        ;
     };
 
     public ATCSAction deleteSelected = new ATCSAction("Delete", "Deletes the selected items") {
@@ -121,8 +108,6 @@ public class WorkspaceActions {
         public void init() {
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         }
-
-        ;
 
         public void actionPerformed(ActionEvent e) {
             if (multiMode) {
@@ -253,8 +238,6 @@ public class WorkspaceActions {
             }
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             elementsToDelete = null;
             if (selectedPaths != null && selectedPaths.length > 1) {
@@ -284,7 +267,6 @@ public class WorkspaceActions {
             }
         }
 
-        ;
     };
 
     public ATCSAction createGDE = new ATCSAction("Create Game Data Element (JSON)", "Opens the game object creation wizard") {
@@ -341,13 +323,10 @@ public class WorkspaceActions {
             }
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode instanceof Project || selectedNode instanceof SavedGamesSet);
         }
 
-        ;
     };
 
     public ATCSAction compareItems = new ATCSAction("Items comparator", "Opens an editor showing all the items of the project in a table") {
@@ -378,13 +357,10 @@ public class WorkspaceActions {
             new ExportProjectWizard(selectedNode.getProject()).setVisible(true);
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode != null && selectedNode.getProject() != null);
         }
 
-        ;
     };
 
     public ATCSAction runBeanShell = new ATCSAction("Run Beanshell console", "Opens a beanshell scripting pad.") {
@@ -392,7 +368,6 @@ public class WorkspaceActions {
             new BeanShellView();
         }
 
-        ;
     };
 
     public ATCSAction showAbout = new ATCSAction("About...", "Displays credits and other informations about ATCS") {
@@ -400,7 +375,6 @@ public class WorkspaceActions {
             ATContentStudio.frame.showAbout();
         }
 
-        ;
     };
 
     public ATCSAction exitATCS = new ATCSAction("Exit", "Closes the program") {
@@ -415,7 +389,6 @@ public class WorkspaceActions {
             }
         }
 
-        ;
     };
 
     public ATCSAction createWriter = new ATCSAction("Create dialogue sketch", "Create a dialogue sketch for fast dialogue edition") {
@@ -434,8 +407,6 @@ public class WorkspaceActions {
 //			frame.pack();
 //			frame.setVisible(true);
         }
-
-        ;
 
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode != null && selectedNode.getProject() != null);
@@ -464,8 +435,6 @@ public class WorkspaceActions {
 
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(selectedNode != null && selectedNode instanceof Dialogue);
         }
@@ -476,13 +445,10 @@ public class WorkspaceActions {
             new WorkspaceSettingsEditor(Workspace.activeWorkspace.settings);
         }
 
-        ;
-
         public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
             setEnabled(true);
         }
 
-        ;
     };
 
     List<ATCSAction> actions = new ArrayList<WorkspaceActions.ATCSAction>();
@@ -540,8 +506,6 @@ public class WorkspaceActions {
         @Override
         public void actionPerformed(ActionEvent e) {
         }
-
-        ;
 
         public Map<String, Object> values = new LinkedHashMap<String, Object>();
 

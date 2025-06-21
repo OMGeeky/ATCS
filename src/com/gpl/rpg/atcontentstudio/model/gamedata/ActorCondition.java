@@ -22,7 +22,6 @@ public class ActorCondition extends JSONElement {
 
     public static final Integer MAGNITUDE_CLEAR = -99;
     public static final Integer DURATION_FOREVER = 999;
-    ;
     public static final Integer DURATION_NONE = 0;
 
     // Available from init state

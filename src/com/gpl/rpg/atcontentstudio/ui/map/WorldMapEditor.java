@@ -985,7 +985,6 @@ public class WorldMapEditor extends Editor implements FieldUpdateListener {
             repaintMap();
         }
 
-        ;
     };
 
     private void setCurrentSelectionModel(ListModel<TMXMap> listModel, ListSelectionModel listSelectionModel) {

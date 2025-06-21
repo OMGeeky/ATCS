@@ -45,7 +45,6 @@ public class WorkerDialog extends JDialog {
                     JOptionPane.showMessageDialog(parent, "<html><font size=" + (int) (5 * ATContentStudio.SCALING) + ">Done !</font></html>");
             }
 
-            ;
         }.start();
     }
 }

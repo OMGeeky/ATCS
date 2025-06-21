@@ -119,7 +119,6 @@ public class TMXMapSet implements ProjectTreeNode {
                     }
                 }
 
-                ;
             };
             watcher.start();
         }

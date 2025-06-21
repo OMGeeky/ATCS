@@ -37,8 +37,6 @@ public class Spritesheet extends GameDataElement {
         actorcondition
     }
 
-    ;
-
     //Lazy initialization.
     public BufferedImage spritesheet = null;
     public Map<Integer, BufferedImage> cache_full_size = new LinkedHashMap<Integer, BufferedImage>();

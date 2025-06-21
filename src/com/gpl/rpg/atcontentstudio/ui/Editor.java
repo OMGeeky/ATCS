@@ -126,7 +126,6 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
                     translationStatus.setText(unit.translatedText);
                 }
 
-                ;
             }.start();
             pane.add(labelPane, JideBoxLayout.FIX);
             tfComponent.getDocument().addDocumentListener(new DocumentListener() {
@@ -333,18 +332,15 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
                     defaultChance = Integer.parseInt(defaultValue.substring(0, c));
                 } catch (NumberFormatException nfe) {
                 }
-                ;
                 try {
                     defaultMaxChance = Integer.parseInt(defaultValue.substring(c + 1));
                 } catch (NumberFormatException nfe) {
                 }
-                ;
             } else {
                 try {
                     defaultChance = Integer.parseInt(defaultValue);
                 } catch (NumberFormatException nfe) {
                 }
-                ;
             }
         }
 
@@ -358,19 +354,16 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
                     chance = Integer.parseInt(initialValue.substring(0, c));
                 } catch (NumberFormatException nfe) {
                 }
-                ;
                 try {
                     maxChance = Integer.parseInt(initialValue.substring(c + 1));
                 } catch (NumberFormatException nfe) {
                 }
-                ;
             } else {
                 try {
                     chance = Integer.parseInt(initialValue);
                     currentFormIsRatio = false;
                 } catch (NumberFormatException nfe) {
                 }
-                ;
             }
         }
 

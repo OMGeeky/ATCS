@@ -323,7 +323,6 @@ public class SpritesheetEditor extends Editor {
                         }
                     }
 
-                    ;
                 };
                 animator.start();
             }

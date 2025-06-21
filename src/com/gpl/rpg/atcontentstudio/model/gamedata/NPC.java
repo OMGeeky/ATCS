@@ -574,7 +574,5 @@ public class NPC extends JSONElement {
         return new Double(Math.ceil(experience)).intValue();
     }
 
-    ;
-
 
 }

@@ -768,8 +768,6 @@ public class WriterModeEditor extends Editor {
             }
         }
 
-        ;
-
 
         private void showEditorOnSelected() {
             if (selected == null) return;

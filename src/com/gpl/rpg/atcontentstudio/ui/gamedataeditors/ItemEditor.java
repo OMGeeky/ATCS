@@ -1165,7 +1165,6 @@ public class ItemEditor extends JSONElementEditor {
     public static class SourceTimedConditionsListModel extends OrderedListenerListModel<Common.DeathEffect, Common.TimedConditionEffect> {
         public SourceTimedConditionsListModel(Common.DeathEffect effect) {
             super(effect);
-            ;
         }
 
         @Override

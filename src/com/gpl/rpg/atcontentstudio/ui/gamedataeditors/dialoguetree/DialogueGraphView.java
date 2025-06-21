@@ -204,7 +204,6 @@ public class DialogueGraphView extends Display {
                         dNode.setString(LABEL, message + translationHeader + unit.translatedText);
                     }
 
-                    ;
                 };
             } else {
                 label = dialogue.message;
@@ -244,7 +243,6 @@ public class DialogueGraphView extends Display {
                         rNode.setString(LABEL, message + translationHeader + unit.translatedText);
                     }
 
-                    ;
                 };
             } else {
                 label = r.text;

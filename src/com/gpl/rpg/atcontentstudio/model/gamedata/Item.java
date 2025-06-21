@@ -614,7 +614,6 @@ public class Item extends JSONElement {
                 price += kill_effect == null ? 0 : calculateUseCost();
             } else if (category.action_type == ItemCategory.ActionType.equip) {
                 price += equip_effect == null ? 0 : calculateEquipCost(isWeapon());
-                ;
                 price += hit_effect == null ? 0 : calculateHitCost();
                 price += kill_effect == null ? 0 : calculateKillCost();
             }

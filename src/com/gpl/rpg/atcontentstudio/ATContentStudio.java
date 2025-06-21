@@ -113,7 +113,6 @@ public class ATContentStudio {
                             frame.setDefaultCloseOperation(StudioFrame.DO_NOTHING_ON_CLOSE);
                         }
 
-                        ;
                     });
                     for (File f : ConfigCache.getKnownWorkspaces()) {
                         if (workspaceRoot.equals(f)) {
