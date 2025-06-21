@@ -179,13 +179,29 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
     }
 
     public static JTextField addTextField(JPanel pane, String label, String initialValue, boolean editable, final FieldUpdateListener listener) {
+        final JTextField tfField = new JTextField(initialValue);
+        addTextComponent(pane, label, editable, listener, tfField, false, false);
+        tfField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                listener.valueChanged(tfField, tfField.getText());
+            }
+        });
+        return tfField;
+    }
+    public static <T extends JTextComponent> T addTextComponent(JPanel pane, String label, boolean editable, final FieldUpdateListener listener, T tfField, boolean specialNewLinesHandling, boolean scrollable) {
         JPanel tfPane = new JPanel();
         tfPane.setLayout(new JideBoxLayout(tfPane, JideBoxLayout.LINE_AXIS, 6));
         JLabel tfLabel = new JLabel(label);
         tfPane.add(tfLabel, JideBoxLayout.FIX);
-        final JTextField tfField = new JTextField(initialValue);
         tfField.setEditable(editable);
-        tfPane.add(tfField, JideBoxLayout.VARY);
+        JComponent component;
+        if (scrollable){
+            component = new JScrollPane(tfField);
+        }else{
+            component = tfField;
+        }
+        tfPane.add(component, JideBoxLayout.VARY);
         JButton nullify = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
         tfPane.add(nullify, JideBoxLayout.FIX);
         nullify.setEnabled(editable);
@@ -201,23 +217,23 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         tfField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void removeUpdate(DocumentEvent e) {
-                listener.valueChanged(tfField, tfField.getText());
+                String text = tfField.getText();
+                if(specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
+                listener.valueChanged(tfField, text);
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                listener.valueChanged(tfField, tfField.getText());
+                String text = tfField.getText();
+                if(specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
+                listener.valueChanged(tfField, text);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                listener.valueChanged(tfField, tfField.getText());
-            }
-        });
-        tfField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(tfField, tfField.getText());
+                String text = tfField.getText();
+                if(specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
+                listener.valueChanged(tfField, text);
             }
         });
         return tfField;
@@ -232,51 +248,12 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
 
     public static JTextArea addTextArea(JPanel pane, String label, String initialValue, boolean editable, final FieldUpdateListener listener) {
         String text = initialValue == null ? "" : initialValue.replaceAll("\\n", "\n");
-
-        JPanel tfPane = new JPanel();
-        tfPane.setLayout(new JideBoxLayout(tfPane, JideBoxLayout.LINE_AXIS, 6));
-        JLabel tfLabel = new JLabel(label);
-        tfPane.add(tfLabel, JideBoxLayout.FIX);
         final JTextArea tfArea = new JTextArea(text);
-        tfArea.setEditable(editable);
         tfArea.setRows(2);
         tfArea.setLineWrap(true);
         tfArea.setWrapStyleWord(true);
-        tfPane.add(new JScrollPane(tfArea), JideBoxLayout.VARY);
-        JButton nullify = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-        tfPane.add(nullify, JideBoxLayout.FIX);
-        nullify.setEnabled(editable);
-        pane.add(tfPane, JideBoxLayout.FIX);
 
-        nullify.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tfArea.setText("");
-                listener.valueChanged(tfArea, null);
-            }
-        });
-        tfArea.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                listener.valueChanged(tfArea, tfArea.getText().replaceAll("\n", Matcher.quoteReplacement("\n")));
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                listener.valueChanged(tfArea, tfArea.getText().replaceAll("\n", Matcher.quoteReplacement("\n")));
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                listener.valueChanged(tfArea, tfArea.getText().replaceAll("\n", Matcher.quoteReplacement("\n")));
-            }
-        });
-//		tfArea.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				listener.valueChanged(tfArea, tfArea.getText().replaceAll("\n", "\\n"));
-//			}
-//		});
+        addTextComponent(pane, label, editable, listener, tfArea, true, true);
         return tfArea;
     }
 
