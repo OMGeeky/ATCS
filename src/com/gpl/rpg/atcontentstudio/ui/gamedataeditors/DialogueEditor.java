@@ -108,15 +108,7 @@ public class DialogueEditor extends JSONElementEditor {
         dialogueGraphView = new DialogueGraphView(dialogue, null);
         pane.add(dialogueGraphView, BorderLayout.CENTER);
 
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new JideBoxLayout(buttonPane, JideBoxLayout.LINE_AXIS));
-        JButton reloadButton = new JButton("Refresh graph");
-        buttonPane.add(reloadButton, JideBoxLayout.FIX);
-        buttonPane.add(new JPanel(), JideBoxLayout.VARY);
-        pane.add(buttonPane, BorderLayout.NORTH);
-
-
-        reloadButton.addActionListener(new ActionListener() {
+        JPanel buttonPane = UiUtils.createRefreshButtonPane(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 pane.remove(dialogueGraphView);
@@ -126,6 +118,7 @@ public class DialogueEditor extends JSONElementEditor {
                 pane.repaint();
             }
         });
+        pane.add(buttonPane, BorderLayout.NORTH);
 
         return pane;
     }

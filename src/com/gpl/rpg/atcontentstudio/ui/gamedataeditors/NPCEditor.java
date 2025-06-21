@@ -8,6 +8,7 @@ import com.gpl.rpg.atcontentstudio.model.gamedata.*;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.ui.*;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
+import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
@@ -170,20 +171,14 @@ public class NPCEditor extends JSONElementEditor {
         dialogueGraphView = new DialogueGraphView(npc.dialogue, npc);
         dialogueGraphPane.add(dialogueGraphView, BorderLayout.CENTER);
 
-        JPanel buttonPane = new JPanel();
-        buttonPane.setLayout(new JideBoxLayout(buttonPane, JideBoxLayout.LINE_AXIS));
-        JButton reloadButton = new JButton("Refresh graph");
-        buttonPane.add(reloadButton, JideBoxLayout.FIX);
-        buttonPane.add(new JPanel(), JideBoxLayout.VARY);
-        dialogueGraphPane.add(buttonPane, BorderLayout.NORTH);
-
-
-        reloadButton.addActionListener(new ActionListener() {
+        JPanel buttonPane = UiUtils.createRefreshButtonPane(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 reloadGraphView(npc);
             }
         });
+        dialogueGraphPane.add(buttonPane, BorderLayout.NORTH);
+
 
         return dialogueGraphPane;
     }

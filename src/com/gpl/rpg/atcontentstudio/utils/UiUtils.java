@@ -9,16 +9,24 @@ import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.function.Supplier;
 
 public class UiUtils {
     public static class CollapsibleItemListCreation<E> {
         public CollapsiblePanel collapsiblePanel;
         public JList<E> list;
+    }
+    public static JPanel createRefreshButtonPane(ActionListener reloadButtonEditor){
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new JideBoxLayout(buttonPane, JideBoxLayout.LINE_AXIS));
+        JButton reloadButton = new JButton("Refresh graph");
+        buttonPane.add(reloadButton, JideBoxLayout.FIX);
+        buttonPane.add(new JPanel(), JideBoxLayout.VARY);
+
+        reloadButton.addActionListener(reloadButtonEditor);
+        return buttonPane;
     }
 
     public static <S, E, M extends OrderedListenerListModel<S, E>> CollapsibleItemListCreation<E> getCollapsibleItemList(FieldUpdateListener listener,
