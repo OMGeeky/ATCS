@@ -4,12 +4,13 @@ import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
-import com.gpl.rpg.atcontentstudio.model.gamedata.ItemCategory;
+import com.gpl.rpg.atcontentstudio.model.gamedata.*;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.ui.*;
+import com.gpl.rpg.atcontentstudio.utils.BasicLambda;
+import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithArg;
+import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithReturn;
+import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
@@ -83,7 +84,7 @@ public class ItemEditor extends JSONElementEditor {
     private JSpinner hitAPMax;
     private SourceTimedConditionsListModel hitSourceConditionsModel;
     @SuppressWarnings("rawtypes")
-    private JList hitSourceConditionsList;
+    private JList<Common.TimedConditionEffect> hitSourceConditionsList;
     private MyComboBox hitSourceConditionBox;
     private JSpinner hitSourceConditionChance;
     private JRadioButton hitSourceConditionClear;
@@ -282,59 +283,39 @@ public class ItemEditor extends JSONElementEditor {
         hitHPMax = addIntegerField(hitEffectPane, "HP bonus max: ", hitEffect.hp_boost_max, true, item.writable, listener);
         hitAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, item.writable, listener);
         hitAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, item.writable, listener);
-        final CollapsiblePanel hitSourceConditionsPane = new CollapsiblePanel("Actor Conditions applied to the source: ");
-        hitSourceConditionsPane.setLayout(new JideBoxLayout(hitSourceConditionsPane, JideBoxLayout.PAGE_AXIS));
         hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
-        hitSourceConditionsList = new JList(hitSourceConditionsModel);
-        hitSourceConditionsList.setCellRenderer(new TimedConditionsCellRenderer());
-        hitSourceConditionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        hitSourceConditionsPane.add(new JScrollPane(hitSourceConditionsList), JideBoxLayout.FIX);
         final JPanel sourceTimedConditionsEditorPane = new JPanel();
         final JButton createHitSourceCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
         final JButton deleteHitSourceCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-        hitSourceConditionsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                selectedHitEffectSourceCondition = (Common.TimedConditionEffect) hitSourceConditionsList.getSelectedValue();
-                updateHitSourceTimedConditionEditorPane(sourceTimedConditionsEditorPane, selectedHitEffectSourceCondition, listener);
-                if (selectedHitEffectSourceCondition == null) {
-                    deleteHitSourceCondition.setEnabled(false);
-                } else {
-                    deleteHitSourceCondition.setEnabled(true);
-                }
-            }
-        });
-        if (item.writable) {
-            JPanel listButtonsPane = new JPanel();
-            listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-            createHitSourceCondition.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Common.TimedConditionEffect condition = new Common.TimedConditionEffect();
-                    hitSourceConditionsModel.addItem(condition);
-                    hitSourceConditionsList.setSelectedValue(condition, true);
-                    listener.valueChanged(hitSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                }
-            });
-            deleteHitSourceCondition.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (selectedHitEffectSourceCondition != null) {
-                        hitSourceConditionsModel.removeItem(selectedHitEffectSourceCondition);
-                        selectedHitEffectSourceCondition = null;
-                        hitSourceConditionsList.clearSelection();
-                        listener.valueChanged(hitSourceConditionsList, null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                    }
-                }
-            });
 
-            listButtonsPane.add(createHitSourceCondition, JideBoxLayout.FIX);
-            listButtonsPane.add(deleteHitSourceCondition, JideBoxLayout.FIX);
-            listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-            hitSourceConditionsPane.add(listButtonsPane, JideBoxLayout.FIX);
-        }
-        sourceTimedConditionsEditorPane.setLayout(new JideBoxLayout(sourceTimedConditionsEditorPane, JideBoxLayout.PAGE_AXIS));
-        hitSourceConditionsPane.add(sourceTimedConditionsEditorPane, JideBoxLayout.FIX);
+        BasicLambdaWithReturn<Common.TimedConditionEffect> getSelected = () -> hitSourceConditionsList.getSelectedValue();
+        BasicLambda resetSelected = () -> {
+            selectedHitEffectSourceCondition = null;
+        };
+        BasicLambdaWithArg<Common.TimedConditionEffect> setSelected = (selectedItem) -> {
+            selectedHitEffectSourceCondition = selectedItem;
+        };
+        BasicLambdaWithArg valueChanged = (selectedReply) -> {
+        };
+        BasicLambdaWithArg<JPanel> updateEditorPane = (editorPane) -> updateHitSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener);
+        TimedConditionsCellRenderer cellRenderer = new TimedConditionsCellRenderer();
+        String title = "Actor Conditions applied to the source: ";
+        var collapsibleItemList = UiUtils.getCollapsibleItemList(
+                listener,
+                hitSourceConditionsModel,
+                resetSelected,
+                setSelected,
+                getSelected,
+                valueChanged,
+                updateEditorPane,
+                item.writable,
+                Common.TimedConditionEffect::new,
+                cellRenderer,
+                title,
+                (x) -> null
+        );
+        CollapsiblePanel hitSourceConditionsPane = collapsibleItemList.collapsiblePanel;
+        hitSourceConditionsList = collapsibleItemList.list;
         if (item.hit_effect == null || item.hit_effect.conditions_source == null || item.hit_effect.conditions_source.isEmpty()) {
             hitSourceConditionsPane.collapse();
         }
