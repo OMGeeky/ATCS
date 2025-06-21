@@ -3,10 +3,11 @@ package com.gpl.rpg.atcontentstudio.ui;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class OrderedListenerListModel<S, E> implements ListenerListModel<E> {
+public abstract class OrderedListenerListModel<S, E> implements ListenerCollectionModel<E> {
     protected S source;
 
     protected abstract List<E> getItems();
@@ -16,21 +17,20 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerListMode
         this.source = source;
     }
 
-    public List<ListDataListener> getListeners() {
-        return listeners;
-    }
-
-
     @Override
-    public int getSize() {
-        if (getItems() == null) return 0;
-        return getItems().size();
+    public Collection<E> getElements(){
+        return getItems();
     }
 
     @Override
     public E getElementAt(int index) {
         if (getItems() == null) return null;
         return getItems().get(index);
+    }
+
+    public E setElementAt(int index, E value) {
+        if (getItems() == null) return null;
+        return getItems().set(index, value);
     }
 
     public void addObject(E item) {addItem(item);}
@@ -40,14 +40,14 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerListMode
         }
         getItems().add(item);
         int index = getItems().indexOf(item);
-        notifyListeners( ListDataEvent.INTERVAL_ADDED, index, index);
+        notifyListeners(ListDataEvent.INTERVAL_ADDED, index, index);
     }
 
     public void removeObject(E item) {removeItem(item);}
     public void removeItem(E item) {
         int index = getItems().indexOf(item);
         getItems().remove(item);
-        if (getItems().isEmpty()) {
+        if (getSize() == 0) {
             setItems(null);
         }
         notifyListeners(ListDataEvent.INTERVAL_REMOVED, index, index);
@@ -64,9 +64,9 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerListMode
 
     private void moveUpOrDown(E item, int direction) {
         int index = getItems().indexOf(item);
-        E exchanged = getItems().get(index + direction);
-        getItems().set(index, exchanged);
-        getItems().set(index + direction, item);
+        E exchanged = getElementAt(index + direction);
+        setElementAt(index, exchanged);
+        setElementAt(index + direction, item);
         notifyListeners(ListDataEvent.CONTENTS_CHANGED, index + direction, index);
     }
 
@@ -77,4 +77,7 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerListMode
     }
 
     private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
+    public List<ListDataListener> getListeners() {
+        return listeners;
+    }
 }

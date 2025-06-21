@@ -24,4 +24,8 @@ public interface ListenerListModel<E> extends ListModel<E> {
     default void removeListDataListener(ListDataListener l) {
         getListeners().remove(l);
     }
+
+    default void fireListChanged() {
+        notifyListeners(ListDataEvent.CONTENTS_CHANGED, 0, getSize() -1);
+    }
 }
