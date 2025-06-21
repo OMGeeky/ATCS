@@ -265,12 +265,12 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         return addIntegerField(pane, label, initialValue, 0, allowNegatives, editable, listener);
     }
 
-    public static JSpinner addIntegerField(JPanel pane, String label, Integer initialValue, Integer defaultValue, boolean allowNegatives, boolean editable, final FieldUpdateListener listener) {
+    public static <T extends Comparable<?>> JSpinner addNumberField(JPanel pane, String label, boolean editable, final FieldUpdateListener listener, Number initialValue, Number defaultValue, T minimum, T maxValue, Number stepSize) {
         JPanel tfPane = new JPanel();
         tfPane.setLayout(new JideBoxLayout(tfPane, JideBoxLayout.LINE_AXIS, 6));
         JLabel tfLabel = new JLabel(label);
         tfPane.add(tfLabel, JideBoxLayout.FIX);
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(initialValue != null ? initialValue.intValue() : defaultValue.intValue(), allowNegatives ? Integer.MIN_VALUE : 0, Integer.MAX_VALUE, 1));
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(initialValue != null ? initialValue : defaultValue, minimum, maxValue, stepSize));
         ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
         spinner.setEnabled(editable);
         ((DefaultFormatter) ((NumberEditor) spinner.getEditor()).getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -293,6 +293,9 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
             }
         });
         return spinner;
+    }
+    public static JSpinner addIntegerField(JPanel pane, String label, Integer initialValue, Integer defaultValue, boolean allowNegatives, boolean editable, final FieldUpdateListener listener) {
+        return addNumberField(pane, label, editable, listener, initialValue, defaultValue, allowNegatives ? Integer.MIN_VALUE : 0, Integer.MAX_VALUE, 1);
     }
 
 
@@ -450,34 +453,7 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
 //	}
 
     public static JSpinner addDoubleField(JPanel pane, String label, Double initialValue, boolean editable, final FieldUpdateListener listener) {
-        JPanel tfPane = new JPanel();
-        tfPane.setLayout(new JideBoxLayout(tfPane, JideBoxLayout.LINE_AXIS, 6));
-        JLabel tfLabel = new JLabel(label);
-        tfPane.add(tfLabel, JideBoxLayout.FIX);
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(initialValue != null ? initialValue.doubleValue() : 0.0d, 0.0d, new Float(Float.MAX_VALUE).doubleValue(), 1.0d));
-        ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
-        spinner.setEnabled(editable);
-        ((DefaultFormatter) ((NumberEditor) spinner.getEditor()).getTextField().getFormatter()).setCommitsOnValidEdit(true);
-        tfPane.add(spinner, JideBoxLayout.VARY);
-        JButton nullify = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-        tfPane.add(nullify, JideBoxLayout.FIX);
-        nullify.setEnabled(editable);
-        pane.add(tfPane, JideBoxLayout.FIX);
-        pane.add(tfPane, JideBoxLayout.FIX);
-        spinner.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                listener.valueChanged(spinner, spinner.getValue());
-            }
-        });
-        nullify.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                spinner.setValue(0.0d);
-                listener.valueChanged(spinner, null);
-            }
-        });
-        return spinner;
+        return addNumberField(pane, label, editable, listener, initialValue, 0.0d, 0.0d, new Float(Float.MAX_VALUE).doubleValue(), 1.0d);
     }
 
     public static IntegerBasedCheckBox addIntegerBasedCheckBox(JPanel pane, String label, Integer initialValue, boolean editable) {
