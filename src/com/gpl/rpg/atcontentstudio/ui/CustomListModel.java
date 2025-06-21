@@ -17,6 +17,13 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         this.source = source;
     }
 
+    protected void notifyListeners(int event, int index0, int index1) {
+        for (ListDataListener l : listeners) {
+            l.intervalRemoved(new ListDataEvent(this, event, index0, index1));
+        }
+    }
+
+
     @Override
     public int getSize() {
         if (getItems() == null) return 0;
@@ -36,9 +43,7 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         }
         getItems().add(item);
         int index = getItems().indexOf(item);
-        for (ListDataListener l : listeners) {
-            l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-        }
+        notifyListeners( ListDataEvent.INTERVAL_ADDED, index, index);
     }
 
     public void removeObject(E item) {removeItem(item);}
@@ -48,10 +53,9 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         if (getItems().isEmpty()) {
             setItems(null);
         }
-        for (ListDataListener l : listeners) {
-            l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-        }
+        notifyListeners(ListDataEvent.INTERVAL_REMOVED, index, index);
     }
+
 
     public void moveUp(E item) {
         moveUpOrDown(item, -1);
@@ -66,20 +70,16 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         E exchanged = getItems().get(index + direction);
         getItems().set(index, exchanged);
         getItems().set(index + direction, item);
-        for (ListDataListener l : listeners) {
-            l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index + direction, index));
-        }
+        notifyListeners(ListDataEvent.CONTENTS_CHANGED, index + direction, index);
     }
 
     public void objectChanged(E item) {itemChanged(item);}
     public void itemChanged(E item) {
         int index = getItems().indexOf(item);
-        for (ListDataListener l : listeners) {
-            l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-        }
+        notifyListeners( ListDataEvent.CONTENTS_CHANGED, index, index);
     }
 
-    List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
+    private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
 
     @Override
     public void addListDataListener(ListDataListener l) {
