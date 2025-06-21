@@ -19,10 +19,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
@@ -1071,7 +1068,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public class LayerListModel implements ListModel {
+	public class LayerListModel implements ListenerListModel {
 
 		public TMXMap map;
 		
@@ -1092,40 +1089,28 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 
 		public void objectChanged(tiled.core.MapLayer layer) {
 			int index = map.tmxMap.getLayerIndex(layer);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
+			notifyListeners(ListDataEvent.CONTENTS_CHANGED, index, index);
+
 		}
 		
 		public void addObject(tiled.core.MapLayer layer) {
 			map.addLayer(layer);
 			int index = map.tmxMap.getLayerIndex(layer);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
+			notifyListeners(ListDataEvent.INTERVAL_ADDED, index, index);
 		}
 		
 		public void removeObject(tiled.core.MapLayer layer) {
 			int index = map.tmxMap.getLayerIndex(layer);
 			map.removeLayer(layer);
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
+			notifyListeners(ListDataEvent.INTERVAL_REMOVED, index, index);
 		}
 		
 		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
-
-		
 	}
 	
 	public class LayerListRenderer extends DefaultListCellRenderer {
@@ -1534,44 +1519,22 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		
 	}
 	
-	public static class TMXMapSpritesheetsListModel implements ListModel<Spritesheet> {
-
-
+	public static class TMXMapSpritesheetsListModel implements ListenerCollectionModel<Spritesheet> {
 		TMXMap map;
 
 		public TMXMapSpritesheetsListModel(TMXMap map) {
 			this.map = map;
 		}
 		@Override
-		public int getSize() {
-			return map.usedSpritesheets.size();
-		}
-
-		@Override
-		public Spritesheet getElementAt(int index) {
-			for (Spritesheet sheet : map.usedSpritesheets) {
-				if (index == 0) return sheet;
-				index --;
-			}
-			return null;
+		public Collection getElements() {
+			return map.usedSpritesheets;
 		}
 
 		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
-		public void fireListChanged() { 
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
-			}
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
 	}
 	

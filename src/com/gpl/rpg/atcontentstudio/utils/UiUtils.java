@@ -2,7 +2,6 @@ package com.gpl.rpg.atcontentstudio.utils;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
-import com.gpl.rpg.atcontentstudio.model.gamedata.Requirement;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;

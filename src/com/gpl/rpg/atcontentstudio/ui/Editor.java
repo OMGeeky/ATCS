@@ -15,10 +15,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 
@@ -1028,7 +1025,7 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
 	}
 	
 	
-	public static class GDEBacklinksListModel implements ListModel<GameDataElement> {
+	public static class GDEBacklinksListModel implements ListenerCollectionModel<GameDataElement> {
 		
 		GameDataElement source;
 		
@@ -1046,38 +1043,19 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
 				}
 			});
 		}
-		
-		@Override
-		public int getSize() {
-			return source.getBacklinks().size();
-		}
 
 		@Override
-		public GameDataElement getElementAt(int index) {
-			for (GameDataElement gde : source.getBacklinks()) {
-				if (index == 0) return gde;
-				index --;
-			}
-			return null;
+		public Collection<GameDataElement> getElements() {
+			return source.getBacklinks();
 		}
 
 		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
-		
-		public void fireListChanged() {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
-			}
-		}
+
 	}
 	
 	@SuppressWarnings({"rawtypes", "unchecked"})

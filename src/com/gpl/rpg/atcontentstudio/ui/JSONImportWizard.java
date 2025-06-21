@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -583,46 +584,24 @@ public class JSONImportWizard extends JDialog {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static class GDEListModel implements ListModel {
+	public static class GDEListModel implements ListenerCollectionModel {
 		
 		List<? extends Object> source;
 		
 		public GDEListModel(List<? extends Object> source) {
 			this.source = source;
 		}
-		
 		@Override
-		public int getSize() {
-			return source.size();
-		}
-
-		@Override
-		public Object getElementAt(int index) {
-			for (Object obj : source) {
-				if (index == 0) return obj;
-				index --;
-			}
-			return null;
+		public Collection getElements() {
+			return source;
 		}
 
 		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
 
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
-		public void fireListChanged() {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
-			}
-		}
-		
 	}
 
 

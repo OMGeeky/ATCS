@@ -48,6 +48,7 @@ import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.Editor;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.ListenerListModel;
 import com.gpl.rpg.atcontentstudio.utils.DesktopIntegration;
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideTabbedPane;
@@ -351,7 +352,7 @@ public class SpritesheetEditor extends Editor {
 	}
 	
 	
-	public static class SpritesheetsBacklinksListModel implements ListModel<ProjectTreeNode> {
+	public static class SpritesheetsBacklinksListModel implements ListenerListModel<ProjectTreeNode> {
 		
 		Spritesheet sheet;
 		
@@ -374,21 +375,10 @@ public class SpritesheetEditor extends Editor {
 		}
 
 		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
-		public void fireListChanged() {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, this.getSize()));
-			}
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
 	}
 	

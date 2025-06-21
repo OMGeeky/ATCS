@@ -37,6 +37,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.gpl.rpg.atcontentstudio.ui.*;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
@@ -49,10 +50,6 @@ import com.gpl.rpg.atcontentstudio.model.SaveEvent;
 import com.gpl.rpg.atcontentstudio.model.maps.TMXMap;
 import com.gpl.rpg.atcontentstudio.model.maps.Worldmap;
 import com.gpl.rpg.atcontentstudio.model.maps.WorldmapSegment;
-import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
-import com.gpl.rpg.atcontentstudio.ui.Editor;
-import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
-import com.gpl.rpg.atcontentstudio.ui.SaveItemsWizard;
 import com.jidesoft.swing.ComboBoxSearchable;
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideTabbedPane;
@@ -694,7 +691,7 @@ public class WorldMapEditor extends Editor implements FieldUpdateListener {
 		
 	}
 	
-	public class MapSegmentMapsListModel implements ListModel<TMXMap> {
+	public class MapSegmentMapsListModel implements ListenerListModel<TMXMap> {
 
 		WorldmapSegment segment;
 		
@@ -713,27 +710,17 @@ public class WorldMapEditor extends Editor implements FieldUpdateListener {
 		}
 
 		public void listChanged() {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSize() - 1));
-			}
+			fireListChanged();
 		}
 		
 		List<ListDataListener> listeners = new ArrayList<ListDataListener>();
-		
 		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
-
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
 	}
 	
-	public class MapSegmentLabelMapsListModel implements ListModel<TMXMap> {
-
+	public class MapSegmentLabelMapsListModel implements ListenerListModel<TMXMap> {
 		WorldmapSegment segment;
 		WorldmapSegment.NamedArea area;
 		
@@ -755,26 +742,18 @@ public class WorldMapEditor extends Editor implements FieldUpdateListener {
 		}
 
 		public void listChanged() {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSize() - 1));
-			}
+			fireListChanged();
 		}
 		
 		List<ListDataListener> listeners = new ArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
-		
 	}
 	
-	public class MapSegmentLabelsListModel implements ListModel<WorldmapSegment.NamedArea> {
+	public class MapSegmentLabelsListModel implements ListenerListModel<WorldmapSegment.NamedArea> {
 
 		WorldmapSegment segment;
 		
@@ -793,21 +772,14 @@ public class WorldMapEditor extends Editor implements FieldUpdateListener {
 		}
 
 		public void listChanged() {
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSize() - 1));
-			}
+			fireListChanged();
 		}
 		
 		List<ListDataListener> listeners = new ArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		public List<ListDataListener> getListeners() {
+			return listeners;
 		}
 		
 	}
