@@ -29,23 +29,23 @@ public class UiUtils {
     }
 
     public static <S, E, M extends OrderedListenerListModel<S, E>> CollapsibleItemListCreation<E> getCollapsibleItemList(FieldUpdateListener listener,
-                                                                                                                         M itemsListModel,
-                                                                                                                         BasicLambda selectedItemReset,
-                                                                                                                         BasicLambdaWithArg<E> setSelectedItem,
-                                                                                                                         BasicLambdaWithReturn<E> selectedItem,
+                                                                                                                         M listModel,
+                                                                                                                         BasicLambda selectedReset,
+                                                                                                                         BasicLambdaWithArg<E> setSelected,
+                                                                                                                         BasicLambdaWithReturn<E> getSelected,
                                                                                                                          BasicLambdaWithArg<E> valueChanged,
                                                                                                                          BasicLambdaWithArg<JPanel> updateEditorPane,
                                                                                                                          boolean writable,
-                                                                                                                         Supplier<E> tempSupplier,
+                                                                                                                         Supplier<E> newValueSupplier,
                                                                                                                          DefaultListCellRenderer cellRenderer,
                                                                                                                          String title,
                                                                                                                          BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj) {
         CollapsiblePanel itemsPane = new CollapsiblePanel(title);
         itemsPane.setLayout(new JideBoxLayout(itemsPane, JideBoxLayout.PAGE_AXIS));
-        final JList<E> itemsList = new JList<>(itemsListModel);
-        itemsList.setCellRenderer(cellRenderer);
-        itemsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        itemsPane.add(new JScrollPane(itemsList), JideBoxLayout.FIX);
+        final JList<E> list = new JList<>(listModel);
+        list.setCellRenderer(cellRenderer);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        itemsPane.add(new JScrollPane(list), JideBoxLayout.FIX);
         final JPanel editorPane = new JPanel();
         final JButton createBtn = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
         final JButton deleteBtn = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
@@ -54,18 +54,18 @@ public class UiUtils {
         deleteBtn.setEnabled(false);
         moveUpBtn.setEnabled(false);
         moveDownBtn.setEnabled(false);
-        itemsList.addListSelectionListener(e -> {
-            E selectedValue = itemsList.getSelectedValue();
+        list.addListSelectionListener(e -> {
+            E selectedValue = list.getSelectedValue();
             valueChanged.doIt(selectedValue);
-            setSelectedItem.doIt(selectedValue);
+            setSelected.doIt(selectedValue);
             if (selectedValue == null) {
                 deleteBtn.setEnabled(false);
                 moveUpBtn.setEnabled(false);
                 moveDownBtn.setEnabled(false);
             } else {
                 deleteBtn.setEnabled(true);
-                    moveUpBtn.setEnabled(itemsList.getSelectedIndex() > 0);
-                    moveDownBtn.setEnabled(itemsList.getSelectedIndex() < (itemsListModel.getSize() - 1));
+                    moveUpBtn.setEnabled(list.getSelectedIndex() > 0);
+                    moveDownBtn.setEnabled(list.getSelectedIndex() < (listModel.getSize() - 1));
 
             }
             updateEditorPane.doIt(editorPane);
@@ -74,14 +74,14 @@ public class UiUtils {
             JPanel listButtonsPane = new JPanel();
             listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
 
-            addRemoveAndAddButtons(listener, itemsListModel, selectedItemReset, selectedItem, tempSupplier, createBtn, itemsList, listButtonsPane, deleteBtn);
-            addMoveButtonListeners(listener, itemsListModel, selectedItem, moveUpBtn, itemsList, listButtonsPane, moveDownBtn);
+            addRemoveAndAddButtons(listener, listModel, selectedReset, getSelected, newValueSupplier, createBtn, list, listButtonsPane, deleteBtn);
+            addMoveButtonListeners(listener, listModel, getSelected, moveUpBtn, list, listButtonsPane, moveDownBtn);
 
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
             itemsPane.add(listButtonsPane, JideBoxLayout.FIX);
         }
 
-        addNavigationListeners(getReferencedObj, itemsList);
+        addNavigationListeners(getReferencedObj, list);
 
         editorPane.setLayout(new JideBoxLayout(editorPane, JideBoxLayout.PAGE_AXIS));
         itemsPane.add(editorPane, JideBoxLayout.FIX);
@@ -89,14 +89,14 @@ public class UiUtils {
         return new CollapsibleItemListCreation<E>() {
             {
                 collapsiblePanel = itemsPane;
-                list = itemsList;
+                list = list;
             }
         };
     }
 
-    private static <S, E, M extends OrderedListenerListModel<S, E>> void addRemoveAndAddButtons(FieldUpdateListener listener, M itemsListModel, BasicLambda selectedItemReset, BasicLambdaWithReturn<E> selectedItem, Supplier<E> tempSupplier, JButton createBtn, JList<E> itemsList, JPanel listButtonsPane, JButton deleteBtn) {
+    private static <S, E, M extends OrderedListenerListModel<S, E>> void addRemoveAndAddButtons(FieldUpdateListener listener, M itemsListModel, BasicLambda selectedItemReset, BasicLambdaWithReturn<E> selectedItem, Supplier<E> newValueSupplier, JButton createBtn, JList<E> itemsList, JPanel listButtonsPane, JButton deleteBtn) {
         createBtn.addActionListener(e -> {
-            E tempItem = tempSupplier.get();
+            E tempItem = newValueSupplier.get();
             itemsListModel.addItem(tempItem);
             itemsList.setSelectedValue(tempItem, true);
             listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.

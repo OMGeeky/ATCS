@@ -171,7 +171,10 @@ public class ItemCategory extends JSONElement {
 
     @Override
     public void link() {
-        if (!this.linkCheck()) return;
+		if (shouldSkipParseOrLink()) {
+			return;
+		}
+		ensureParseIfNeeded();
 
         //Nothing to link to :D
         this.state = State.linked;

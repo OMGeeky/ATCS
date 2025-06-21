@@ -21,8 +21,7 @@ public abstract class JSONElement extends GameDataElement {
 
     @SuppressWarnings("rawtypes")
     public void parse() {
-        if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
-            //This type of state is unrelated to parsing/linking.
+		if (shouldSkipParse()) {
             return;
         }
         JSONParser parser = new JSONParser();

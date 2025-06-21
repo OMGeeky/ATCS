@@ -222,7 +222,10 @@ public class ActorCondition extends JSONElement {
 
     @Override
     public void link() {
-        if (!this.linkCheck()) return;
+		if (shouldSkipParseOrLink()) {
+			return;
+		}
+		ensureParseIfNeeded();
         if (this.icon_id != null) {
             String spritesheetId = this.icon_id.split(":")[0];
             if (getProject().getSpritesheet(spritesheetId) == null) {

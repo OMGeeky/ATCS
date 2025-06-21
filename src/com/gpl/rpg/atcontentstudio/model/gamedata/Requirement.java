@@ -122,7 +122,10 @@ public class Requirement extends JSONElement {
 
     @Override
     public void link() {
-        if (!this.linkCheck()) return;
+        if (shouldSkipParseOrLink()) {
+            return;
+        }
+        ensureParseIfNeeded();
         Project proj = getProject();
         if (proj == null) {
             Notification.addError("Error linking requirement " + getDesc() + ". No parent project found.");
