@@ -14,7 +14,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
@@ -62,15 +61,20 @@ public class NotificationsPane extends JList {
 		});
 		Notification.addNotificationListener(model);
 	}
-	
-	
-	private class MyListModel implements ListModel, NotificationListener {
+
+
+	private class MyListModel implements ListenerListModel<Notification>, NotificationListener {
 		
 		@Override
-		public Object getElementAt(int index) {
+		public Notification getElementAt(int index) {
 			return Notification.notifs.get(index);
 		}
-		
+
+		@Override
+		public List<ListDataListener> getListeners() {
+			return listeners;
+		}
+
 		@Override
 		public int getSize() {
 			return Notification.notifs.size();
@@ -78,28 +82,15 @@ public class NotificationsPane extends JList {
 		
 		@Override
 		public void onNewNotification(Notification n) {
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(NotificationsPane.this, ListDataEvent.INTERVAL_ADDED, Notification.notifs.size() - 1 , Notification.notifs.size() - 1));
-			}
+			notifyListeners(NotificationsPane.this, ListDataEvent.INTERVAL_ADDED, Notification.notifs.size() - 1 , Notification.notifs.size() - 1);
 			NotificationsPane.this.ensureIndexIsVisible(Notification.notifs.indexOf(n));
 		}
 		
 		@Override
 		public void onListCleared(int i) {
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(NotificationsPane.this, ListDataEvent.INTERVAL_REMOVED, 0 , i));
-			}
+			notifyListeners(NotificationsPane.this, ListDataEvent.INTERVAL_REMOVED, 0 , i);
 		}
 		
 		private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
-		}
-		
 	}
 }

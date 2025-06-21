@@ -1,13 +1,12 @@
 package com.gpl.rpg.atcontentstudio.ui;
 
-import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class CustomListModel<S, E> implements ListModel<E> {
+public abstract class CustomListModel<S, E> implements ListenerListModel<E> {
     protected S source;
 
     protected abstract List<E> getItems();
@@ -17,10 +16,8 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
         this.source = source;
     }
 
-    protected void notifyListeners(int event, int index0, int index1) {
-        for (ListDataListener l : listeners) {
-            l.intervalRemoved(new ListDataEvent(this, event, index0, index1));
-        }
+    public List<ListDataListener> getListeners() {
+        return listeners;
     }
 
 
@@ -80,14 +77,4 @@ public abstract class CustomListModel<S, E> implements ListModel<E> {
     }
 
     private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-
-    @Override
-    public void addListDataListener(ListDataListener l) {
-        listeners.add(l);
-    }
-
-    @Override
-    public void removeListDataListener(ListDataListener l) {
-        listeners.remove(l);
-    }
 }
