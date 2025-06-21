@@ -135,8 +135,8 @@ public class DialogueEditor extends JSONElementEditor {
         messageField = addTranslatableTextArea(pane, "Message: ", dialogue.message, dialogue.writable, listener);
         switchToNpcBox = addNPCBox(pane, dialogue.getProject(), "Switch active NPC to: ", dialogue.switch_to_npc, dialogue.writable, listener);
 
-        RewardsCellRenderer cellRendererRewards = new RewardsCellRenderer();
         String titleRewards = "Reaching this phrase gives the following rewards: ";
+        RewardsCellRenderer cellRendererRewards = new RewardsCellRenderer();
         rewardsListModel = new RewardsListModel(dialogue);
 
         CollapsiblePanel rewards = UiUtils.getCollapsibleItemList(
@@ -441,9 +441,9 @@ public class DialogueEditor extends JSONElementEditor {
         updateRepliesParamsEditorPane(repliesParamsPane, reply, listener);
         pane.add(repliesParamsPane, JideBoxLayout.FIX);
 
+        ReplyRequirementsCellRenderer cellRendererRequirements = new ReplyRequirementsCellRenderer();
         String titleRequirements = "Requirements the player must fulfill to select this reply: ";
         requirementsListModel = new ReplyRequirementsListModel(reply);
-        ReplyRequirementsCellRenderer cellRendererRequirements = new ReplyRequirementsCellRenderer();
         UiUtils.CollapsibleItemListCreation itemsPane = UiUtils.getCollapsibleItemList(
                 listener,
                 requirementsListModel,

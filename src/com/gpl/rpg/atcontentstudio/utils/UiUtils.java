@@ -157,8 +157,10 @@ public class UiUtils {
                     E selectedValue = itemsList.getSelectedValue();
                     if (selectedValue == null) return;
                     GameDataElement referencedObj = getReferencedObj.doIt(selectedValue);
-                    ATContentStudio.frame.openEditor(referencedObj);
-                    ATContentStudio.frame.selectInTree(referencedObj);
+                    if (referencedObj != null) {
+                        ATContentStudio.frame.openEditor(referencedObj);
+                        ATContentStudio.frame.selectInTree(referencedObj);
+                    }
                 }
             }
         });

@@ -1080,8 +1080,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
         }
 
         public void addObject(String source, String target) {
-            ReplaceArea.Replacement repl = this.source.createReplacement(source, target);
-            addObject(repl);
+            addObject(this.source.createReplacement(source, target));
         }
     }
 
