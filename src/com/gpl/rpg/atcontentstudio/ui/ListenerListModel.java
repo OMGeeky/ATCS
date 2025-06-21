@@ -11,6 +11,7 @@ public interface ListenerListModel<E> extends ListModel<E> {
     default void notifyListeners(int event, int index0, int index1) {
         notifyListeners(this, event, index0, index1);
     }
+
     default void notifyListeners(Object source, int event, int index0, int index1) {
         for (ListDataListener l : getListeners()) {
             l.intervalRemoved(new ListDataEvent(source, event, index0, index1));
@@ -26,6 +27,6 @@ public interface ListenerListModel<E> extends ListModel<E> {
     }
 
     default void fireListChanged() {
-        notifyListeners(ListDataEvent.CONTENTS_CHANGED, 0, getSize() -1);
+        notifyListeners(ListDataEvent.CONTENTS_CHANGED, 0, getSize() - 1);
     }
 }

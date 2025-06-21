@@ -16,7 +16,7 @@ public interface ListenerCollectionModel<E> extends ListenerListModel<E> {
     default E getElementAt(int index) {
         for (E obj : getElements()) {
             if (index == 0) return obj;
-            index --;
+            index--;
         }
         return null;
     }

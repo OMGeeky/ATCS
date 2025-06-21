@@ -11,6 +11,7 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
     protected S source;
 
     protected abstract List<E> getItems();
+
     protected abstract void setItems(List<E> items);
 
     public OrderedListenerListModel(S source) {
@@ -18,7 +19,7 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
     }
 
     @Override
-    public Collection<E> getElements(){
+    public Collection<E> getElements() {
         return getItems();
     }
 
@@ -33,7 +34,10 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
         return getItems().set(index, value);
     }
 
-    public void addObject(E item) {addItem(item);}
+    public void addObject(E item) {
+        addItem(item);
+    }
+
     public void addItem(E item) {
         if (getItems() == null) {
             setItems(new ArrayList<E>());
@@ -43,7 +47,10 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
         notifyListeners(ListDataEvent.INTERVAL_ADDED, index, index);
     }
 
-    public void removeObject(E item) {removeItem(item);}
+    public void removeObject(E item) {
+        removeItem(item);
+    }
+
     public void removeItem(E item) {
         int index = getItems().indexOf(item);
         getItems().remove(item);
@@ -70,13 +77,17 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
         notifyListeners(ListDataEvent.CONTENTS_CHANGED, index + direction, index);
     }
 
-    public void objectChanged(E item) {itemChanged(item);}
+    public void objectChanged(E item) {
+        itemChanged(item);
+    }
+
     public void itemChanged(E item) {
         int index = getItems().indexOf(item);
-        notifyListeners( ListDataEvent.CONTENTS_CHANGED, index, index);
+        notifyListeners(ListDataEvent.CONTENTS_CHANGED, index, index);
     }
 
     private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
+
     public List<ListDataListener> getListeners() {
         return listeners;
     }

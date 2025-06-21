@@ -3,13 +3,16 @@ package com.gpl.rpg.atcontentstudio.utils;
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
-import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.function.Supplier;
 
 public class UiUtils {
@@ -70,7 +73,7 @@ public class UiUtils {
 
             addRemoveAndAddButtons(listener, itemsListModel, selectedItemReset, selectedItem, tempSupplier, createBtn, itemsList, listButtonsPane, deleteBtn);
 
-            if(withMoveButtons) {
+            if (withMoveButtons) {
                 addMoveButtonListeners(listener, itemsListModel, selectedItem, moveUpBtn, itemsList, listButtonsPane, moveDownBtn);
             }
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
@@ -85,7 +88,8 @@ public class UiUtils {
         return new CollapsibleItemListCreation<E>() {
             {
                 collapsiblePanel = itemsPane;
-                list = itemsList;}
+                list = itemsList;
+            }
         };
     }
 
@@ -140,7 +144,7 @@ public class UiUtils {
                     GameDataElement referencedObj = getReferencedObj.doIt(selectedValue);
                     if (referencedObj != null) {
                         ATContentStudio.frame.openEditor(referencedObj);
-                        ATContentStudio.frame.selectInTree( referencedObj);
+                        ATContentStudio.frame.selectInTree(referencedObj);
                     }
                 }
             }
