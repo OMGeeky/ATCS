@@ -62,7 +62,7 @@ public class ATContentStudio {
 	 */
 	public static void main(String[] args) {
 		String fontScaling = System.getProperty(FONT_SCALE_ENV_VAR_NAME);
-		Float fontScale = null;
+		Float fontScale;
 		if (fontScaling != null) {
 			try {
 				fontScale = Float.parseFloat(fontScaling);

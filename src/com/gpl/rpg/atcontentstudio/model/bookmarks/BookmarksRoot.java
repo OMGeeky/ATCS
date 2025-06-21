@@ -30,7 +30,7 @@ public class BookmarksRoot implements BookmarkNode {
 
 	SavedSlotCollection v = new SavedSlotCollection();
 
-	public transient Project parent = null;
+	public transient Project parent;
 	
 	BookmarkFolder ac, diag, dl, it, ic, npc, q, tmx, sp, wm;
 	
@@ -171,7 +171,7 @@ public class BookmarksRoot implements BookmarkNode {
 	
 	public void addBookmark(GameDataElement target) {
 			BookmarkEntry node;
-			BookmarkFolder folder = null;
+			BookmarkFolder folder;
 			if (target instanceof ActorCondition) {
 				folder = ac;
 			} else if (target instanceof Dialogue) {

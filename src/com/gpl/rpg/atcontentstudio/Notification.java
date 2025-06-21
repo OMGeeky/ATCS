@@ -8,7 +8,7 @@ public class Notification {
 
 	public static List<Notification> notifs = new ArrayList<Notification>();
 	private static List<NotificationListener> listeners = new CopyOnWriteArrayList<NotificationListener>();
-	public static boolean showS = true, showI = true, showW = true, showE = true;
+	public static boolean showS, showI, showW, showE;
 	
 	static {
 		boolean[] config = ConfigCache.getNotifViewConfig();

@@ -32,7 +32,7 @@ public class WorldmapLabelEditionWizard extends JDialog {
 	final WorldmapSegment segment;
 	final WorldmapSegment.NamedArea label;
 	
-	boolean createMode = false;
+	boolean createMode;
 	
 	public WorldmapLabelEditionWizard(WorldmapSegment segment) {
 		this(segment, new WorldmapSegment.NamedArea(null, null, null), true);

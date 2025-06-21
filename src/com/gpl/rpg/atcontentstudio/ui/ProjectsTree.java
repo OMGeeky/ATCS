@@ -685,7 +685,7 @@ public class ProjectsTree extends JPanel {
 				JLabel label = (JLabel)c;
 				String text = ((ProjectTreeNode)value).getDesc();
 				if (text != null) label.setText(text);
-				Image img = null;
+				Image img;
 				if (leaf) img = ((ProjectTreeNode)value).getLeafIcon();
 				else if (expanded) img = ((ProjectTreeNode)value).getOpenIcon();
 				else img = ((ProjectTreeNode)value).getClosedIcon();

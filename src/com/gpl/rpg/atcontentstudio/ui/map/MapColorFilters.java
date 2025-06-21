@@ -14,7 +14,7 @@ public class MapColorFilters {
 		Composite oldComp = g2d.getComposite();
 		Rectangle clip = g2d.getClipBounds();
 		MatrixComposite newComp = null;
-		float f=0.0f;
+		float f;
 		switch(colorFilter) {
 		case black20:
 			f=0.8f;

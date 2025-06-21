@@ -9,9 +9,9 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 
 public class MapChange extends MapObject {
 
-	public String map_id = null;
+	public String map_id;
 	public TMXMap map = null;
-	public String place_id = null;
+	public String place_id;
 	
 	public MapChange(tiled.core.MapObject obj) {
 		this.map_id = obj.getProperties().getProperty("map");

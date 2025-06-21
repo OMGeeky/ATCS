@@ -972,7 +972,7 @@ public class DialogueEditor extends JSONElementEditor {
 			} else if (source == rewardValue) {
 				//Backlink removal to quest stages when selecting another quest are handled in the addQuestStageBox() method. Too complex too handle here
 				Quest quest = null;
-				QuestStage stage = null;
+				QuestStage stage;
 				if (rewardValue instanceof JComboBox<?>) {
 					quest = ((Quest)selectedReward.reward_obj);
 					if (quest != null && selectedReward.reward_value != null) {
@@ -1048,7 +1048,7 @@ public class DialogueEditor extends JSONElementEditor {
 			} else if (source == requirementValue) {
 				//Backlink removal to quest stages when selecting another quest are handled in the addQuestStageBox() method. Too complex too handle here
 				Quest quest = null;
-				QuestStage stage = null;
+				QuestStage stage;
 				if (requirementValue instanceof JComboBox<?>) {
 					quest = ((Quest)selectedRequirement.required_obj);
 					if (quest != null && selectedRequirement.required_value != null) {

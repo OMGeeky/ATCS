@@ -93,7 +93,7 @@ public class WriterModeEditor extends Editor {
     private Display view;
     
     final private WriterModeData data;
-	private WriterNode selected = null;
+	private WriterNode selected;
 	private WriterNode prevSelected = null;
     
     public WriterModeEditor(WriterModeData data) {
@@ -708,8 +708,8 @@ public class WriterModeEditor extends Editor {
 			public void actionPerformed(ActionEvent e) {
 				commitAreaText();
 				stopPendingEdge();
-				WriterDialogue newWrNode = null;
-				Node newNode = null;
+				WriterDialogue newWrNode;
+				Node newNode;
 				if (selected instanceof WriterDialogue) {
 					EmptyReply temp = data.new EmptyReply((WriterDialogue) selected);
 					newWrNode = data.new WriterDialogue(((WriterDialogue) selected).id_prefix);
@@ -737,8 +737,8 @@ public class WriterModeEditor extends Editor {
 			public void actionPerformed(ActionEvent e) {
 				commitAreaText();
 				stopPendingEdge();
-				WriterReply newWrNode = null;
-				Node newNode = null;
+				WriterReply newWrNode;
+				Node newNode;
 				if (selected instanceof WriterReply) {
 					newWrNode = data.new WriterReply(((WriterReply) selected).parent);
 					newNode = addReplyNode(newWrNode);

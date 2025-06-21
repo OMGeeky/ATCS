@@ -1429,10 +1429,8 @@ public class ItemEditor extends JSONElementEditor {
 					ItemEditor.this.repaint();
 				} else if (item.category.action_type == ItemCategory.ActionType.equip) {
 					equipEffectPane.setVisible(true);
-					updateEquip = true;
-					hitEffectPane.setVisible(true);
-					updateEquip = true;
-					killEffectPane.setVisible(true);
+                    hitEffectPane.setVisible(true);
+                    killEffectPane.setVisible(true);
 					updateKill = true;
 					hitReceivedEffectPane.setVisible(true);
 					updateEquip = true;

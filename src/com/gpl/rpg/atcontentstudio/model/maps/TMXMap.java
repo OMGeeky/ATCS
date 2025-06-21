@@ -54,7 +54,7 @@ public class TMXMap extends GameDataElement {
 		bluetint
 	}
 	
-	public File tmxFile = null;
+	public File tmxFile;
 	public tiled.core.Map tmxMap = null;
 	public Set<Spritesheet> usedSpritesheets = null;
 	public List<MapObjectGroup> groups = null;

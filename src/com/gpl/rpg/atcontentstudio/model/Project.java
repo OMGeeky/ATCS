@@ -103,7 +103,7 @@ public class Project implements ProjectTreeNode, Serializable {
 
 	public transient Workspace parent;
 	
-	public Properties knownSpritesheetsProperties = null;
+	public Properties knownSpritesheetsProperties;
 	
 	public static enum ResourceSet {
 		gameData,
@@ -111,7 +111,7 @@ public class Project implements ProjectTreeNode, Serializable {
 		allFiles
 	} 
 	
-	public ResourceSet sourceSetToUse = ResourceSet.allFiles;
+	public ResourceSet sourceSetToUse;
 
 	public Project(Workspace w, String name, File source, ResourceSet sourceSet) {
 		this.parent = w;
@@ -237,7 +237,7 @@ public class Project implements ProjectTreeNode, Serializable {
 
 
 	public static Project fromFolder(Workspace w, File projRoot) {
-		Project p = null;
+		Project p;
 		File f = new File(projRoot, Project.SETTINGS_FILE);
 		if (!f.exists()) {
 			Notification.addError("Unable to find "+SETTINGS_FILE+" for project "+projRoot.getName());

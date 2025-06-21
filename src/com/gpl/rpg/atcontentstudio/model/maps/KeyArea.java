@@ -9,10 +9,10 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 
 public class KeyArea extends MapObject {
 
-	public String dialogue_id = null;
+	public String dialogue_id;
 	public Dialogue dialogue = null;
-	public Requirement requirement = null;
-	public boolean oldSchoolRequirement = true;
+	public Requirement requirement;
+	public boolean oldSchoolRequirement;
 	
 	public KeyArea(tiled.core.MapObject obj) {
 		dialogue_id = obj.getProperties().getProperty("phrase");

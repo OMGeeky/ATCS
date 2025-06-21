@@ -72,7 +72,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
 	}
 
 	public static void setActive(File workspaceRoot) {
-		Workspace w = null;
+		Workspace w;
 		File f = new File(workspaceRoot, WS_SETTINGS_FILE);
 		if (!workspaceRoot.exists() || !f.exists()) {
 			w = new Workspace(workspaceRoot);
@@ -311,8 +311,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
 			Notification.addError("Error while deleting closed project "
 					+ cp.name + ". Files may remain in the workspace.");
 		}
-		cp = null;
-		saveActive();
+        saveActive();
 	}
 
 	public static void deleteProject(Project p) {
@@ -327,8 +326,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
 			Notification.addError("Error while deleting project " + p.name
 					+ ". Files may remain in the workspace.");
 		}
-		p = null;
-		saveActive();
+        saveActive();
 	}
 
 	private static boolean delete(File f) {
@@ -339,7 +337,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
 			for (File c : f.listFiles())
 				b &= delete(c);
 		}
-		return b &= f.delete();
+		return b & f.delete();
 	}
 
 	@Override

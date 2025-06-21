@@ -11,7 +11,7 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 
 public class ReplaceArea extends MapObject {
 
-	public Requirement requirement = null;
+	public Requirement requirement;
 	public boolean oldSchoolRequirement = false;
 	
 	public List<ReplaceArea.Replacement> replacements = null;

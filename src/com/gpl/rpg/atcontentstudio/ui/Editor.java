@@ -919,8 +919,8 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
 
 		private static final long serialVersionUID = 6819681566800482793L;
 
-		private boolean includeType = false;
-		private boolean writable = false;
+		private boolean includeType;
+		private boolean writable;
 		
 		public GDERenderer(boolean includeType, boolean writable) {
 			super();

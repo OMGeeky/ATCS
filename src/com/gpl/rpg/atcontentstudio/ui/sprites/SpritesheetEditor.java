@@ -386,7 +386,7 @@ public class SpritesheetEditor extends Editor {
 
 		private static final long serialVersionUID = 6819681566800482793L;
 
-		private boolean includeType = false;
+		private boolean includeType;
 		
 		public BacklinkCellRenderer(boolean includeType) {
 			super();

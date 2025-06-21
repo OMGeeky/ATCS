@@ -234,10 +234,8 @@ public class ProjectCreationWizard extends JDialog {
 		buttonPane.setLayout(new GridBagLayout());
 		GridBagConstraints c2 = new GridBagConstraints();
 		c2.fill = GridBagConstraints.HORIZONTAL;
-		c2.gridx = 1;
-		c2.weightx = 80;
-		
-		c2.gridx = 1;
+
+        c2.gridx = 1;
 		c2.weightx = 80;
 		buttonPane.add(new JLabel(), c2);
 

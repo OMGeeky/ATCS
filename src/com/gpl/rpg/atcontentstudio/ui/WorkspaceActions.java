@@ -171,7 +171,7 @@ public class WorkspaceActions {
 					@Override
 					public void run() {
 						final List<SaveEvent> events = new ArrayList<SaveEvent>();
-						List<SaveEvent> catEvents = null;
+						List<SaveEvent> catEvents;
 						for (GameDataCategory<JSONElement> category : impactedCategories.keySet()) {
 							for (File f : impactedCategories.get(category)) {
 								catEvents = category.attemptSave(true, f.getName());

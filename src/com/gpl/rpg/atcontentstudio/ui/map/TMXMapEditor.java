@@ -1173,7 +1173,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 	
 	public class ReplacementsLayersComboModel implements ComboBoxModel<String> {
 		ReplaceArea area;
-		boolean modelForSource = false;
+		boolean modelForSource;
 		
 		public List<String> availableLayers = new ArrayList<String>();
 		
@@ -1542,7 +1542,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 
 		private static final long serialVersionUID = 6819681566800482793L;
 
-		private boolean includeType = false;
+		private boolean includeType;
 		
 		public SpritesheetCellRenderer(boolean includeType) {
 			super();
@@ -2032,7 +2032,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 				if (selectedMapObject instanceof KeyArea) {
 					KeyArea area = (KeyArea) selectedMapObject;
 					Quest quest = null;
-					QuestStage stage = null;
+					QuestStage stage;
 					if (requirementValue instanceof JComboBox<?>) {
 						quest = ((Quest)area.requirement.required_obj);
 						if (quest != null && area.requirement.required_value != null) {
@@ -2053,7 +2053,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 				} else if (selectedMapObject instanceof ReplaceArea) {
 					ReplaceArea area = (ReplaceArea) selectedMapObject;
 					Quest quest = null;
-					QuestStage stage = null;
+					QuestStage stage;
 					if (requirementValue instanceof JComboBox<?>) {
 						quest = ((Quest)area.requirement.required_obj);
 						if (quest != null && area.requirement.required_value != null) {

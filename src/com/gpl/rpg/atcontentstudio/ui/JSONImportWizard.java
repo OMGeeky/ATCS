@@ -293,8 +293,8 @@ public class JSONImportWizard extends JDialog {
 						errors.add("Invalid JSON content: neither an array nor an object.");
 					}
 					if (jsonObjects != null) {
-						JSONElement node = null;
-						JSONElement existingNode = null;
+						JSONElement node;
+						JSONElement existingNode;
 						int i = 0;
 						for (Map jsonObject : jsonObjects) {
 							switch ((DataType)dataTypeCombo.getSelectedItem()) {
@@ -342,10 +342,8 @@ public class JSONImportWizard extends JDialog {
 										node.jsonFile = existingNode.jsonFile;
 										warnings.add("An item with id "+node.id+" exists in the used game source. This one will be inserted as \"altered\"");
 									}
-									existingNode = null;
-								}
-								node = null;
-							} else {
+                                }
+                            } else {
 								warnings.add("Failed to load element #"+i);
 							}
 						}
@@ -508,7 +506,7 @@ public class JSONImportWizard extends JDialog {
 
 		private static final long serialVersionUID = 6819681566800482793L;
 
-		private boolean includeType = false;
+		private boolean includeType;
 		
 		public GDERenderer(boolean includeType) {
 			super();

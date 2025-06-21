@@ -57,7 +57,7 @@ public class GameSource implements ProjectTreeNode, Serializable {
 	public File baseFolder;
 	public Type type;
 	
-	public transient Project parent = null;
+	public transient Project parent;
 	
 	public transient Map<String, List<String>> referencedSourceFiles = null;
 	
@@ -105,7 +105,7 @@ public class GameSource implements ProjectTreeNode, Serializable {
 	}
 	
 	public void readResourceList() {
-		File xmlFile = null;
+		File xmlFile;
 		if (parent.sourceSetToUse == ResourceSet.gameData) {
 			xmlFile = new File(baseFolder, DEFAULT_REL_PATH_FOR_GAME_RESOURCE);
 		} else if (parent.sourceSetToUse == ResourceSet.debugData) {

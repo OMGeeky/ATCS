@@ -206,8 +206,7 @@ public class ResourcesCompactor {
 			compactMap(tmx, map.id);
 			clone.tmxMap = null;
 			clone.groups.clear();
-			clone = null;
-		}
+        }
 	}
 	
 	private void compactMap(tiled.core.Map tmx, String name) {
