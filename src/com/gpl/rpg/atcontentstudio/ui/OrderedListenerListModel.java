@@ -25,12 +25,12 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
 
     @Override
     public E getElementAt(int index) {
-        if (getItems() == null) return null;
+        if (index < 0 || index >= getSize()) return null;
         return getItems().get(index);
     }
 
     public E setElementAt(int index, E value) {
-        if (getItems() == null) return null;
+        if (index < 0 || index >= getSize()) return null;
         return getItems().set(index, value);
     }
 
