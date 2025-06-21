@@ -65,26 +65,12 @@ public class ReplaceArea extends MapObject {
 	public void elementChanged(GameDataElement oldOne, GameDataElement newOne) {
 		requirement.elementChanged(oldOne, newOne);
 	}
-	
-	public ReplaceArea.Replacement addReplacement(String source, String target) {
-		Replacement repl = new Replacement(source, target); 
-		addReplacement(repl);
+
+	public ReplaceArea.Replacement createReplacement(String source, String target) {
+		Replacement repl = new Replacement(source, target);
 		return repl;
 	}
-	
-	public void addReplacement(ReplaceArea.Replacement repl) {
-		if (replacements == null) replacements = new ArrayList<ReplaceArea.Replacement>();
-		replacements.add(repl);
-	}
-	
-//	public void removeReplacement(String source, String target) {
-//		replacedLayers.remove(source);
-//	}
-	
-	public void removeReplacement(Replacement repl) {
-		replacements.remove(repl);
-	}
-	
+
 	@Override
 	public void savePropertiesInTmxObject(tiled.core.MapObject tmxObject) {
 		if (replacements != null) {

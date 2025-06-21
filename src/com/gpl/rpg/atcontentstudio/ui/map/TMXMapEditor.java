@@ -1147,61 +1147,23 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class ReplacementsListModel implements ListModel<ReplaceArea.Replacement> {
-		
-		public ReplaceArea area;
-		
+	public class ReplacementsListModel extends CustomListModel<ReplaceArea, ReplaceArea.Replacement> {
 		public ReplacementsListModel(ReplaceArea area) {
-			this.area = area;
+			super(area);
 		}
-		
 		@Override
-		public int getSize() {
-			if (area.replacements == null) return 0;
-			return area.replacements.size();
+		protected List<ReplaceArea.Replacement> getItems() {
+			return source.replacements;
 		}
 
 		@Override
-		public ReplaceArea.Replacement getElementAt(int index) {
-			if (index < 0 || index > getSize()) return null;
-			if (area.replacements == null) return null;
-			return area.replacements.get(index);
+		protected void setItems(List<ReplaceArea.Replacement> items) {
+			source.replacements = items;
 		}
 
-
-		public void objectChanged(ReplaceArea.Replacement repl) {
-			int index = area.replacements.indexOf(repl);
-			for (ListDataListener l : listeners) {
-				l.contentsChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, index, index));
-			}
-		}
-		
 		public void addObject(String source, String target) {
-			ReplaceArea.Replacement repl = area.addReplacement(source, target);
-			int index = area.replacements.indexOf(repl);
-			for (ListDataListener l : listeners) {
-				l.intervalAdded(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, index, index));
-			}
-		}
-		
-		public void removeObject(ReplaceArea.Replacement repl) {
-			int index = area.replacements.indexOf(repl);
-			area.removeReplacement(repl);
-			for (ListDataListener l : listeners) {
-				l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, index, index));
-			}
-		}
-		
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
-		}
-
-		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+			ReplaceArea.Replacement repl = this.source.createReplacement(source, target);
+			addObject(repl);
 		}
 	}
 	
@@ -1308,37 +1270,22 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 			return c;
 		}
 	}
-	
-	public class SpawnGroupNpcListModel implements ListModel<NPC> {
-		
-		public SpawnArea area;
-		
+
+
+	public class SpawnGroupNpcListModel extends CustomListModel<SpawnArea, NPC> {
 		public SpawnGroupNpcListModel(SpawnArea area) {
-			this.area = area;
-		}
-		
-		@Override
-		public int getSize() {
-			return area.spawnGroup.size();
+			super(area);
 		}
 
 		@Override
-		public NPC getElementAt(int index) {
-			return area.spawnGroup.get(index);
-		}
-
-		List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
-		
-		@Override
-		public void addListDataListener(ListDataListener l) {
-			listeners.add(l);
+		protected List<NPC> getItems() {
+			return source.spawnGroup;
 		}
 
 		@Override
-		public void removeListDataListener(ListDataListener l) {
-			listeners.remove(l);
+		protected void setItems(List<NPC> items) {
+			source.spawnGroup = items;
 		}
-	
 	}
 	
 	
@@ -1588,13 +1535,13 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 	}
 	
 	public static class TMXMapSpritesheetsListModel implements ListModel<Spritesheet> {
-		
+
+
 		TMXMap map;
-		
+
 		public TMXMapSpritesheetsListModel(TMXMap map) {
 			this.map = map;
 		}
-		
 		@Override
 		public int getSize() {
 			return map.usedSpritesheets.size();
