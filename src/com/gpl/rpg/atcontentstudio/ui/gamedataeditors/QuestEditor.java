@@ -183,7 +183,7 @@ public class QuestEditor extends JSONElementEditor {
 	}
 
 
-	public static class StagesListModel extends CustomListModel<Quest, QuestStage> {
+	public static class StagesListModel extends OrderedListenerListModel<Quest, QuestStage> {
 		public StagesListModel(Quest quest) {
 			super(quest);
 		}

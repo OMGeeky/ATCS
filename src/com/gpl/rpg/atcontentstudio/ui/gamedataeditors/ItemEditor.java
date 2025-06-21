@@ -1178,7 +1178,7 @@ public class ItemEditor extends JSONElementEditor {
 	}
 
 	
-	public static class SourceTimedConditionsListModel extends CustomListModel<Common.DeathEffect , Common.TimedConditionEffect> {
+	public static class SourceTimedConditionsListModel extends OrderedListenerListModel<Common.DeathEffect , Common.TimedConditionEffect> {
 		public SourceTimedConditionsListModel(Common.DeathEffect effect) {
 			super(effect);;
 		}
@@ -1193,7 +1193,7 @@ public class ItemEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class TargetTimedConditionsListModel extends CustomListModel<Common.HitEffect,Common.TimedConditionEffect> {
+	public static class TargetTimedConditionsListModel extends OrderedListenerListModel<Common.HitEffect,Common.TimedConditionEffect> {
 		public TargetTimedConditionsListModel(Common.HitEffect effect) {
 			super(effect);
 		}
@@ -1243,7 +1243,7 @@ public class ItemEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class ConditionsListModel extends CustomListModel<Item.EquipEffect, Common.ConditionEffect> {
+	public static class ConditionsListModel extends OrderedListenerListModel<Item.EquipEffect, Common.ConditionEffect> {
 		public ConditionsListModel(Item.EquipEffect equipEffect) {
 			super(equipEffect);
 		}

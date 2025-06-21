@@ -1147,7 +1147,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class ReplacementsListModel extends CustomListModel<ReplaceArea, ReplaceArea.Replacement> {
+	public class ReplacementsListModel extends OrderedListenerListModel<ReplaceArea, ReplaceArea.Replacement> {
 		public ReplacementsListModel(ReplaceArea area) {
 			super(area);
 		}
@@ -1242,7 +1242,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 		}
 	}
 	
-	public class MapObjectsListModel extends CustomListModel<MapObjectGroup, MapObject> {
+	public class MapObjectsListModel extends OrderedListenerListModel<MapObjectGroup, MapObject> {
 		public MapObjectsListModel(MapObjectGroup group) {
 			super(group);
 		}
@@ -1272,7 +1272,7 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 	}
 
 
-	public class SpawnGroupNpcListModel extends CustomListModel<SpawnArea, NPC> {
+	public class SpawnGroupNpcListModel extends OrderedListenerListModel<SpawnArea, NPC> {
 		public SpawnGroupNpcListModel(SpawnArea area) {
 			super(area);
 		}

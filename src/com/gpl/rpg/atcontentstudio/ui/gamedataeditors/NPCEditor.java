@@ -1021,7 +1021,7 @@ public class NPCEditor extends JSONElementEditor {
 		deathSourceConditionForever.setEnabled(!clear);
 	}
 
-	public static class TargetTimedConditionsListModel extends CustomListModel<Common.HitEffect,Common.TimedConditionEffect> {
+	public static class TargetTimedConditionsListModel extends OrderedListenerListModel<Common.HitEffect,Common.TimedConditionEffect> {
 		public TargetTimedConditionsListModel(Common.HitEffect effect) {
 			super(effect);
 		}
@@ -1037,7 +1037,7 @@ public class NPCEditor extends JSONElementEditor {
 		}
 	}
 	
-	public static class SourceTimedConditionsListModel extends CustomListModel<Common.DeathEffect, Common.TimedConditionEffect> {
+	public static class SourceTimedConditionsListModel extends OrderedListenerListModel<Common.DeathEffect, Common.TimedConditionEffect> {
 		public SourceTimedConditionsListModel(Common.DeathEffect effect) {
 			super(effect);
 		}

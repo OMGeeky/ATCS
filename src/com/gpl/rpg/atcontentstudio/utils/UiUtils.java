@@ -4,7 +4,7 @@ import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Requirement;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
-import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
+import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
 import com.jidesoft.swing.JideBoxLayout;
@@ -19,19 +19,19 @@ public class UiUtils {
         public JList<E> list;
     }
 
-    public static <S, E, M extends CustomListModel<S, E>> CollapsibleItemListCreation<E> getCollapsibleItemList(FieldUpdateListener listener,
-                                                                                                  M itemsListModel,
-                                                                                                  BasicLambda selectedItemReset,
-                                                                                                  BasicLambdaWithArg<E> setSelectedItem,
-                                                                                                  BasicLambdaWithReturn<E> selectedItem,
-                                                                                                  BasicLambdaWithArg<E> valueChanged,
-                                                                                                  BasicLambdaWithArg<JPanel> updateEditorPane,
-                                                                                                  boolean writable,
-                                                                                                  Supplier<E> tempSupplier,
-                                                                                                  DefaultListCellRenderer cellRenderer,
-                                                                                                  String title,
-                                                                                                  BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj,
-                                                                                                  boolean withMoveButtons) {
+    public static <S, E, M extends OrderedListenerListModel<S, E>> CollapsibleItemListCreation<E> getCollapsibleItemList(FieldUpdateListener listener,
+                                                                                                                         M itemsListModel,
+                                                                                                                         BasicLambda selectedItemReset,
+                                                                                                                         BasicLambdaWithArg<E> setSelectedItem,
+                                                                                                                         BasicLambdaWithReturn<E> selectedItem,
+                                                                                                                         BasicLambdaWithArg<E> valueChanged,
+                                                                                                                         BasicLambdaWithArg<JPanel> updateEditorPane,
+                                                                                                                         boolean writable,
+                                                                                                                         Supplier<E> tempSupplier,
+                                                                                                                         DefaultListCellRenderer cellRenderer,
+                                                                                                                         String title,
+                                                                                                                         BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj,
+                                                                                                                         boolean withMoveButtons) {
         CollapsiblePanel itemsPane = new CollapsiblePanel(title);
         itemsPane.setLayout(new JideBoxLayout(itemsPane, JideBoxLayout.PAGE_AXIS));
         final JList<E> itemsList = new JList<>(itemsListModel);
@@ -90,7 +90,7 @@ public class UiUtils {
         };
     }
 
-    private static <S, E, M extends CustomListModel<S, E>> void addRemoveAndAddButtons(FieldUpdateListener listener, M itemsListModel, BasicLambda selectedItemReset, BasicLambdaWithReturn<E> selectedItem, Supplier<E> tempSupplier, JButton createBtn, JList<E> itemsList, JPanel listButtonsPane, JButton deleteBtn) {
+    private static <S, E, M extends OrderedListenerListModel<S, E>> void addRemoveAndAddButtons(FieldUpdateListener listener, M itemsListModel, BasicLambda selectedItemReset, BasicLambdaWithReturn<E> selectedItem, Supplier<E> tempSupplier, JButton createBtn, JList<E> itemsList, JPanel listButtonsPane, JButton deleteBtn) {
         createBtn.addActionListener(e -> {
             E tempItem = tempSupplier.get();
             itemsListModel.addItem(tempItem);
@@ -110,7 +110,7 @@ public class UiUtils {
         listButtonsPane.add(deleteBtn, JideBoxLayout.FIX);
     }
 
-    private static <S, E, M extends CustomListModel<S, E>> void addMoveButtonListeners(FieldUpdateListener listener, M itemsListModel, BasicLambdaWithReturn<E> selectedItem, JButton moveUpBtn, JList<E> itemsList, JPanel listButtonsPane, JButton moveDownBtn) {
+    private static <S, E, M extends OrderedListenerListModel<S, E>> void addMoveButtonListeners(FieldUpdateListener listener, M itemsListModel, BasicLambdaWithReturn<E> selectedItem, JButton moveUpBtn, JList<E> itemsList, JPanel listButtonsPane, JButton moveDownBtn) {
         moveUpBtn.addActionListener(e -> {
             if (selectedItem.doIt() != null) {
                 itemsListModel.moveUp(selectedItem.doIt());

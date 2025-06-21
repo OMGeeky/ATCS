@@ -22,7 +22,7 @@ import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist.DroppedItem;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
-import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
+import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
@@ -101,7 +101,7 @@ public class DroplistEditor extends JSONElementEditor {
 		pane.repaint();
 	}
 	
-	public class DroppedItemsListModel extends CustomListModel<Droplist, DroppedItem> {
+	public class DroppedItemsListModel extends OrderedListenerListModel<Droplist, DroppedItem> {
 		public DroppedItemsListModel(Droplist droplist) {
 			super(droplist);
 		}

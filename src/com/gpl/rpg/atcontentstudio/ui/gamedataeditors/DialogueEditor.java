@@ -6,10 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +40,7 @@ import com.gpl.rpg.atcontentstudio.ui.BooleanBasedCheckBox;
 import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
-import com.gpl.rpg.atcontentstudio.ui.CustomListModel;
+import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.ui.OverlayIcon;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
 import com.gpl.rpg.atcontentstudio.utils.UiUtils;
@@ -867,7 +863,7 @@ public class DialogueEditor extends JSONElementEditor {
 	}
 	
 	
-	public static class RewardsListModel extends CustomListModel<Dialogue,Dialogue.Reward> {
+	public static class RewardsListModel extends OrderedListenerListModel<Dialogue,Dialogue.Reward> {
 		@Override
 		protected List<Dialogue.Reward> getItems() {
 			return source.rewards;
@@ -990,7 +986,7 @@ public class DialogueEditor extends JSONElementEditor {
 	}
 	
 	
-	public static class RepliesListModel extends CustomListModel<Dialogue, Dialogue.Reply> {
+	public static class RepliesListModel extends OrderedListenerListModel<Dialogue, Dialogue.Reply> {
 		@Override
 		protected List<Dialogue.Reply> getItems() {
 			return source.replies;
@@ -1056,7 +1052,7 @@ public class DialogueEditor extends JSONElementEditor {
 		}
 	}
 
-	public static class ReplyRequirementsListModel extends CustomListModel<Dialogue.Reply,Requirement> {
+	public static class ReplyRequirementsListModel extends OrderedListenerListModel<Dialogue.Reply,Requirement> {
 		@Override
 		protected List<Requirement> getItems() {
 			return source.requirements;

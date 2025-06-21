@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class CustomListModel<S, E> implements ListenerListModel<E> {
+public abstract class OrderedListenerListModel<S, E> implements ListenerListModel<E> {
     protected S source;
 
     protected abstract List<E> getItems();
     protected abstract void setItems(List<E> items);
 
-    public CustomListModel(S source) {
+    public OrderedListenerListModel(S source) {
         this.source = source;
     }
 
