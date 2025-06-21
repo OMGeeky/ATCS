@@ -9,7 +9,6 @@ import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.util.function.Supplier;
 
@@ -40,8 +39,7 @@ public class UiUtils {
                                                                                                                          Supplier<E> tempSupplier,
                                                                                                                          DefaultListCellRenderer cellRenderer,
                                                                                                                          String title,
-                                                                                                                         BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj,
-                                                                                                                         boolean withMoveButtons) {
+                                                                                                                         BasicLambdaWithArgAndReturn<E, GameDataElement> getReferencedObj) {
         CollapsiblePanel itemsPane = new CollapsiblePanel(title);
         itemsPane.setLayout(new JideBoxLayout(itemsPane, JideBoxLayout.PAGE_AXIS));
         final JList<E> itemsList = new JList<>(itemsListModel);
@@ -62,16 +60,13 @@ public class UiUtils {
             setSelectedItem.doIt(selectedValue);
             if (selectedValue == null) {
                 deleteBtn.setEnabled(false);
-                if (withMoveButtons) {
-                    moveUpBtn.setEnabled(false);
-                    moveDownBtn.setEnabled(false);
-                }
+                moveUpBtn.setEnabled(false);
+                moveDownBtn.setEnabled(false);
             } else {
                 deleteBtn.setEnabled(true);
-                if (withMoveButtons) {
                     moveUpBtn.setEnabled(itemsList.getSelectedIndex() > 0);
                     moveDownBtn.setEnabled(itemsList.getSelectedIndex() < (itemsListModel.getSize() - 1));
-                }
+
             }
             updateEditorPane.doIt(editorPane);
         });
@@ -80,10 +75,8 @@ public class UiUtils {
             listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
 
             addRemoveAndAddButtons(listener, itemsListModel, selectedItemReset, selectedItem, tempSupplier, createBtn, itemsList, listButtonsPane, deleteBtn);
+            addMoveButtonListeners(listener, itemsListModel, selectedItem, moveUpBtn, itemsList, listButtonsPane, moveDownBtn);
 
-            if (withMoveButtons) {
-                addMoveButtonListeners(listener, itemsListModel, selectedItem, moveUpBtn, itemsList, listButtonsPane, moveDownBtn);
-            }
             listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
             itemsPane.add(listButtonsPane, JideBoxLayout.FIX);
         }

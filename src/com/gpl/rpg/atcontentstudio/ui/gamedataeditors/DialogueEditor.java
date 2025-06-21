@@ -152,8 +152,7 @@ public class DialogueEditor extends JSONElementEditor {
                 Dialogue.Reward::new,
                 cellRendererRewards,
                 titleRewards,
-                (x) -> null,
-                false
+                (x) -> null
         ).collapsiblePanel;
         if (dialogue.rewards == null || dialogue.rewards.isEmpty()) {
             rewards.collapse();
@@ -181,8 +180,7 @@ public class DialogueEditor extends JSONElementEditor {
                 Dialogue.Reply::new,
                 cellRendererReplies,
                 titleReplies,
-                (x) -> null,
-                true
+                (x) -> null
         ).collapsiblePanel;
         if (dialogue.replies == null || dialogue.replies.isEmpty()) {
             replies.collapse();
@@ -459,8 +457,7 @@ public class DialogueEditor extends JSONElementEditor {
                 Requirement::new,
                 cellRendererRequirements,
                 titleRequirements,
-                (x) -> x.required_obj,
-                false
+                (x) -> x.required_obj
         );
         CollapsiblePanel requirementsPane = itemsPane.collapsiblePanel;
         requirementsList = itemsPane.list;
