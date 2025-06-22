@@ -265,12 +265,21 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         return addIntegerField(pane, label, initialValue, 0, allowNegatives, editable, listener);
     }
 
-    public static <T extends Comparable<?>> JSpinner addNumberField(JPanel pane, String label, boolean editable, final FieldUpdateListener listener, Number initialValue, Number defaultValue, T minimum, T maxValue, Number stepSize) {
+    public static <T extends Comparable<?>> JSpinner addNumberField(JPanel pane, String label, boolean editable, final FieldUpdateListener listener, T minimum, T maximum, Number stepSize, Number value, Number defaultValue) {
         JPanel tfPane = new JPanel();
         tfPane.setLayout(new JideBoxLayout(tfPane, JideBoxLayout.LINE_AXIS, 6));
         JLabel tfLabel = new JLabel(label);
         tfPane.add(tfLabel, JideBoxLayout.FIX);
-        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(initialValue != null ? initialValue : defaultValue, minimum, maxValue, stepSize));
+        if (!(((minimum == null) || (((Comparable<Object>)minimum).compareTo(value) <= 0)) &&
+                ((maximum == null) || (((Comparable<Object>)maximum).compareTo(value) >= 0)))) {
+            try{
+            	throw new IllegalArgumentException("Value for number field outside of range: %s <= %s <= %s".formatted(minimum, value, maximum));
+            }catch (IllegalArgumentException e){
+                e.printStackTrace();
+                value = defaultValue;
+            }
+        }
+        final JSpinner spinner = new JSpinner(new SpinnerNumberModel(value, minimum, maximum, stepSize));
         ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.LEFT);
         spinner.setEnabled(editable);
         ((DefaultFormatter) ((NumberEditor) spinner.getEditor()).getTextField().getFormatter()).setCommitsOnValidEdit(true);
@@ -295,7 +304,10 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         return spinner;
     }
     public static JSpinner addIntegerField(JPanel pane, String label, Integer initialValue, Integer defaultValue, boolean allowNegatives, boolean editable, final FieldUpdateListener listener) {
-        return addNumberField(pane, label, editable, listener, initialValue, defaultValue, allowNegatives ? Integer.MIN_VALUE : 0, Integer.MAX_VALUE, 1);
+        int value = initialValue != null ? initialValue : defaultValue;
+		int minimum = allowNegatives ? Integer.MIN_VALUE : 0;
+        int maxValue = Integer.MAX_VALUE;
+        return addNumberField(pane, label, editable, listener, minimum, maxValue, 1, value, defaultValue);
     }
 
 
@@ -453,7 +465,11 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
 //	}
 
     public static JSpinner addDoubleField(JPanel pane, String label, Double initialValue, boolean editable, final FieldUpdateListener listener) {
-        return addNumberField(pane, label, editable, listener, initialValue, 0.0d, 0.0d, new Float(Float.MAX_VALUE).doubleValue(), 1.0d);
+        double minimum = 0.0d;
+        double defaultValue = 0.0d;
+        double value = initialValue != null ? initialValue : minimum;
+        double maximum = new Float(Float.MAX_VALUE).doubleValue();
+        return addNumberField(pane, label, editable, listener, minimum, maximum, 1.0d, value, defaultValue);
     }
 
     public static IntegerBasedCheckBox addIntegerBasedCheckBox(JPanel pane, String label, Integer initialValue, boolean editable) {
