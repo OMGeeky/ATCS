@@ -74,13 +74,13 @@ public class NotificationsPane extends JList {
 
         @Override
         public void onNewNotification(Notification n) {
-            notifyListeners(NotificationsPane.this, ListDataEvent.INTERVAL_ADDED, Notification.notifs.size() - 1, Notification.notifs.size() - 1);
+            notifyListeners(NotificationsPane.this, ChangeType.ADDED, Notification.notifs.size() - 1, Notification.notifs.size() - 1);
             NotificationsPane.this.ensureIndexIsVisible(Notification.notifs.indexOf(n));
         }
 
         @Override
         public void onListCleared(int i) {
-            notifyListeners(NotificationsPane.this, ListDataEvent.INTERVAL_REMOVED, 0, i);
+            notifyListeners(NotificationsPane.this, ChangeType.REMOVED, 0, i);
         }
 
         private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();

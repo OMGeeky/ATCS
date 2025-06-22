@@ -8,13 +8,24 @@ import java.util.List;
 public interface ListenerListModel<E> extends ListModel<E> {
     List<ListDataListener> getListeners();
 
-    default void notifyListeners(int event, int index0, int index1) {
+    default void notifyListeners(ChangeType event, int index0, int index1) {
         notifyListeners(this, event, index0, index1);
     }
 
-    default void notifyListeners(Object source, int event, int index0, int index1) {
+    default void notifyListeners(Object source, ChangeType event, int index0, int index1) {
+        int eventCode = switch (event) {
+            case CHANGED -> ListDataEvent.CONTENTS_CHANGED;
+            case ADDED -> ListDataEvent.INTERVAL_ADDED;
+            case REMOVED -> ListDataEvent.INTERVAL_REMOVED;
+        };
+
         for (ListDataListener l : getListeners()) {
-            l.intervalRemoved(new ListDataEvent(source, event, index0, index1));
+            ListDataEvent e = new ListDataEvent(source, eventCode, index0, index1);
+            switch (event) {
+                case CHANGED -> l.contentsChanged(e);
+                case ADDED -> l.intervalAdded(e);
+                case REMOVED -> l.intervalRemoved(e);
+            }
         }
     }
 
@@ -27,6 +38,12 @@ public interface ListenerListModel<E> extends ListModel<E> {
     }
 
     default void fireListChanged() {
-        notifyListeners(ListDataEvent.CONTENTS_CHANGED, 0, getSize() - 1);
+        notifyListeners(this, ChangeType.CHANGED, 0, getSize() - 1);
+    }
+
+    enum ChangeType {
+        CHANGED,
+        ADDED,
+        REMOVED,
     }
 }

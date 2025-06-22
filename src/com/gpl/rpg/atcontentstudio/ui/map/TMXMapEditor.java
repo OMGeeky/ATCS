@@ -1020,20 +1020,20 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
 
         public void objectChanged(tiled.core.MapLayer layer) {
             int index = map.tmxMap.getLayerIndex(layer);
-            notifyListeners(ListDataEvent.CONTENTS_CHANGED, index, index);
+            notifyListeners(ChangeType.CHANGED, index, index);
 
         }
 
         public void addObject(tiled.core.MapLayer layer) {
             map.addLayer(layer);
             int index = map.tmxMap.getLayerIndex(layer);
-            notifyListeners(ListDataEvent.INTERVAL_ADDED, index, index);
+            notifyListeners(ChangeType.ADDED, index, index);
         }
 
         public void removeObject(tiled.core.MapLayer layer) {
             int index = map.tmxMap.getLayerIndex(layer);
             map.removeLayer(layer);
-            notifyListeners(ListDataEvent.INTERVAL_REMOVED, index, index);
+            notifyListeners(ChangeType.REMOVED, index, index);
         }
 
         List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();

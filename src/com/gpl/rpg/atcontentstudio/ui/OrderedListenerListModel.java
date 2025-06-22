@@ -44,7 +44,7 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
         }
         getItems().add(item);
         int index = getItems().indexOf(item);
-        notifyListeners(ListDataEvent.INTERVAL_ADDED, index, index);
+        notifyListeners(ChangeType.ADDED, index, index);
     }
 
     public void removeObject(E item) {
@@ -57,7 +57,7 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
         if (getSize() == 0) {
             setItems(null);
         }
-        notifyListeners(ListDataEvent.INTERVAL_REMOVED, index, index);
+        notifyListeners(this, ChangeType.REMOVED, index, index);
     }
 
 
@@ -74,7 +74,7 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
         E exchanged = getElementAt(index + direction);
         setElementAt(index, exchanged);
         setElementAt(index + direction, item);
-        notifyListeners(ListDataEvent.CONTENTS_CHANGED, index + direction, index);
+        notifyListeners(this, ChangeType.CHANGED, index + direction, index);
     }
 
     public void objectChanged(E item) {
@@ -83,10 +83,10 @@ public abstract class OrderedListenerListModel<S, E> implements ListenerCollecti
 
     public void itemChanged(E item) {
         int index = getItems().indexOf(item);
-        notifyListeners(ListDataEvent.CONTENTS_CHANGED, index, index);
+        notifyListeners(this, ChangeType.CHANGED, index, index);
     }
 
-    private List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
+    private final List<ListDataListener> listeners = new CopyOnWriteArrayList<ListDataListener>();
 
     public List<ListDataListener> getListeners() {
         return listeners;
