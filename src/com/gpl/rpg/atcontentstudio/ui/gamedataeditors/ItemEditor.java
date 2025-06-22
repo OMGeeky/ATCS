@@ -659,32 +659,32 @@ public class ItemEditor extends JSONElementEditor {
         hitSourceConditionClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitSourceConditionClear, new Boolean(hitSourceConditionClear.isSelected()));
+                listener.valueChanged(hitSourceConditionClear, hitSourceConditionClear.isSelected());
             }
         });
         hitSourceConditionApply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitSourceConditionApply, new Boolean(hitSourceConditionApply.isSelected()));
+                listener.valueChanged(hitSourceConditionApply, hitSourceConditionApply.isSelected());
             }
         });
         hitSourceConditionImmunity.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitSourceConditionImmunity, new Boolean(hitSourceConditionImmunity.isSelected()));
+                listener.valueChanged(hitSourceConditionImmunity, hitSourceConditionImmunity.isSelected());
             }
         });
 
         hitSourceConditionTimed.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitSourceConditionTimed, new Boolean(hitSourceConditionTimed.isSelected()));
+                listener.valueChanged(hitSourceConditionTimed, hitSourceConditionTimed.isSelected());
             }
         });
         hitSourceConditionForever.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitSourceConditionForever, new Boolean(hitSourceConditionForever.isSelected()));
+                listener.valueChanged(hitSourceConditionForever, hitSourceConditionForever.isSelected());
             }
         });
 
@@ -755,32 +755,32 @@ public class ItemEditor extends JSONElementEditor {
         hitTargetConditionClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitTargetConditionClear, new Boolean(hitTargetConditionClear.isSelected()));
+                listener.valueChanged(hitTargetConditionClear, hitTargetConditionClear.isSelected());
             }
         });
         hitTargetConditionApply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitTargetConditionApply, new Boolean(hitTargetConditionApply.isSelected()));
+                listener.valueChanged(hitTargetConditionApply, hitTargetConditionApply.isSelected());
             }
         });
         hitTargetConditionImmunity.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitTargetConditionImmunity, new Boolean(hitTargetConditionImmunity.isSelected()));
+                listener.valueChanged(hitTargetConditionImmunity, hitTargetConditionImmunity.isSelected());
             }
         });
 
         hitTargetConditionTimed.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitTargetConditionTimed, new Boolean(hitTargetConditionTimed.isSelected()));
+                listener.valueChanged(hitTargetConditionTimed, hitTargetConditionTimed.isSelected());
             }
         });
         hitTargetConditionForever.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitTargetConditionForever, new Boolean(hitTargetConditionForever.isSelected()));
+                listener.valueChanged(hitTargetConditionForever, hitTargetConditionForever.isSelected());
             }
         });
 
@@ -851,32 +851,32 @@ public class ItemEditor extends JSONElementEditor {
         killSourceConditionClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(killSourceConditionClear, new Boolean(killSourceConditionClear.isSelected()));
+                listener.valueChanged(killSourceConditionClear, killSourceConditionClear.isSelected());
             }
         });
         killSourceConditionApply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(killSourceConditionApply, new Boolean(killSourceConditionApply.isSelected()));
+                listener.valueChanged(killSourceConditionApply, killSourceConditionApply.isSelected());
             }
         });
         killSourceConditionImmunity.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(killSourceConditionImmunity, new Boolean(killSourceConditionImmunity.isSelected()));
+                listener.valueChanged(killSourceConditionImmunity, killSourceConditionImmunity.isSelected());
             }
         });
 
         killSourceConditionTimed.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(killSourceConditionTimed, new Boolean(killSourceConditionTimed.isSelected()));
+                listener.valueChanged(killSourceConditionTimed, killSourceConditionTimed.isSelected());
             }
         });
         killSourceConditionForever.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(killSourceConditionForever, new Boolean(killSourceConditionForever.isSelected()));
+                listener.valueChanged(killSourceConditionForever, killSourceConditionForever.isSelected());
             }
         });
 
@@ -935,13 +935,13 @@ public class ItemEditor extends JSONElementEditor {
         equipConditionWithMagnitude.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(equipConditionWithMagnitude, new Boolean(equipConditionWithMagnitude.isSelected()));
+                listener.valueChanged(equipConditionWithMagnitude, equipConditionWithMagnitude.isSelected());
             }
         });
         equipConditionImmunity.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(equipConditionImmunity, new Boolean(equipConditionImmunity.isSelected()));
+                listener.valueChanged(equipConditionImmunity, equipConditionImmunity.isSelected());
             }
         });
 
@@ -995,32 +995,32 @@ public class ItemEditor extends JSONElementEditor {
         hitReceivedSourceConditionClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedSourceConditionClear, new Boolean(hitReceivedSourceConditionClear.isSelected()));
+                listener.valueChanged(hitReceivedSourceConditionClear, hitReceivedSourceConditionClear.isSelected());
             }
         });
         hitReceivedSourceConditionApply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedSourceConditionApply, new Boolean(hitReceivedSourceConditionApply.isSelected()));
+                listener.valueChanged(hitReceivedSourceConditionApply, hitReceivedSourceConditionApply.isSelected());
             }
         });
         hitReceivedSourceConditionImmunity.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedSourceConditionImmunity, new Boolean(hitReceivedSourceConditionImmunity.isSelected()));
+                listener.valueChanged(hitReceivedSourceConditionImmunity, hitReceivedSourceConditionImmunity.isSelected());
             }
         });
 
         hitReceivedSourceConditionTimed.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedSourceConditionTimed, new Boolean(hitReceivedSourceConditionTimed.isSelected()));
+                listener.valueChanged(hitReceivedSourceConditionTimed, hitReceivedSourceConditionTimed.isSelected());
             }
         });
         hitReceivedSourceConditionForever.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedSourceConditionForever, new Boolean(hitReceivedSourceConditionForever.isSelected()));
+                listener.valueChanged(hitReceivedSourceConditionForever, hitReceivedSourceConditionForever.isSelected());
             }
         });
 
@@ -1091,32 +1091,32 @@ public class ItemEditor extends JSONElementEditor {
         hitReceivedTargetConditionClear.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedTargetConditionClear, new Boolean(hitReceivedTargetConditionClear.isSelected()));
+                listener.valueChanged(hitReceivedTargetConditionClear, hitReceivedTargetConditionClear.isSelected());
             }
         });
         hitReceivedTargetConditionApply.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedTargetConditionApply, new Boolean(hitReceivedTargetConditionApply.isSelected()));
+                listener.valueChanged(hitReceivedTargetConditionApply, hitReceivedTargetConditionApply.isSelected());
             }
         });
         hitReceivedTargetConditionImmunity.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedTargetConditionImmunity, new Boolean(hitReceivedTargetConditionImmunity.isSelected()));
+                listener.valueChanged(hitReceivedTargetConditionImmunity, hitReceivedTargetConditionImmunity.isSelected());
             }
         });
 
         hitReceivedTargetConditionTimed.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedTargetConditionTimed, new Boolean(hitReceivedTargetConditionTimed.isSelected()));
+                listener.valueChanged(hitReceivedTargetConditionTimed, hitReceivedTargetConditionTimed.isSelected());
             }
         });
         hitReceivedTargetConditionForever.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitReceivedTargetConditionForever, new Boolean(hitReceivedTargetConditionForever.isSelected()));
+                listener.valueChanged(hitReceivedTargetConditionForever, hitReceivedTargetConditionForever.isSelected());
             }
         });
 
