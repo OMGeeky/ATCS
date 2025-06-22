@@ -6,6 +6,10 @@ import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Quest;
 import com.gpl.rpg.atcontentstudio.model.gamedata.QuestStage;
 import com.gpl.rpg.atcontentstudio.ui.*;
+import com.gpl.rpg.atcontentstudio.utils.BasicLambda;
+import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithArg;
+import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithReturn;
+import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
@@ -57,96 +61,32 @@ public class QuestEditor extends JSONElementEditor {
         nameField = addTranslatableTextField(pane, "Quest Name: ", quest.name, quest.writable, listener);
         visibleBox = addIntegerBasedCheckBox(pane, "Visible in quest log", quest.visible_in_log, quest.writable, listener);
 
-        CollapsiblePanel stagesPane = new CollapsiblePanel("Quest stages: ");
-        stagesPane.setLayout(new JideBoxLayout(stagesPane, JideBoxLayout.PAGE_AXIS));
+        String title = "Quest stages: ";
+        StagesCellRenderer cellRenderer = new StagesCellRenderer();
         stagesListModel = new StagesListModel(quest);
-        stagesList = new JList<QuestStage>(stagesListModel);
-        stagesList.setCellRenderer(new StagesCellRenderer());
-        stagesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        stagesPane.add(new JScrollPane(stagesList), JideBoxLayout.FIX);
-        final JPanel stagesEditorPane = new JPanel();
-        final JButton createStage = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-        final JButton deleteStage = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
-        final JButton moveStageUp = new JButton(new ImageIcon(DefaultIcons.getArrowUpIcon()));
-        final JButton moveStageDown = new JButton(new ImageIcon(DefaultIcons.getArrowDownIcon()));
-        deleteStage.setEnabled(false);
-        moveStageUp.setEnabled(false);
-        moveStageDown.setEnabled(false);
-        stagesList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                selectedStage = (QuestStage) stagesList.getSelectedValue();
-                if (selectedStage != null) {
-                    deleteStage.setEnabled(true);
-                    moveStageUp.setEnabled(stagesList.getSelectedIndex() > 0);
-                    moveStageDown.setEnabled(stagesList.getSelectedIndex() < (stagesListModel.getSize() - 1));
-                } else {
-                    deleteStage.setEnabled(false);
-                    moveStageUp.setEnabled(false);
-                    moveStageDown.setEnabled(false);
-                }
-                updateStageEditorPane(stagesEditorPane, selectedStage, listener);
-            }
-        });
-        if (quest.writable) {
-            JPanel listButtonsPane = new JPanel();
-            listButtonsPane.setLayout(new JideBoxLayout(listButtonsPane, JideBoxLayout.LINE_AXIS, 6));
-            createStage.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    QuestStage stage = new QuestStage(quest);
-                    stagesListModel.addItem(stage);
-                    stagesList.setSelectedValue(stage, true);
-                    listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                }
-            });
-            deleteStage.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (selectedStage != null) {
-                        stagesListModel.removeItem(selectedStage);
-                        selectedStage = null;
-                        stagesList.clearSelection();
-                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                    }
-                }
-            });
-            moveStageUp.addActionListener(new ActionListener() {
+        BasicLambdaWithArg<QuestStage> selectedSet = (value)->selectedStage = value;
+        BasicLambdaWithReturn<QuestStage> selectedGet = ()->selectedStage ;
+        BasicLambda selectedReset = ()->selectedStage = null;
+        BasicLambdaWithArg<JPanel> updatePane = (editorPane) -> updateStageEditorPane(editorPane, selectedStage, listener);
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (selectedStage != null) {
-                        stagesListModel.moveUp(selectedStage);
-                        stagesList.setSelectedValue(selectedStage, true);
-                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                    }
-                }
-            });
-            moveStageDown.addActionListener(new ActionListener() {
+        var result = UiUtils.getCollapsibleItemList(listener,
+                stagesListModel,
+                selectedReset,
+                selectedSet,
+                selectedGet,
+                (x) -> {},
+                updatePane,
+                quest.writable,
+                () -> new QuestStage(quest),
+                cellRenderer,
+                title,
+                (x) -> null);
+        stagesList = result.list;
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (selectedStage != null) {
-                        stagesListModel.moveDown(selectedStage);
-                        stagesList.setSelectedValue(selectedStage, true);
-                        listener.valueChanged(new JLabel(), null); //Item changed, but we took care of it, just do the usual notification and JSON update stuff.
-                    }
-                }
-            });
-            listButtonsPane.add(createStage, JideBoxLayout.FIX);
-            listButtonsPane.add(deleteStage, JideBoxLayout.FIX);
-            listButtonsPane.add(moveStageUp, JideBoxLayout.FIX);
-            listButtonsPane.add(moveStageDown, JideBoxLayout.FIX);
-            listButtonsPane.add(new JPanel(), JideBoxLayout.VARY);
-            stagesPane.add(listButtonsPane, JideBoxLayout.FIX);
-        }
         if (quest.stages == null || quest.stages.isEmpty()) {
-            stagesPane.collapse();
+            result.collapsiblePanel.collapse();
         }
-        stagesEditorPane.setLayout(new JideBoxLayout(stagesEditorPane, JideBoxLayout.PAGE_AXIS));
-        stagesPane.add(stagesEditorPane, JideBoxLayout.FIX);
-        pane.add(stagesPane, JideBoxLayout.FIX);
-
+        pane.add(result.collapsiblePanel, JideBoxLayout.FIX);
     }
 
     public void updateStageEditorPane(JPanel pane, QuestStage selectedStage, FieldUpdateListener listener) {
