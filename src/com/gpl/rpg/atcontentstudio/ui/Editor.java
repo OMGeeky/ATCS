@@ -19,6 +19,7 @@ import javax.swing.text.DefaultFormatter;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Console;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
