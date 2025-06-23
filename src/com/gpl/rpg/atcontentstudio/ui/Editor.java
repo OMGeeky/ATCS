@@ -1106,4 +1106,21 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
     }
 
 
+    protected <E extends Common.ConditionEffect, T extends OrderedListenerListModel<?, E>> void updateConditionEffect(ActorCondition value,
+                                                                                                                      GameDataElement backlink,
+                                                                                                                      E selectedHitEffectTargetCondition,
+                                                                                                                      T hitTargetConditionsModel) {
+        if (selectedHitEffectTargetCondition.condition != null) {
+            selectedHitEffectTargetCondition.condition.removeBacklink(backlink);
+        }
+        selectedHitEffectTargetCondition.condition = value;
+        if (selectedHitEffectTargetCondition.condition != null) {
+            selectedHitEffectTargetCondition.condition_id = selectedHitEffectTargetCondition.condition.id;
+            selectedHitEffectTargetCondition.condition.addBacklink(backlink);
+        } else {
+            selectedHitEffectTargetCondition.condition_id = null;
+        }
+        hitTargetConditionsModel.itemChanged(selectedHitEffectTargetCondition);
+    }
+
 }

@@ -1134,17 +1134,7 @@ public class NPCEditor extends JSONElementEditor {
             } else if (source == hitTargetConditionsList) {
                 updateHit = true;
             } else if (source == hitTargetConditionBox) {
-                if (selectedHitEffectTargetCondition.condition != null) {
-                    selectedHitEffectTargetCondition.condition.removeBacklink(npc);
-                }
-                selectedHitEffectTargetCondition.condition = (ActorCondition) value;
-                if (selectedHitEffectTargetCondition.condition != null) {
-                    selectedHitEffectTargetCondition.condition_id = selectedHitEffectTargetCondition.condition.id;
-                    selectedHitEffectTargetCondition.condition.addBacklink(npc);
-                } else {
-                    selectedHitEffectTargetCondition.condition_id = null;
-                }
-                hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                updateConditionEffect((ActorCondition) value, npc, selectedHitEffectTargetCondition, hitTargetConditionsListModel);
             } else if (source == hitTargetConditionClear && (Boolean) value) {
                 selectedHitEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
                 selectedHitEffectTargetCondition.duration = null;
@@ -1282,17 +1272,7 @@ public class NPCEditor extends JSONElementEditor {
             } else if (source == hitReceivedTargetConditionsList) {
                 updateHitReceived = true;
             } else if (source == hitReceivedTargetConditionBox) {
-                if (selectedHitReceivedEffectTargetCondition.condition != null) {
-                    selectedHitReceivedEffectTargetCondition.condition.removeBacklink(npc);
-                }
-                selectedHitReceivedEffectTargetCondition.condition = (ActorCondition) value;
-                if (selectedHitReceivedEffectTargetCondition.condition != null) {
-                    selectedHitReceivedEffectTargetCondition.condition_id = selectedHitReceivedEffectTargetCondition.condition.id;
-                    selectedHitReceivedEffectTargetCondition.condition.addBacklink(npc);
-                } else {
-                    selectedHitReceivedEffectTargetCondition.condition_id = null;
-                }
-                hitReceivedTargetConditionsListModel.itemChanged(selectedHitReceivedEffectTargetCondition);
+                updateConditionEffect((ActorCondition) value, npc, selectedHitReceivedEffectTargetCondition, hitReceivedTargetConditionsListModel);
             } else if (source == hitReceivedTargetConditionClear && (Boolean) value) {
                 selectedHitReceivedEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
                 selectedHitReceivedEffectTargetCondition.duration = null;

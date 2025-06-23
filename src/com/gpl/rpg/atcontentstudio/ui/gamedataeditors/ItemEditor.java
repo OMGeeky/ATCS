@@ -1312,17 +1312,7 @@ public class ItemEditor extends JSONElementEditor {
             } else if (source == equipConditionsList) {
                 updateEquip = true;
             } else if (source == equipConditionBox) {
-                if (selectedEquipEffectCondition.condition != null) {
-                    selectedEquipEffectCondition.condition.removeBacklink(item);
-                }
-                selectedEquipEffectCondition.condition = (ActorCondition) value;
-                if (selectedEquipEffectCondition.condition != null) {
-                    selectedEquipEffectCondition.condition_id = selectedEquipEffectCondition.condition.id;
-                    selectedEquipEffectCondition.condition.addBacklink(item);
-                } else {
-                    selectedEquipEffectCondition.condition_id = null;
-                }
-                equipConditionsModel.itemChanged(selectedEquipEffectCondition);
+                updateConditionEffect((ActorCondition) value, item, selectedEquipEffectCondition, equipConditionsModel);
             } else if (source == equipConditionMagnitude) {
                 selectedEquipEffectCondition.magnitude = (Integer) value;
                 equipConditionsModel.itemChanged(selectedEquipEffectCondition);
@@ -1353,17 +1343,7 @@ public class ItemEditor extends JSONElementEditor {
             } else if (source == hitSourceConditionsList) {
                 updateHit = true;
             } else if (source == hitSourceConditionBox) {
-                if (selectedHitEffectSourceCondition.condition != null) {
-                    selectedHitEffectSourceCondition.condition.removeBacklink(item);
-                }
-                selectedHitEffectSourceCondition.condition = (ActorCondition) value;
-                if (selectedHitEffectSourceCondition.condition != null) {
-                    selectedHitEffectSourceCondition.condition_id = selectedHitEffectSourceCondition.condition.id;
-                    selectedHitEffectSourceCondition.condition.addBacklink(item);
-                } else {
-                    selectedHitEffectSourceCondition.condition_id = null;
-                }
-                hitSourceConditionsModel.itemChanged(selectedHitEffectSourceCondition);
+                updateConditionEffect((ActorCondition)value, item, selectedHitEffectSourceCondition, hitSourceConditionsModel);
                 updateHit = true;
             } else if (source == hitSourceConditionClear && (Boolean) value) {
                 selectedHitEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
@@ -1417,17 +1397,7 @@ public class ItemEditor extends JSONElementEditor {
             } else if (source == hitTargetConditionsList) {
                 updateHit = true;
             } else if (source == hitTargetConditionBox) {
-                if (selectedHitEffectTargetCondition.condition != null) {
-                    selectedHitEffectTargetCondition.condition.removeBacklink(item);
-                }
-                selectedHitEffectTargetCondition.condition = (ActorCondition) value;
-                if (selectedHitEffectTargetCondition.condition != null) {
-                    selectedHitEffectTargetCondition.condition_id = selectedHitEffectTargetCondition.condition.id;
-                    selectedHitEffectTargetCondition.condition.addBacklink(item);
-                } else {
-                    selectedHitEffectTargetCondition.condition_id = null;
-                }
-                hitTargetConditionsModel.itemChanged(selectedHitEffectTargetCondition);
+                updateConditionEffect((ActorCondition)value, item, selectedHitEffectTargetCondition, hitTargetConditionsModel);
                 updateHit = true;
             } else if (source == hitTargetConditionClear && (Boolean) value) {
                 selectedHitEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
@@ -1497,17 +1467,7 @@ public class ItemEditor extends JSONElementEditor {
             } else if (source == killSourceConditionsList) {
                 updateKill = true;
             } else if (source == killSourceConditionBox) {
-                if (selectedKillEffectCondition.condition != null) {
-                    selectedKillEffectCondition.condition.removeBacklink(item);
-                }
-                selectedKillEffectCondition.condition = (ActorCondition) value;
-                if (selectedKillEffectCondition.condition != null) {
-                    selectedKillEffectCondition.condition_id = selectedKillEffectCondition.condition.id;
-                    selectedKillEffectCondition.condition.addBacklink(item);
-                } else {
-                    selectedKillEffectCondition.condition_id = null;
-                }
-                killSourceConditionsModel.itemChanged(selectedKillEffectCondition);
+                updateConditionEffect((ActorCondition) value, item, selectedKillEffectCondition, killSourceConditionsModel);
                 updateKill = true;
             } else if (source == killSourceConditionClear && (Boolean) value) {
                 selectedKillEffectCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
@@ -1593,17 +1553,7 @@ public class ItemEditor extends JSONElementEditor {
             } else if (source == hitReceivedSourceConditionsList) {
                 updateHitReceived = true;
             } else if (source == hitReceivedSourceConditionBox) {
-                if (selectedHitReceivedEffectSourceCondition.condition != null) {
-                    selectedHitReceivedEffectSourceCondition.condition.removeBacklink(item);
-                }
-                selectedHitReceivedEffectSourceCondition.condition = (ActorCondition) value;
-                if (selectedHitReceivedEffectSourceCondition.condition != null) {
-                    selectedHitReceivedEffectSourceCondition.condition_id = selectedHitReceivedEffectSourceCondition.condition.id;
-                    selectedHitReceivedEffectSourceCondition.condition.addBacklink(item);
-                } else {
-                    selectedHitReceivedEffectSourceCondition.condition_id = null;
-                }
-                hitReceivedSourceConditionsModel.itemChanged(selectedHitReceivedEffectSourceCondition);
+                updateConditionEffect((ActorCondition) value, item, selectedHitReceivedEffectSourceCondition, hitReceivedSourceConditionsModel);
                 updateHitReceived = true;
             } else if (source == hitReceivedSourceConditionClear && (Boolean) value) {
                 selectedHitReceivedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
@@ -1657,17 +1607,7 @@ public class ItemEditor extends JSONElementEditor {
             } else if (source == hitReceivedTargetConditionsList) {
                 updateHitReceived = true;
             } else if (source == hitReceivedTargetConditionBox) {
-                if (selectedHitReceivedEffectTargetCondition.condition != null) {
-                    selectedHitReceivedEffectTargetCondition.condition.removeBacklink(item);
-                }
-                selectedHitReceivedEffectTargetCondition.condition = (ActorCondition) value;
-                if (selectedHitReceivedEffectTargetCondition.condition != null) {
-                    selectedHitReceivedEffectTargetCondition.condition_id = selectedHitReceivedEffectTargetCondition.condition.id;
-                    selectedHitReceivedEffectTargetCondition.condition.addBacklink(item);
-                } else {
-                    selectedHitReceivedEffectTargetCondition.condition_id = null;
-                }
-                hitReceivedTargetConditionsModel.itemChanged(selectedHitReceivedEffectTargetCondition);
+                updateConditionEffect((ActorCondition) value, item, selectedHitReceivedEffectTargetCondition, hitReceivedTargetConditionsModel);
                 updateHitReceived = true;
             } else if (source == hitReceivedTargetConditionClear && (Boolean) value) {
                 selectedHitReceivedEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
