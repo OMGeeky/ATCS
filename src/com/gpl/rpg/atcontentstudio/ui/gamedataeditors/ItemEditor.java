@@ -284,9 +284,6 @@ public class ItemEditor extends JSONElementEditor {
         hitAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, item.writable, listener);
         hitAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, item.writable, listener);
         hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
-        final JPanel sourceTimedConditionsEditorPane = new JPanel();
-        final JButton createHitSourceCondition = new JButton(new ImageIcon(DefaultIcons.getCreateIcon()));
-        final JButton deleteHitSourceCondition = new JButton(new ImageIcon(DefaultIcons.getNullifyIcon()));
 
         BasicLambdaWithReturn<Common.TimedConditionEffect> getSelected = () -> hitSourceConditionsList.getSelectedValue();
         BasicLambda resetSelected = () -> {
