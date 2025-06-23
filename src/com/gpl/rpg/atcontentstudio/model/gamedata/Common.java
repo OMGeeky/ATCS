@@ -88,12 +88,12 @@ public final class Common {
         HitReceivedEffect hit_received_effect = new Common.HitReceivedEffect();
         readHitEffect(hitReceivedEffect, hit_received_effect);
         if (hitReceivedEffect.get("increaseAttackerCurrentHP") != null) {
-            hit_received_effect.hp_boost_max_target = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentHP")).get("max")));
-            hit_received_effect.hp_boost_min_target = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentHP")).get("min")));
+            hit_received_effect.target.hp_boost_max = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentHP")).get("max")));
+            hit_received_effect.target.hp_boost_min = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentHP")).get("min")));
         }
         if (hitReceivedEffect.get("increaseAttackerCurrentAP") != null) {
-            hit_received_effect.ap_boost_max_target = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentAP")).get("max")));
-            hit_received_effect.ap_boost_min_target = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentAP")).get("min")));
+            hit_received_effect.target.ap_boost_max = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentAP")).get("max")));
+            hit_received_effect.target.ap_boost_min = JSONElement.getInteger((Number) (((Map) hitReceivedEffect.get("increaseAttackerCurrentAP")).get("min")));
         }
         return hit_received_effect;
     }
@@ -138,10 +138,7 @@ public final class Common {
 
     public static class HitReceivedEffect extends Common.HitEffect {
         //Available from parsed state
-        public Integer hp_boost_min_target = null;
-        public Integer hp_boost_max_target = null;
-        public Integer ap_boost_min_target = null;
-        public Integer ap_boost_max_target = null;
+        public BasicEffect target = new BasicEffect();
     }
 
 
@@ -182,10 +179,7 @@ public final class Common {
 
     public static void copyHitReceivedEffectValues(Common.HitReceivedEffect target, Common.HitReceivedEffect source, GameDataElement backlink) {
         copyHitEffectValues(target, source, backlink);
-        target.ap_boost_max_target = source.ap_boost_max_target;
-        target.ap_boost_min_target = source.ap_boost_min_target;
-        target.hp_boost_max_target = source.hp_boost_max_target;
-        target.hp_boost_min_target = source.hp_boost_min_target;
+        copyEffectValues(target.target, source.target);
     }
 
 }

@@ -1139,10 +1139,10 @@ public class ItemEditor extends JSONElementEditor {
         if (effect.ap_boost_max != null) return false;
         if (effect.hp_boost_min != null) return false;
         if (effect.hp_boost_max != null) return false;
-        if (effect.ap_boost_min_target != null) return false;
-        if (effect.ap_boost_max_target != null) return false;
-        if (effect.hp_boost_min_target != null) return false;
-        if (effect.hp_boost_max_target != null) return false;
+        if (effect.target.ap_boost_min != null) return false;
+        if (effect.target.ap_boost_max != null) return false;
+        if (effect.target.hp_boost_min != null) return false;
+        if (effect.target.hp_boost_max != null) return false;
         if (effect.conditions_source != null) return false;
         if (effect.conditions_target != null) return false;
         return true;
@@ -1534,19 +1534,19 @@ public class ItemEditor extends JSONElementEditor {
                 updatePrice = true;
                 updateHitReceived = true;
             } else if (source == hitReceivedHPMinTarget) {
-                hitReceivedEffect.hp_boost_min_target = (Integer) value;
+                hitReceivedEffect.target.hp_boost_min = (Integer) value;
                 updatePrice = true;
                 updateHitReceived = true;
             } else if (source == hitReceivedHPMaxTarget) {
-                hitReceivedEffect.hp_boost_max_target = (Integer) value;
+                hitReceivedEffect.target.hp_boost_max = (Integer) value;
                 updatePrice = true;
                 updateHitReceived = true;
             } else if (source == hitReceivedAPMinTarget) {
-                hitReceivedEffect.ap_boost_min_target = (Integer) value;
+                hitReceivedEffect.target.ap_boost_min = (Integer) value;
                 updatePrice = true;
                 updateHitReceived = true;
             } else if (source == hitReceivedAPMaxTarget) {
-                hitReceivedEffect.ap_boost_max_target = (Integer) value;
+                hitReceivedEffect.target.ap_boost_max = (Integer) value;
                 updatePrice = true;
                 updateHitReceived = true;
             } else if (source == hitReceivedSourceConditionsList) {

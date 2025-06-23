@@ -506,24 +506,24 @@ public class Item extends JSONElement {
                     apJson.put("max", this.hit_received_effect.ap_boost_max);
                 else apJson.put("max", 0);
             }
-            if (this.hit_received_effect.hp_boost_min_target != null || this.hit_received_effect.hp_boost_max_target != null) {
+            if (this.hit_received_effect.target.hp_boost_min != null || this.hit_received_effect.target.hp_boost_max != null) {
                 Map hpJson = new LinkedHashMap();
                 hitReceivedEffectJson.put("increaseAttackerCurrentHP", hpJson);
-                if (this.hit_received_effect.hp_boost_min_target != null)
-                    hpJson.put("min", this.hit_received_effect.hp_boost_min_target);
+                if (this.hit_received_effect.target.hp_boost_min != null)
+                    hpJson.put("min", this.hit_received_effect.target.hp_boost_min);
                 else hpJson.put("min", 0);
-                if (this.hit_received_effect.hp_boost_max_target != null)
-                    hpJson.put("max", this.hit_received_effect.hp_boost_max_target);
+                if (this.hit_received_effect.target.hp_boost_max != null)
+                    hpJson.put("max", this.hit_received_effect.target.hp_boost_max);
                 else hpJson.put("max", 0);
             }
-            if (this.hit_received_effect.ap_boost_min_target != null || this.hit_received_effect.ap_boost_max_target != null) {
+            if (this.hit_received_effect.target.ap_boost_min != null || this.hit_received_effect.target.ap_boost_max != null) {
                 Map apJson = new LinkedHashMap();
                 hitReceivedEffectJson.put("increaseAttackerCurrentAP", apJson);
-                if (this.hit_received_effect.ap_boost_min_target != null)
-                    apJson.put("min", this.hit_received_effect.ap_boost_min_target);
+                if (this.hit_received_effect.target.ap_boost_min != null)
+                    apJson.put("min", this.hit_received_effect.target.ap_boost_min);
                 else apJson.put("min", 0);
-                if (this.hit_received_effect.ap_boost_max_target != null)
-                    apJson.put("max", this.hit_received_effect.ap_boost_max_target);
+                if (this.hit_received_effect.target.ap_boost_max != null)
+                    apJson.put("max", this.hit_received_effect.target.ap_boost_max);
                 else apJson.put("max", 0);
             }
             if (this.hit_received_effect.conditions_source != null) {
