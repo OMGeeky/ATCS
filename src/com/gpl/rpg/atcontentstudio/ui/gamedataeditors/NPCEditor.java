@@ -207,7 +207,7 @@ public class NPCEditor extends JSONElementEditor {
         dmgRes = addIntegerField(combatTraitPane, "Damage resistance: ", npc.damage_resistance, false, npc.writable, listener);
 
         hitEffectPane = new CommonEditor.HitEffectPane(this.hitEffectPane.selectedHitEffectSourceCondition, this.hitEffectPane.selectedHitEffectTargetCondition);
-        hitEffectPane.createHitEffectPaneContent(npc, listener, this);
+        hitEffectPane.createHitEffectPaneContent(npc, listener, this, null);
         combatTraitPane.add(hitEffectPane.hitEffectPane, JideBoxLayout.FIX);
 
         hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");

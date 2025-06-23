@@ -53,6 +53,7 @@ public class CommonEditor {
             return c;
         }
     }
+
     public static class ConditionsCellRenderer extends DefaultListCellRenderer {
         private static final long serialVersionUID = 7987880146189575234L;
 
@@ -109,15 +110,15 @@ public class CommonEditor {
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
         }
 
-        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor) {
-            createDeathEffectPaneContent(npc, listener, editor);
+        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint) {
+            createDeathEffectPaneContent(npc, listener, editor, applyToHint);
 
             String titleTarget = "Actor Conditions applied to the target: ";
             hitTargetConditionsListModel = new NPCEditor.TargetTimedConditionsListModel(hitEffect);
             CommonEditor.TimedConditionsCellRenderer cellRendererTarget = new CommonEditor.TimedConditionsCellRenderer();
-            BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value)-> selectedHitEffectTargetCondition = value;
-            BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = ()-> selectedHitEffectTargetCondition ;
-            BasicLambda selectedResetTarget = ()-> selectedHitEffectTargetCondition = null;
+            BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
+            BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = () -> selectedHitEffectTargetCondition;
+            BasicLambda selectedResetTarget = () -> selectedHitEffectTargetCondition = null;
             BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(editorPane, selectedHitEffectTargetCondition, listener, editor);
 
             var resultTarget = UiUtils.getCollapsibleItemList(listener,
@@ -125,7 +126,8 @@ public class CommonEditor {
                     selectedResetTarget,
                     selectedSetTarget,
                     selectedGetTarget,
-                    (x) -> {},
+                    (x) -> {
+                    },
                     updatePaneTarget,
                     npc.writable,
                     Common.TimedActorConditionEffect::new,
@@ -257,7 +259,12 @@ public class CommonEditor {
             this.selectedHitEffectSourceCondition = selectedHitEffectSourceCondition;
         }
 
-        void createDeathEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor) {
+        void createDeathEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint) {
+            if (applyToHint == null || applyToHint == "") {
+                applyToHint = "";
+            } else {
+                applyToHint = " (%s)".formatted(applyToHint);
+            }
             hitEffectPane = new CollapsiblePanel("Effect on every hit: ");
             hitEffectPane.setLayout(new JideBoxLayout(hitEffectPane, JideBoxLayout.PAGE_AXIS));
             if (npc.hit_effect == null) {
@@ -265,25 +272,26 @@ public class CommonEditor {
             } else {
                 hitEffect = npc.hit_effect;
             }
-            hitEffectHPMin = addIntegerField(hitEffectPane, "HP bonus min: ", hitEffect.hp_boost_min, true, npc.writable, listener);
-            hitEffectHPMax = addIntegerField(hitEffectPane, "HP bonus max: ", hitEffect.hp_boost_max, true, npc.writable, listener);
-            hitEffectAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, npc.writable, listener);
-            hitEffectAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, npc.writable, listener);
+            hitEffectHPMin = addIntegerField(hitEffectPane, "HP bonus min%s: ".formatted(applyToHint), hitEffect.hp_boost_min, true, npc.writable, listener);
+            hitEffectHPMax = addIntegerField(hitEffectPane, "HP bonus max%s: ".formatted(applyToHint), hitEffect.hp_boost_max, true, npc.writable, listener);
+            hitEffectAPMin = addIntegerField(hitEffectPane, "AP bonus min%s: ".formatted(applyToHint), hitEffect.ap_boost_min, true, npc.writable, listener);
+            hitEffectAPMax = addIntegerField(hitEffectPane, "AP bonus max%s: ".formatted(applyToHint), hitEffect.ap_boost_max, true, npc.writable, listener);
 
             String titleSource = "Actor Conditions applied to the source: ";
             hitSourceConditionsModel = new NPCEditor.SourceTimedConditionsListModel(hitEffect);
             CommonEditor.TimedConditionsCellRenderer cellRendererSource = new CommonEditor.TimedConditionsCellRenderer();
-            BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetSource = (value)-> selectedHitEffectSourceCondition = value;
-            BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetSource = ()-> selectedHitEffectSourceCondition ;
-            BasicLambda selectedResetSource = ()-> selectedHitEffectSourceCondition = null;
-            BasicLambdaWithArg<JPanel> updatePaneSource =(editorPane) -> updateDeathEffectSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener, editor);
+            BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetSource = (value) -> selectedHitEffectSourceCondition = value;
+            BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetSource = () -> selectedHitEffectSourceCondition;
+            BasicLambda selectedResetSource = () -> selectedHitEffectSourceCondition = null;
+            BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> updateDeathEffectSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener, editor);
 
             var resultSource = UiUtils.getCollapsibleItemList(listener,
                     hitSourceConditionsModel,
                     selectedResetSource,
                     selectedSetSource,
                     selectedGetSource,
-                    (x) -> {},
+                    (x) -> {
+                    },
                     updatePaneSource,
                     npc.writable,
                     Common.TimedActorConditionEffect::new,
