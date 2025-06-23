@@ -287,7 +287,7 @@ public class ItemEditor extends JSONElementEditor {
         hitEffectPane.add(hitSourceConditionsPane, JideBoxLayout.FIX);
         String titleHitTargetConditions = "Actor Conditions applied to the target: ";
         hitTargetConditionsModel = new TargetTimedConditionsListModel(hitEffect);
-        ConditionsCellRenderer cellRendererHitTargetConditions = new ConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererHitTargetConditions = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetHitTargetConditions = (value)->selectedHitEffectTargetCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetHitTargetConditions = ()->selectedHitEffectTargetCondition ;
         BasicLambda selectedResetHitTargetConditions = ()->selectedHitEffectTargetCondition = null;
