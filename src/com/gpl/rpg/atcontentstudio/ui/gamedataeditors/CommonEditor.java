@@ -1,5 +1,6 @@
 package com.gpl.rpg.atcontentstudio.ui.gamedataeditors;
 
+import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
 import com.gpl.rpg.atcontentstudio.model.gamedata.NPC;
@@ -12,6 +13,8 @@ import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import static com.gpl.rpg.atcontentstudio.ui.Editor.addIntegerField;
 
@@ -119,7 +122,7 @@ public class CommonEditor {
             this.selectedHitEffectSourceCondition = selectedHitEffectSourceCondition;
         }
 
-        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, BasicLambdaWithArg<JPanel> updatePaneSource, BasicLambdaWithArg<JPanel> updatePaneTarget) {
+        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor) {
             hitEffectPane = new CollapsiblePanel("Effect on every hit: ");
             hitEffectPane.setLayout(new JideBoxLayout(hitEffectPane, JideBoxLayout.PAGE_AXIS));
             if (npc.hit_effect == null) {
@@ -138,6 +141,7 @@ public class CommonEditor {
             BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetSource = (value)-> selectedHitEffectSourceCondition = value;
             BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetSource = ()-> selectedHitEffectSourceCondition ;
             BasicLambda selectedResetSource = ()-> selectedHitEffectSourceCondition = null;
+            BasicLambdaWithArg<JPanel> updatePaneSource =(editorPane) -> updateHitSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener, editor);
 
             var resultSource = UiUtils.getCollapsibleItemList(listener,
                     hitSourceConditionsModel,
@@ -164,6 +168,8 @@ public class CommonEditor {
             BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value)-> selectedHitEffectTargetCondition = value;
             BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = ()-> selectedHitEffectTargetCondition ;
             BasicLambda selectedResetTarget = ()-> selectedHitEffectTargetCondition = null;
+            BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(editorPane, selectedHitEffectTargetCondition, listener, editor);
+
             var resultTarget = UiUtils.getCollapsibleItemList(listener,
                     hitTargetConditionsListModel,
                     selectedResetTarget,
@@ -184,5 +190,181 @@ public class CommonEditor {
             hitEffectPane.add(hitTargetConditionsPane, JideBoxLayout.FIX);
         }
 
+        public void updateHitSourceTimedConditionEditorPane(JPanel pane, Common.TimedActorConditionEffect condition, final FieldUpdateListener listener, Editor e) {
+            pane.removeAll();
+            if (hitSourceConditionBox != null) {
+                e.removeElementListener(hitSourceConditionBox);
+            }
+
+            boolean writable = e.target.writable;
+            Project proj = e.target.getProject();
+
+            hitSourceConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
+            hitSourceConditionChance = e.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
+
+            hitSourceConditionClear = new JRadioButton("Clear active condition");
+            pane.add(hitSourceConditionClear, JideBoxLayout.FIX);
+            hitSourceConditionApply = new JRadioButton("Apply condition with magnitude");
+            pane.add(hitSourceConditionApply, JideBoxLayout.FIX);
+            hitSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
+            hitSourceConditionImmunity = new JRadioButton("Give immunity to condition");
+            pane.add(hitSourceConditionImmunity, JideBoxLayout.FIX);
+
+            ButtonGroup radioEffectGroup = new ButtonGroup();
+            radioEffectGroup.add(hitSourceConditionApply);
+            radioEffectGroup.add(hitSourceConditionClear);
+            radioEffectGroup.add(hitSourceConditionImmunity);
+
+            hitSourceConditionTimed = new JRadioButton("For a number of rounds");
+            pane.add(hitSourceConditionTimed, JideBoxLayout.FIX);
+            hitSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
+            hitSourceConditionForever = new JRadioButton("Forever");
+            pane.add(hitSourceConditionForever, JideBoxLayout.FIX);
+
+            ButtonGroup radioDurationGroup = new ButtonGroup();
+            radioDurationGroup.add(hitSourceConditionTimed);
+            radioDurationGroup.add(hitSourceConditionForever);
+
+            updateHitSourceTimedConditionWidgets(condition);
+
+            hitSourceConditionClear.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitSourceConditionClear, new Boolean(hitSourceConditionClear.isSelected()));
+                }
+            });
+            hitSourceConditionApply.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitSourceConditionApply, new Boolean(hitSourceConditionApply.isSelected()));
+                }
+            });
+            hitSourceConditionImmunity.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitSourceConditionImmunity, new Boolean(hitSourceConditionImmunity.isSelected()));
+                }
+            });
+
+            hitSourceConditionTimed.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitSourceConditionTimed, new Boolean(hitSourceConditionTimed.isSelected()));
+                }
+            });
+            hitSourceConditionForever.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitSourceConditionForever, new Boolean(hitSourceConditionForever.isSelected()));
+                }
+            });
+            pane.revalidate();
+            pane.repaint();
+        }
+        public void updateHitTargetTimedConditionEditorPane(JPanel pane, Common.TimedActorConditionEffect condition, final FieldUpdateListener listener, Editor e) {
+            pane.removeAll();
+            if (hitTargetConditionBox != null) {
+                e.removeElementListener(hitTargetConditionBox);
+            }
+
+            boolean writable = e.target.writable;
+            Project proj = e.target.getProject();
+
+            hitTargetConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
+            hitTargetConditionChance = e.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
+            hitTargetConditionClear = new JRadioButton("Clear active condition");
+            pane.add(hitTargetConditionClear, JideBoxLayout.FIX);
+            hitTargetConditionApply = new JRadioButton("Apply condition with magnitude");
+            pane.add(hitTargetConditionApply, JideBoxLayout.FIX);
+            hitTargetConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
+            hitTargetConditionImmunity = new JRadioButton("Give immunity to condition");
+            pane.add(hitTargetConditionImmunity, JideBoxLayout.FIX);
+
+            ButtonGroup radioEffectGroup = new ButtonGroup();
+            radioEffectGroup.add(hitTargetConditionApply);
+            radioEffectGroup.add(hitTargetConditionClear);
+            radioEffectGroup.add(hitTargetConditionImmunity);
+
+            hitTargetConditionTimed = new JRadioButton("For a number of rounds");
+            pane.add(hitTargetConditionTimed, JideBoxLayout.FIX);
+            hitTargetConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
+            hitTargetConditionForever = new JRadioButton("Forever");
+            pane.add(hitTargetConditionForever, JideBoxLayout.FIX);
+
+            ButtonGroup radioDurationGroup = new ButtonGroup();
+            radioDurationGroup.add(hitTargetConditionTimed);
+            radioDurationGroup.add(hitTargetConditionForever);
+
+            updateHitTargetTimedConditionWidgets(condition);
+
+            hitTargetConditionClear.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitTargetConditionClear, new Boolean(hitTargetConditionClear.isSelected()));
+                }
+            });
+            hitTargetConditionApply.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitTargetConditionApply, new Boolean(hitTargetConditionApply.isSelected()));
+                }
+            });
+            hitTargetConditionImmunity.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitTargetConditionImmunity, new Boolean(hitTargetConditionImmunity.isSelected()));
+                }
+            });
+
+            hitTargetConditionTimed.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitTargetConditionTimed, new Boolean(hitTargetConditionTimed.isSelected()));
+                }
+            });
+            hitTargetConditionForever.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.valueChanged(hitTargetConditionForever, new Boolean(hitTargetConditionForever.isSelected()));
+                }
+            });
+            pane.revalidate();
+            pane.repaint();
+        }
+
+
+        public void updateHitSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
+            boolean immunity = condition.isImmunity();
+            boolean clear = condition.isClear();
+            boolean forever = condition.isInfinite();
+
+            hitSourceConditionClear.setSelected(clear);
+            hitSourceConditionApply.setSelected(!clear && !immunity);
+            hitSourceConditionMagnitude.setEnabled(!clear && !immunity);
+            hitSourceConditionImmunity.setSelected(immunity);
+
+            hitSourceConditionTimed.setSelected(!forever);
+            hitSourceConditionTimed.setEnabled(!clear);
+            hitSourceConditionDuration.setEnabled(!clear && !forever);
+            hitSourceConditionForever.setSelected(forever);
+            hitSourceConditionForever.setEnabled(!clear);
+        }
+
+        public void updateHitTargetTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
+            boolean immunity = condition.isImmunity();
+            boolean clear = condition.isClear();
+            boolean forever = condition.isInfinite();
+
+            hitTargetConditionClear.setSelected(clear);
+            hitTargetConditionApply.setSelected(!clear && !immunity);
+            hitTargetConditionMagnitude.setEnabled(!clear && !immunity);
+            hitTargetConditionImmunity.setSelected(immunity);
+            hitTargetConditionTimed.setSelected(!forever);
+            hitTargetConditionTimed.setEnabled(!clear);
+            hitTargetConditionDuration.setEnabled(!clear && !forever);
+            hitTargetConditionForever.setSelected(forever);
+            hitTargetConditionForever.setEnabled(!clear);
+
+        }
     }
 }
