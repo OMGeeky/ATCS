@@ -84,6 +84,9 @@ public class CommonEditor {
     public static class HitEffectPane extends DeathEffectPane {
         /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
         Common.HitEffect effect;
+
+        String applyToTargetHint;
+
         NPCEditor.TargetTimedConditionsListModel hitTargetConditionsListModel;
         JList hitTargetConditionsList;
         Common.TimedActorConditionEffect selectedHitEffectTargetCondition;
@@ -101,9 +104,10 @@ public class CommonEditor {
         /*
          * create a new HitEffectPane with the selections (probably passed in from last time)
          */
-        public HitEffectPane(String title, Supplier<?> sourceNewSupplier, Editor editor, String applyToHint) {
+        public HitEffectPane(String title, Supplier<?> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
             super(title, sourceNewSupplier, editor, applyToHint);
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
+            this.applyToTargetHint = applyToTargetHint;
         }
 
         void createHitEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {

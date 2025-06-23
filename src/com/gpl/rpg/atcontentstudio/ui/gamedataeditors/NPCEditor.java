@@ -194,11 +194,8 @@ public class NPCEditor extends JSONElementEditor {
             hitEffect = npc.hit_effect;
         }
         if (hitEffectPane == null)
-            hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, "test");
-        hitEffectPane.createHitEffectPaneContent(listener,
-                npc.writable,
-                hitEffect,
-                new SourceTimedConditionsListModel(hitEffect));
+            hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
+        hitEffectPane.createHitEffectPaneContent(listener, npc.writable, hitEffect, new SourceTimedConditionsListModel(hitEffect));
         combatTraitPane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
         hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
