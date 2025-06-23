@@ -67,7 +67,7 @@ public final class Common {
         if (min != null || max != null) {
             Map minMaxMap = new LinkedHashMap();
             parent.put(key, minMaxMap);
-            writeMinMaxToMap(parent, min, max, defaultValue);
+            writeMinMaxToMap(minMaxMap, min, max, defaultValue);
         }
     }
     public static void writeDescriptionToMap(Map parent, String description) {
