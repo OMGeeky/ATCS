@@ -353,7 +353,7 @@ public class Item extends JSONElement {
     public Map toJson() {
         Map itemJson = new LinkedHashMap();
         itemJson.put("id", this.id);
-        if (this.icon_id != null) itemJson.put("iconID", this.icon_id);
+        writeIconToMap(itemJson, this.icon_id);
         if (this.name != null) itemJson.put("name", this.name);
         if (this.display_type != null) itemJson.put("displaytype", this.display_type.toString());
 
@@ -364,20 +364,11 @@ public class Item extends JSONElement {
         } else if (this.category_id != null) {
             itemJson.put("category", this.category_id);
         }
-        if (this.description != null) itemJson.put("description", this.description);
+        writeDescriptionToMap(itemJson, this.description);
         if (this.equip_effect != null) {
             Map equipEffectJson = new LinkedHashMap();
             itemJson.put("equipEffect", equipEffectJson);
-            if (this.equip_effect.damage_boost_min != null || this.equip_effect.damage_boost_max != null) {
-                Map damageJson = new LinkedHashMap();
-                equipEffectJson.put("increaseAttackDamage", damageJson);
-                if (this.equip_effect.damage_boost_min != null)
-                    damageJson.put("min", this.equip_effect.damage_boost_min);
-                else damageJson.put("min", 0);
-                if (this.equip_effect.damage_boost_max != null)
-                    damageJson.put("max", this.equip_effect.damage_boost_max);
-                else damageJson.put("max", 0);
-            }
+            writeMinMaxToMap(equipEffectJson, "increaseAttackDamage", this.equip_effect.damage_boost_min, this.equip_effect.damage_boost_max, 0);
             if (this.equip_effect.max_hp_boost != null)
                 equipEffectJson.put("increaseMaxHP", this.equip_effect.max_hp_boost);
             if (this.equip_effect.max_ap_boost != null)
@@ -412,45 +403,9 @@ public class Item extends JSONElement {
                 }
             }
         }
-        if (this.hit_effect != null) {
-            Map hitEffectJson = new LinkedHashMap();
-            itemJson.put("hitEffect", hitEffectJson);
-            if (this.hit_effect.hp_boost_min != null || this.hit_effect.hp_boost_max != null) {
-                Map hpJson = new LinkedHashMap();
-                hitEffectJson.put("increaseCurrentHP", hpJson);
-                if (this.hit_effect.hp_boost_min != null) hpJson.put("min", this.hit_effect.hp_boost_min);
-                else hpJson.put("min", 0);
-                if (this.hit_effect.hp_boost_max != null) hpJson.put("max", this.hit_effect.hp_boost_max);
-                else hpJson.put("max", 0);
-            }
-            if (this.hit_effect.ap_boost_min != null || this.hit_effect.ap_boost_max != null) {
-                Map apJson = new LinkedHashMap();
-                hitEffectJson.put("increaseCurrentAP", apJson);
-                if (this.hit_effect.ap_boost_min != null) apJson.put("min", this.hit_effect.ap_boost_min);
-                else apJson.put("min", 0);
-                if (this.hit_effect.ap_boost_max != null) apJson.put("max", this.hit_effect.ap_boost_max);
-                else apJson.put("max", 0);
-            }
-            if (this.hit_effect.conditions_source != null) {
-                List conditionsSourceJson = new ArrayList();
-                hitEffectJson.put("conditionsSource", conditionsSourceJson);
-                for (TimedActorConditionEffect condition : this.hit_effect.conditions_source) {
-                    Map conditionJson = new LinkedHashMap();
-                    conditionsSourceJson.add(conditionJson);
-                    writeTimedConditionEffectToMap(condition, conditionJson);
-                }
-            }
-            if (this.hit_effect.conditions_target != null) {
-                List conditionsTargetJson = new ArrayList();
-                hitEffectJson.put("conditionsTarget", conditionsTargetJson);
-                for (TimedActorConditionEffect condition : this.hit_effect.conditions_target) {
-                    Map conditionJson = new LinkedHashMap();
-                    conditionsTargetJson.add(conditionJson);
-                    writeTimedConditionEffectToMap(condition, conditionJson);
-                }
-            }
-        }
+        writeHitEffectToMap(itemJson, this.hit_effect, "hitEffect");
         writeHitReceivedEffectToMap(itemJson, this.hit_received_effect, "hitReceivedEffect");
+        
         String key;
         if (this.category != null && this.category.action_type != null && this.category.action_type == ItemCategory.ActionType.equip) {
             key = "killEffect";

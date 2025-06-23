@@ -41,7 +41,30 @@ public final class Common {
     //endregion
 
     //region write common stuff
+    public static void writeMinMaxToMap(Map parent, Integer min, Integer max, int defaultValue) {
+        if (min != null || max != null) {
+            if (min != null)
+                parent.put("min", min);
+            else parent.put("min", defaultValue);
+            if (max != null)
+                parent.put("max", max);
+            else parent.put("max", defaultValue);
+        }
+    }
+    public static void writeMinMaxToMap(Map parent, String key, Integer min, Integer max, int defaultValue) {
+        if (min != null || max != null) {
+            Map minMaxMap = new LinkedHashMap();
+            parent.put(key, minMaxMap);
+            writeMinMaxToMap(parent, min, max, defaultValue);
+        }
+    }
+    public static void writeDescriptionToMap(Map parent, String description) {
+        if (description != null) parent.put("description", description);
+    }
 
+    public static void writeIconToMap(Map parent, String icon_id) {
+        if (icon_id != null) parent.put("iconID", icon_id);
+    }
     public static void writeHitReceivedEffectToMap(Map parent, HitReceivedEffect effect) {
         if(effect != null){
             writeHitEffectToMap(parent, effect);
@@ -81,27 +104,9 @@ public final class Common {
     }
 
     public static void writeBasicEffectObjectToMap(BasicEffect effect, Map parent, String keyHP, String keyAP) {
-        if (effect.hp_boost_min != null || effect.hp_boost_max != null) {
-            Map hpJson = new LinkedHashMap();
-            parent.put(keyHP, hpJson);
-            if (effect.hp_boost_min != null)
-                hpJson.put("min", effect.hp_boost_min);
-            else hpJson.put("min", 0);
-            if (effect.hp_boost_max != null)
-                hpJson.put("max", effect.hp_boost_max);
-            else hpJson.put("max", 0);
-        }
+        writeMinMaxToMap(parent, keyHP, effect.hp_boost_min, effect.hp_boost_max, 0);
 
-        if (effect.ap_boost_min != null || effect.ap_boost_max != null) {
-            Map apJson = new LinkedHashMap();
-            parent.put(keyAP, apJson);
-            if (effect.ap_boost_min != null)
-                apJson.put("min", effect.ap_boost_min);
-            else apJson.put("min", 0);
-            if (effect.ap_boost_max != null)
-                apJson.put("max", effect.ap_boost_max);
-            else apJson.put("max", 0);
-        }
+        writeMinMaxToMap(parent, keyAP, effect.ap_boost_min, effect.ap_boost_max, 0);
     }
 
     public static void writeTimedActorConditionEffectObjectToMap(List<TimedActorConditionEffect> list, Map parent, String key) {
