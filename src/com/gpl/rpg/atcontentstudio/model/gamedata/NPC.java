@@ -171,19 +171,7 @@ public class NPC extends JSONElement {
 
         Map hitEffect = (Map) npcJson.get("hitEffect");
         if (hitEffect != null) {
-            this.hit_effect = new HitEffect();
-            if (hitEffect.get("increaseCurrentHP") != null) {
-                this.hit_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map) hitEffect.get("increaseCurrentHP")).get("max")));
-                this.hit_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map) hitEffect.get("increaseCurrentHP")).get("min")));
-            }
-            if (hitEffect.get("increaseCurrentAP") != null) {
-                this.hit_effect.ap_boost_max = JSONElement.getInteger((Number) (((Map) hitEffect.get("increaseCurrentAP")).get("max")));
-                this.hit_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map) hitEffect.get("increaseCurrentAP")).get("min")));
-            }
-            List conditionsSourceJson = (List) hitEffect.get("conditionsSource");
-            this.hit_effect.conditions_source = parseTimedConditionEffects(conditionsSourceJson);
-            List conditionsTargetJson = (List) hitEffect.get("conditionsTarget");
-            this.hit_effect.conditions_target = parseTimedConditionEffects(conditionsTargetJson);
+            this.hit_effect = parseHitEffect(hitEffect);
         }
 
         Map hitReceivedEffect = (Map) npcJson.get("hitReceivedEffect");
@@ -193,19 +181,8 @@ public class NPC extends JSONElement {
 
         Map deathEffect = (Map) npcJson.get("deathEffect");
         if (deathEffect != null) {
-            this.death_effect = new HitEffect();
-            if (deathEffect.get("increaseCurrentHP") != null) {
-                this.death_effect.hp_boost_max = JSONElement.getInteger((Number) (((Map) deathEffect.get("increaseCurrentHP")).get("max")));
-                this.death_effect.hp_boost_min = JSONElement.getInteger((Number) (((Map) deathEffect.get("increaseCurrentHP")).get("min")));
-            }
-            if (deathEffect.get("increaseCurrentAP") != null) {
-                this.death_effect.ap_boost_max = JSONElement.getInteger((Number) (((Map) deathEffect.get("increaseCurrentAP")).get("max")));
-                this.death_effect.ap_boost_min = JSONElement.getInteger((Number) (((Map) deathEffect.get("increaseCurrentAP")).get("min")));
-            }
-            List conditionsSourceJson = (List) deathEffect.get("conditionsSource");
-            this.death_effect.conditions_source = parseTimedConditionEffects(conditionsSourceJson);
+            this.death_effect = parseDeathEffect(deathEffect);
         }
-
     }
 
     @Override
@@ -302,23 +279,9 @@ public class NPC extends JSONElement {
                 this.droplist = (Droplist) newOne;
                 if (newOne != null) newOne.addBacklink(this);
             } else {
-                if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-                    for (TimedActorConditionEffect tce : this.hit_effect.conditions_source) {
-                        if (tce.condition == oldOne) {
-                            oldOne.removeBacklink(this);
-                            tce.condition = (ActorCondition) newOne;
-                            if (newOne != null) newOne.addBacklink(this);
-                        }
-                    }
-                }
-                if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-                    for (TimedActorConditionEffect tce : this.hit_effect.conditions_target) {
-                        if (tce.condition == oldOne) {
-                            oldOne.removeBacklink(this);
-                            tce.condition = (ActorCondition) newOne;
-                            if (newOne != null) newOne.addBacklink(this);
-                        }
-                    }
+                if (this.hit_effect != null) {
+                    actorConditionElementChanged(this.hit_effect.conditions_source, oldOne, newOne, this);
+                    actorConditionElementChanged(this.hit_effect.conditions_target, oldOne, newOne, this);
                 }
             }
         }

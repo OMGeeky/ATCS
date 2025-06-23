@@ -10,6 +10,18 @@ import java.util.Map;
 
 public final class Common {
 
+    public static <T extends ActorConditionEffect> void actorConditionElementChanged(List<T> list, GameDataElement oldOne, GameDataElement newOne,GameDataElement backlink){
+        if (list != null) {
+            for (T c : list) {
+                if (c.condition == oldOne) {
+                    oldOne.removeBacklink(backlink);
+                    c.condition = (ActorCondition) newOne;
+                    if (newOne != null) newOne.addBacklink(backlink);
+                }
+            }
+        }
+
+    }
     //region link common stuff
     public static void linkConditions(List<? extends ActorConditionEffect> conditions, Project proj, GameDataElement backlink) {
         if (conditions != null) {

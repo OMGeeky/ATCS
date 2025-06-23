@@ -308,42 +308,18 @@ public class Item extends JSONElement {
             this.category = (ItemCategory) newOne;
             if (newOne != null) newOne.addBacklink(this);
         } else {
-            if (this.equip_effect != null && this.equip_effect.conditions != null) {
-                for (ActorConditionEffect c : this.equip_effect.conditions) {
-                    if (c.condition == oldOne) {
-                        oldOne.removeBacklink(this);
-                        c.condition = (ActorCondition) newOne;
-                        if (newOne != null) newOne.addBacklink(this);
-                    }
+            if (this.equip_effect != null) {
+                if (this.equip_effect.conditions != null) {
+                    actorConditionElementChanged(this.equip_effect.conditions, oldOne, newOne, this);
                 }
             }
-            if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-                for (TimedActorConditionEffect c : this.hit_effect.conditions_source) {
-                    if (c.condition == oldOne) {
-                        oldOne.removeBacklink(this);
-                        c.condition = (ActorCondition) newOne;
-                        if (newOne != null) newOne.addBacklink(this);
-                    }
-                }
-            }
-            if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-                for (TimedActorConditionEffect c : this.hit_effect.conditions_target) {
-                    if (c.condition == oldOne) {
-                        oldOne.removeBacklink(this);
-                        c.condition = (ActorCondition) newOne;
-                        if (newOne != null) newOne.addBacklink(this);
-                    }
-                }
+            if (this.hit_effect != null) {
+                actorConditionElementChanged(this.hit_effect.conditions_source, oldOne, newOne, this);
+                actorConditionElementChanged(this.hit_effect.conditions_target, oldOne, newOne, this);
             }
 
-            if (this.kill_effect != null && this.kill_effect.conditions_source != null) {
-                for (TimedActorConditionEffect c : this.kill_effect.conditions_source) {
-                    if (c.condition == oldOne) {
-                        oldOne.removeBacklink(this);
-                        c.condition = (ActorCondition) newOne;
-                        if (newOne != null) newOne.addBacklink(this);
-                    }
-                }
+            if (this.kill_effect != null) {
+                actorConditionElementChanged(this.kill_effect.conditions_source, oldOne, newOne, this);
             }
         }
     }
