@@ -96,11 +96,14 @@ public class CommonEditor {
         void createHitReceivedEffectPaneContent(FieldUpdateListener listener, boolean writable, EFFECT e, MODEL sourceConditionsModelInput, MODEL targetConditionsModelInput) {
             effect = e;
             createHitEffectPaneContent(listener, writable, e, sourceConditionsModelInput, targetConditionsModelInput);
-
-            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "Attacker HP bonus min%s: ".formatted(applyToTargetHint), effect.target.hp_boost_min, true, writable, listener);
-            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "Attacker HP bonus max%s: ".formatted(applyToTargetHint), effect.target.hp_boost_max, true, writable, listener);
-            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "Attacker AP bonus min%s: ".formatted(applyToTargetHint), effect.target.ap_boost_min, true, writable, listener);
-            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "Attacker AP bonus max%s: ".formatted(applyToTargetHint), effect.target.ap_boost_max, true, writable, listener);
+        }
+        @Override
+        protected void addFields(FieldUpdateListener listener, boolean writable) {
+            super.addFields(listener, writable);
+            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToTargetHint), effect.target.hp_boost_min, true, writable, listener);
+            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToTargetHint), effect.target.hp_boost_max, true, writable, listener);
+            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToTargetHint), effect.target.ap_boost_min, true, writable, listener);
+            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToTargetHint), effect.target.ap_boost_max, true, writable, listener);
         }
     }
 
@@ -130,6 +133,12 @@ public class CommonEditor {
         public HitEffectPane(String title, Supplier<ELEMENT> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
             super(title, sourceNewSupplier, editor, applyToHint);
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
+
+            if (applyToTargetHint == null || applyToTargetHint == "") {
+                applyToTargetHint = "";
+            } else {
+                applyToTargetHint = " (%s)".formatted(applyToTargetHint);
+            }
             this.applyToTargetHint = applyToTargetHint;
         }
 
@@ -143,7 +152,7 @@ public class CommonEditor {
         protected void addLists(FieldUpdateListener listener, boolean writable) {
             super.addLists(listener, writable);
 
-            String titleTarget = "Actor Conditions applied to the target: ";
+            String titleTarget = "Actor Conditions applied to the target%s: ".formatted(applyToTargetHint);
             CommonEditor.TimedConditionsCellRenderer cellRendererTarget = new CommonEditor.TimedConditionsCellRenderer();
             BasicLambdaWithArg<ELEMENT> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
             BasicLambdaWithReturn<ELEMENT> selectedGetTarget = () -> selectedHitEffectTargetCondition;
