@@ -81,6 +81,28 @@ public class CommonEditor {
         }
     }
 
+    public static class HitRecievedEffectPane extends HitEffectPane {
+        /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
+        Common.HitReceivedEffect effect;
+        private JSpinner hitReceivedEffectHPMinTarget;
+        private JSpinner hitReceivedEffectHPMaxTarget;
+        private JSpinner hitReceivedEffectAPMinTarget;
+        private JSpinner hitReceivedEffectAPMaxTarget;
+        public HitRecievedEffectPane(String title, Supplier<?> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
+            super(title, sourceNewSupplier, editor, applyToHint,applyToTargetHint);
+        }
+
+        void createHitReceivedEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.HitReceivedEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {
+            effect = e;
+            createHitEffectPaneContent(listener, writable, e, sourceConditionsModelInput);
+
+            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "Attacker HP bonus min%s: ".formatted(applyToTargetHint), effect.target.hp_boost_min, true, writable, listener);
+            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "Attacker HP bonus max%s: ".formatted(applyToTargetHint), effect.target.hp_boost_max, true, writable, listener);
+            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "Attacker AP bonus min%s: ".formatted(applyToTargetHint), effect.target.ap_boost_min, true, writable, listener);
+            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "Attacker AP bonus max%s: ".formatted(applyToTargetHint), effect.target.ap_boost_max, true, writable, listener);
+        }
+    }
+
     public static class HitEffectPane extends DeathEffectPane {
         /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
         Common.HitEffect effect;
