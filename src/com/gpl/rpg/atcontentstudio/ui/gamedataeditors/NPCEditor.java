@@ -206,9 +206,15 @@ public class NPCEditor extends JSONElementEditor {
         blockChance = addIntegerField(combatTraitPane, "Block chance: ", npc.block_chance, false, npc.writable, listener);
         dmgRes = addIntegerField(combatTraitPane, "Damage resistance: ", npc.damage_resistance, false, npc.writable, listener);
 
-        hitEffectPane = new CommonEditor.HitEffectPane(this.hitEffectPane.selectedHitEffectSourceCondition, this.hitEffectPane.selectedHitEffectTargetCondition);
-        hitEffectPane.createHitEffectPaneContent(npc, listener, this, null);
-        combatTraitPane.add(hitEffectPane.hitEffectPane, JideBoxLayout.FIX);
+        Common.HitEffect hitEffect;
+        if (npc.hit_effect == null) {
+            hitEffect = new Common.HitEffect();
+        } else {
+            hitEffect = npc.hit_effect;
+        }
+        hitEffectPane = new CommonEditor.HitEffectPane(this.hitEffectPane.selectedEffectSourceCondition, this.hitEffectPane.selectedHitEffectTargetCondition);
+        hitEffectPane.createHitEffectPaneContent(npc, listener, this, null, npc.writable, hitEffect, new SourceTimedConditionsListModel(hitEffect));
+        combatTraitPane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
         hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
         hitReceivedEffectPane.setLayout(new JideBoxLayout(hitReceivedEffectPane, JideBoxLayout.PAGE_AXIS));
@@ -322,82 +328,9 @@ public class NPCEditor extends JSONElementEditor {
         pane.add(combatTraitPane, JideBoxLayout.FIX);
     }
 
-    
-
-    public void updateHitSourceTimedConditionEditorPane(JPanel pane, Common.TimedActorConditionEffect condition, final FieldUpdateListener listener) {
-        pane.removeAll();
-        if (hitEffectPane.hitSourceConditionBox != null) {
-            removeElementListener(hitEffectPane.hitSourceConditionBox);
-        }
-
-        boolean writable = ((NPC) target).writable;
-        Project proj = ((NPC) target).getProject();
-
-        hitEffectPane.hitSourceConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
-        hitEffectPane.hitSourceConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
-
-        hitEffectPane.hitSourceConditionClear = new JRadioButton("Clear active condition");
-        pane.add(hitEffectPane.hitSourceConditionClear, JideBoxLayout.FIX);
-        hitEffectPane.hitSourceConditionApply = new JRadioButton("Apply condition with magnitude");
-        pane.add(hitEffectPane.hitSourceConditionApply, JideBoxLayout.FIX);
-        hitEffectPane.hitSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
-        hitEffectPane.hitSourceConditionImmunity = new JRadioButton("Give immunity to condition");
-        pane.add(hitEffectPane.hitSourceConditionImmunity, JideBoxLayout.FIX);
-
-        ButtonGroup radioEffectGroup = new ButtonGroup();
-        radioEffectGroup.add(hitEffectPane.hitSourceConditionApply);
-        radioEffectGroup.add(hitEffectPane.hitSourceConditionClear);
-        radioEffectGroup.add(hitEffectPane.hitSourceConditionImmunity);
-
-        hitEffectPane.hitSourceConditionTimed = new JRadioButton("For a number of rounds");
-        pane.add(hitEffectPane.hitSourceConditionTimed, JideBoxLayout.FIX);
-        hitEffectPane.hitSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
-        hitEffectPane.hitSourceConditionForever = new JRadioButton("Forever");
-        pane.add(hitEffectPane.hitSourceConditionForever, JideBoxLayout.FIX);
-
-        ButtonGroup radioDurationGroup = new ButtonGroup();
-        radioDurationGroup.add(hitEffectPane.hitSourceConditionTimed);
-        radioDurationGroup.add(hitEffectPane.hitSourceConditionForever);
-
-        updateHitSourceTimedConditionWidgets(condition);
-
-        hitEffectPane.hitSourceConditionClear.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitEffectPane.hitSourceConditionClear, new Boolean(hitEffectPane.hitSourceConditionClear.isSelected()));
-            }
-        });
-        hitEffectPane.hitSourceConditionApply.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitEffectPane.hitSourceConditionApply, new Boolean(hitEffectPane.hitSourceConditionApply.isSelected()));
-            }
-        });
-        hitEffectPane.hitSourceConditionImmunity.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitEffectPane.hitSourceConditionImmunity, new Boolean(hitEffectPane.hitSourceConditionImmunity.isSelected()));
-            }
-        });
-
-        hitEffectPane.hitSourceConditionTimed.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitEffectPane.hitSourceConditionTimed, new Boolean(hitEffectPane.hitSourceConditionTimed.isSelected()));
-            }
-        });
-        hitEffectPane.hitSourceConditionForever.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(hitEffectPane.hitSourceConditionForever, new Boolean(hitEffectPane.hitSourceConditionForever.isSelected()));
-            }
-        });
-        pane.revalidate();
-        pane.repaint();
-    }
 
     public void updateHitSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-        hitEffectPane.updateDeathEffectSourceTimedConditionWidgets(condition);
+        hitEffectPane.updateEffectSourceTimedConditionWidgets(condition);
     }
 
 
@@ -832,80 +765,80 @@ public class NPCEditor extends JSONElementEditor {
                 npc.block_chance = (Integer) value;
             } else if (source == dmgRes) {
                 npc.damage_resistance = (Integer) value;
-            } else if (source == hitEffectPane.hitEffectHPMin) {
-                hitEffectPane.hitEffect.hp_boost_min = (Integer) value;
+            } else if (source == hitEffectPane.effectHPMin) {
+                hitEffectPane.effect.hp_boost_min = (Integer) value;
                 updateHit = true;
-            } else if (source == hitEffectPane.hitEffectHPMax) {
-                hitEffectPane.hitEffect.hp_boost_max = (Integer) value;
+            } else if (source == hitEffectPane.effectHPMax) {
+                hitEffectPane.effect.hp_boost_max = (Integer) value;
                 updateHit = true;
-            } else if (source == hitEffectPane.hitEffectAPMin) {
-                hitEffectPane.hitEffect.ap_boost_min = (Integer) value;
+            } else if (source == hitEffectPane.effectAPMin) {
+                hitEffectPane.effect.ap_boost_min = (Integer) value;
                 updateHit = true;
-            } else if (source == hitEffectPane.hitEffectAPMax) {
-                hitEffectPane.hitEffect.ap_boost_max = (Integer) value;
+            } else if (source == hitEffectPane.effectAPMax) {
+                hitEffectPane.effect.ap_boost_max = (Integer) value;
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionsList) {
+            } else if (source == hitEffectPane.sourceConditionsList) {
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionBox) {
-                if (hitEffectPane.selectedHitEffectSourceCondition.condition != null) {
-                    hitEffectPane.selectedHitEffectSourceCondition.condition.removeBacklink(npc);
+            } else if (source == hitEffectPane.sourceConditionBox) {
+                if (hitEffectPane.selectedEffectSourceCondition.condition != null) {
+                    hitEffectPane.selectedEffectSourceCondition.condition.removeBacklink(npc);
                 }
-                hitEffectPane.selectedHitEffectSourceCondition.condition = (ActorCondition) value;
-                if (hitEffectPane.selectedHitEffectSourceCondition.condition != null) {
-                    hitEffectPane.selectedHitEffectSourceCondition.condition.addBacklink(npc);
-                    hitEffectPane.selectedHitEffectSourceCondition.condition_id = hitEffectPane.selectedHitEffectSourceCondition.condition.id;
+                hitEffectPane.selectedEffectSourceCondition.condition = (ActorCondition) value;
+                if (hitEffectPane.selectedEffectSourceCondition.condition != null) {
+                    hitEffectPane.selectedEffectSourceCondition.condition.addBacklink(npc);
+                    hitEffectPane.selectedEffectSourceCondition.condition_id = hitEffectPane.selectedEffectSourceCondition.condition.id;
                 } else {
-                    hitEffectPane.selectedHitEffectSourceCondition.condition_id = null;
+                    hitEffectPane.selectedEffectSourceCondition.condition_id = null;
                 }
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
-            } else if (source == hitEffectPane.hitSourceConditionClear && (Boolean) value) {
-                hitEffectPane.selectedHitEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
-                hitEffectPane.selectedHitEffectSourceCondition.duration = null;
-                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedHitEffectSourceCondition);
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
+            } else if (source == hitEffectPane.sourceConditionClear && (Boolean) value) {
+                hitEffectPane.selectedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                hitEffectPane.selectedEffectSourceCondition.duration = null;
+                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedEffectSourceCondition);
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionApply && (Boolean) value) {
-                hitEffectPane.selectedHitEffectSourceCondition.magnitude = (Integer) hitEffectPane.hitSourceConditionMagnitude.getValue();
-                hitEffectPane.selectedHitEffectSourceCondition.duration = hitEffectPane.hitSourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) hitEffectPane.hitSourceConditionDuration.getValue();
-                if (hitEffectPane.selectedHitEffectSourceCondition.duration == null || hitEffectPane.selectedHitEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
-                    hitEffectPane.selectedHitEffectSourceCondition.duration = 1;
+            } else if (source == hitEffectPane.sourceConditionApply && (Boolean) value) {
+                hitEffectPane.selectedEffectSourceCondition.magnitude = (Integer) hitEffectPane.sourceConditionMagnitude.getValue();
+                hitEffectPane.selectedEffectSourceCondition.duration = hitEffectPane.sourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) hitEffectPane.sourceConditionDuration.getValue();
+                if (hitEffectPane.selectedEffectSourceCondition.duration == null || hitEffectPane.selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    hitEffectPane.selectedEffectSourceCondition.duration = 1;
                 }
-                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedHitEffectSourceCondition);
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedEffectSourceCondition);
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionImmunity && (Boolean) value) {
-                hitEffectPane.selectedHitEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
-                hitEffectPane.selectedHitEffectSourceCondition.duration = hitEffectPane.hitSourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) hitEffectPane.hitSourceConditionDuration.getValue();
-                if (hitEffectPane.selectedHitEffectSourceCondition.duration == null || hitEffectPane.selectedHitEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
-                    hitEffectPane.selectedHitEffectSourceCondition.duration = 1;
+            } else if (source == hitEffectPane.sourceConditionImmunity && (Boolean) value) {
+                hitEffectPane.selectedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                hitEffectPane.selectedEffectSourceCondition.duration = hitEffectPane.sourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) hitEffectPane.sourceConditionDuration.getValue();
+                if (hitEffectPane.selectedEffectSourceCondition.duration == null || hitEffectPane.selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    hitEffectPane.selectedEffectSourceCondition.duration = 1;
                 }
-                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedHitEffectSourceCondition);
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedEffectSourceCondition);
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionMagnitude) {
-                hitEffectPane.selectedHitEffectSourceCondition.magnitude = (Integer) value;
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+            } else if (source == hitEffectPane.sourceConditionMagnitude) {
+                hitEffectPane.selectedEffectSourceCondition.magnitude = (Integer) value;
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionTimed && (Boolean) value) {
-                hitEffectPane.selectedHitEffectSourceCondition.duration = (Integer) hitEffectPane.hitSourceConditionDuration.getValue();
-                if (hitEffectPane.selectedHitEffectSourceCondition.duration == null || hitEffectPane.selectedHitEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
-                    hitEffectPane.selectedHitEffectSourceCondition.duration = 1;
+            } else if (source == hitEffectPane.sourceConditionTimed && (Boolean) value) {
+                hitEffectPane.selectedEffectSourceCondition.duration = (Integer) hitEffectPane.sourceConditionDuration.getValue();
+                if (hitEffectPane.selectedEffectSourceCondition.duration == null || hitEffectPane.selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    hitEffectPane.selectedEffectSourceCondition.duration = 1;
                 }
-                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedHitEffectSourceCondition);
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedEffectSourceCondition);
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionForever && (Boolean) value) {
-                hitEffectPane.selectedHitEffectSourceCondition.duration = ActorCondition.DURATION_FOREVER;
-                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedHitEffectSourceCondition);
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+            } else if (source == hitEffectPane.sourceConditionForever && (Boolean) value) {
+                hitEffectPane.selectedEffectSourceCondition.duration = ActorCondition.DURATION_FOREVER;
+                updateHitSourceTimedConditionWidgets(hitEffectPane.selectedEffectSourceCondition);
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionDuration) {
-                hitEffectPane.selectedHitEffectSourceCondition.duration = (Integer) value;
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+            } else if (source == hitEffectPane.sourceConditionDuration) {
+                hitEffectPane.selectedEffectSourceCondition.duration = (Integer) value;
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
                 updateHit = true;
-            } else if (source == hitEffectPane.hitSourceConditionChance) {
-                hitEffectPane.selectedHitEffectSourceCondition.chance = (Double) value;
-                hitEffectPane.hitSourceConditionsModel.itemChanged(hitEffectPane.selectedHitEffectSourceCondition);
+            } else if (source == hitEffectPane.sourceConditionChance) {
+                hitEffectPane.selectedEffectSourceCondition.chance = (Double) value;
+                hitEffectPane.sourceConditionsModel.itemChanged(hitEffectPane.selectedEffectSourceCondition);
             } else if (source == hitEffectPane.hitTargetConditionsList) {
                 updateHit = true;
             } else if (source == hitEffectPane.hitTargetConditionBox) {
@@ -1173,10 +1106,10 @@ public class NPCEditor extends JSONElementEditor {
             }
 
             if (updateHit) {
-                if (isNull(hitEffectPane.hitEffect)) {
+                if (isNull(hitEffectPane.effect)) {
                     npc.hit_effect = null;
                 } else {
-                    npc.hit_effect = hitEffectPane.hitEffect;
+                    npc.hit_effect = hitEffectPane.effect;
                 }
             }
             if (updateHitReceived) {

@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.function.Supplier;
 
 import static com.gpl.rpg.atcontentstudio.ui.Editor.addIntegerField;
 
@@ -81,14 +82,9 @@ public class CommonEditor {
     }
 
     public static class HitEffectPane extends DeathEffectPane {
-        Common.HitEffect hitEffect;
-        CollapsiblePanel hitEffectPane;
-        JSpinner hitEffectHPMin;
-        JSpinner hitEffectHPMax;
-        JSpinner hitEffectAPMin;
-        JSpinner hitEffectAPMax;
+        /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
+        Common.HitEffect effect;
         NPCEditor.TargetTimedConditionsListModel hitTargetConditionsListModel;
-        JList hitSourceConditionsList;
         JList hitTargetConditionsList;
         Common.TimedActorConditionEffect selectedHitEffectTargetCondition;
 
@@ -110,11 +106,12 @@ public class CommonEditor {
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
         }
 
-        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint) {
-            createDeathEffectPaneContent(npc, listener, editor, applyToHint);
+        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint, boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModel1) {
+            effect = e;
+            createDeathEffectPaneContent(npc, listener, editor, applyToHint, writable, e, sourceConditionsModel1, Common.TimedActorConditionEffect::new);
 
             String titleTarget = "Actor Conditions applied to the target: ";
-            hitTargetConditionsListModel = new NPCEditor.TargetTimedConditionsListModel(hitEffect);
+            hitTargetConditionsListModel = new NPCEditor.TargetTimedConditionsListModel(effect);
             CommonEditor.TimedConditionsCellRenderer cellRendererTarget = new CommonEditor.TimedConditionsCellRenderer();
             BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
             BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = () -> selectedHitEffectTargetCondition;
@@ -129,7 +126,7 @@ public class CommonEditor {
                     (x) -> {
                     },
                     updatePaneTarget,
-                    npc.writable,
+                    writable,
                     Common.TimedActorConditionEffect::new,
                     cellRendererTarget,
                     titleTarget,
@@ -139,7 +136,7 @@ public class CommonEditor {
             if (npc.hit_effect == null || npc.hit_effect.conditions_target == null || npc.hit_effect.conditions_target.isEmpty()) {
                 hitTargetConditionsPane.collapse();
             }
-            hitEffectPane.add(hitTargetConditionsPane, JideBoxLayout.FIX);
+            effectPane.add(hitTargetConditionsPane, JideBoxLayout.FIX);
         }
 
         public void updateHitTargetTimedConditionEditorPane(JPanel pane, Common.TimedActorConditionEffect condition, final FieldUpdateListener listener, Editor e) {
@@ -231,147 +228,144 @@ public class CommonEditor {
         }
     }
 
-    public static class DeathEffectPane {
-        Common.DeathEffect hitEffect;
-        CollapsiblePanel hitEffectPane;
-        JSpinner hitEffectHPMin;
-        JSpinner hitEffectHPMax;
-        JSpinner hitEffectAPMin;
-        JSpinner hitEffectAPMax;
-        NPCEditor.SourceTimedConditionsListModel hitSourceConditionsModel;
-        JList hitSourceConditionsList;
-        Common.TimedActorConditionEffect selectedHitEffectSourceCondition;
+    public static class DeathEffectPane<S, E extends Common.TimedActorConditionEffect, M extends OrderedListenerListModel<S, E>> {
+        Common.DeathEffect effect;
+        CollapsiblePanel effectPane;
+        JSpinner effectHPMin;
+        JSpinner effectHPMax;
+        JSpinner effectAPMin;
+        JSpinner effectAPMax;
+        M sourceConditionsModel;
+        JList<E> sourceConditionsList;
+        E selectedEffectSourceCondition;
 
-        Editor.MyComboBox hitSourceConditionBox;
-        JSpinner hitSourceConditionChance;
-        JRadioButton hitSourceConditionClear;
-        JRadioButton hitSourceConditionApply;
-        JRadioButton hitSourceConditionImmunity;
-        JSpinner hitSourceConditionMagnitude;
-        JRadioButton hitSourceConditionTimed;
-        JRadioButton hitSourceConditionForever;
-        JSpinner hitSourceConditionDuration;
+        Editor.MyComboBox sourceConditionBox;
+        JSpinner sourceConditionChance;
+        JRadioButton sourceConditionClear;
+        JRadioButton sourceConditionApply;
+        JRadioButton sourceConditionImmunity;
+        JSpinner sourceConditionMagnitude;
+        JRadioButton sourceConditionTimed;
+        JRadioButton sourceConditionForever;
+        JSpinner sourceConditionDuration;
 
         /*
          * create a new DeatchEffectPane with the selections (probably passed in from last time)
          */
-        public DeathEffectPane(Common.TimedActorConditionEffect selectedHitEffectSourceCondition) {
-            this.selectedHitEffectSourceCondition = selectedHitEffectSourceCondition;
+        public DeathEffectPane(E selectedEffectSourceCondition) {
+            this.selectedEffectSourceCondition = selectedEffectSourceCondition;
         }
 
-        void createDeathEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint) {
+        void createDeathEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint, boolean writable, Common.DeathEffect e, M sourceConditionsModel, Supplier<E> sourceNewSupplier) {
             if (applyToHint == null || applyToHint == "") {
                 applyToHint = "";
             } else {
                 applyToHint = " (%s)".formatted(applyToHint);
             }
-            hitEffectPane = new CollapsiblePanel("Effect on every hit: ");
-            hitEffectPane.setLayout(new JideBoxLayout(hitEffectPane, JideBoxLayout.PAGE_AXIS));
-            if (npc.hit_effect == null) {
-                hitEffect = new Common.HitEffect();
-            } else {
-                hitEffect = npc.hit_effect;
-            }
-            hitEffectHPMin = addIntegerField(hitEffectPane, "HP bonus min%s: ".formatted(applyToHint), hitEffect.hp_boost_min, true, npc.writable, listener);
-            hitEffectHPMax = addIntegerField(hitEffectPane, "HP bonus max%s: ".formatted(applyToHint), hitEffect.hp_boost_max, true, npc.writable, listener);
-            hitEffectAPMin = addIntegerField(hitEffectPane, "AP bonus min%s: ".formatted(applyToHint), hitEffect.ap_boost_min, true, npc.writable, listener);
-            hitEffectAPMax = addIntegerField(hitEffectPane, "AP bonus max%s: ".formatted(applyToHint), hitEffect.ap_boost_max, true, npc.writable, listener);
+            effectPane = new CollapsiblePanel("Effect on every hit: ");
+            effectPane.setLayout(new JideBoxLayout(effectPane, JideBoxLayout.PAGE_AXIS));
+
+            effect = e;
+            effectHPMin = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToHint), effect.hp_boost_min, true, writable, listener);
+            effectHPMax = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToHint), effect.hp_boost_max, true, writable, listener);
+            effectAPMin = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToHint), effect.ap_boost_min, true, writable, listener);
+            effectAPMax = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToHint), effect.ap_boost_max, true, writable, listener);
 
             String titleSource = "Actor Conditions applied to the source: ";
-            hitSourceConditionsModel = new NPCEditor.SourceTimedConditionsListModel(hitEffect);
+            this.sourceConditionsModel = sourceConditionsModel;
             CommonEditor.TimedConditionsCellRenderer cellRendererSource = new CommonEditor.TimedConditionsCellRenderer();
-            BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetSource = (value) -> selectedHitEffectSourceCondition = value;
-            BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetSource = () -> selectedHitEffectSourceCondition;
-            BasicLambda selectedResetSource = () -> selectedHitEffectSourceCondition = null;
-            BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> updateDeathEffectSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener, editor);
+            BasicLambdaWithArg<E> selectedSetSource = (value) -> selectedEffectSourceCondition = value;
+            BasicLambdaWithReturn<E> selectedGetSource = () -> selectedEffectSourceCondition;
+            BasicLambda selectedResetSource = () -> selectedEffectSourceCondition = null;
+            BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> updateEffectSourceTimedConditionEditorPane(editorPane, selectedEffectSourceCondition, listener, editor);
 
             var resultSource = UiUtils.getCollapsibleItemList(listener,
-                    hitSourceConditionsModel,
+                    this.sourceConditionsModel,
                     selectedResetSource,
                     selectedSetSource,
                     selectedGetSource,
                     (x) -> {
                     },
                     updatePaneSource,
-                    npc.writable,
-                    Common.TimedActorConditionEffect::new,
+                    writable,
+                    sourceNewSupplier,
                     cellRendererSource,
                     titleSource,
                     (x) -> null);
-            hitSourceConditionsList = resultSource.list;
-            CollapsiblePanel hitSourceConditionsPane = resultSource.collapsiblePanel;
-            if (npc.hit_effect == null || npc.hit_effect.conditions_source == null || npc.hit_effect.conditions_source.isEmpty()) {
-                hitSourceConditionsPane.collapse();
+            sourceConditionsList = resultSource.list;
+            CollapsiblePanel sourceConditionsPane = resultSource.collapsiblePanel;
+            if (effect == null || effect.conditions_source == null || effect.conditions_source.isEmpty()) {
+                sourceConditionsPane.collapse();
             }
-            hitEffectPane.add(hitSourceConditionsPane, JideBoxLayout.FIX);
+            effectPane.add(sourceConditionsPane, JideBoxLayout.FIX);
         }
 
-        public void updateDeathEffectSourceTimedConditionEditorPane(JPanel pane, Common.TimedActorConditionEffect condition, final FieldUpdateListener listener, Editor e) {
+        public void updateEffectSourceTimedConditionEditorPane(JPanel pane, E condition, final FieldUpdateListener listener, Editor e) {
             pane.removeAll();
-            if (hitSourceConditionBox != null) {
-                e.removeElementListener(hitSourceConditionBox);
+            if (sourceConditionBox != null) {
+                e.removeElementListener(sourceConditionBox);
             }
 
             boolean writable = e.target.writable;
             Project proj = e.target.getProject();
 
-            hitSourceConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
-            hitSourceConditionChance = e.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
+            sourceConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
+            sourceConditionChance = e.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
 
-            hitSourceConditionClear = new JRadioButton("Clear active condition");
-            pane.add(hitSourceConditionClear, JideBoxLayout.FIX);
-            hitSourceConditionApply = new JRadioButton("Apply condition with magnitude");
-            pane.add(hitSourceConditionApply, JideBoxLayout.FIX);
-            hitSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
-            hitSourceConditionImmunity = new JRadioButton("Give immunity to condition");
-            pane.add(hitSourceConditionImmunity, JideBoxLayout.FIX);
+            sourceConditionClear = new JRadioButton("Clear active condition");
+            pane.add(sourceConditionClear, JideBoxLayout.FIX);
+            sourceConditionApply = new JRadioButton("Apply condition with magnitude");
+            pane.add(sourceConditionApply, JideBoxLayout.FIX);
+            sourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
+            sourceConditionImmunity = new JRadioButton("Give immunity to condition");
+            pane.add(sourceConditionImmunity, JideBoxLayout.FIX);
 
             ButtonGroup radioEffectGroup = new ButtonGroup();
-            radioEffectGroup.add(hitSourceConditionApply);
-            radioEffectGroup.add(hitSourceConditionClear);
-            radioEffectGroup.add(hitSourceConditionImmunity);
+            radioEffectGroup.add(sourceConditionApply);
+            radioEffectGroup.add(sourceConditionClear);
+            radioEffectGroup.add(sourceConditionImmunity);
 
-            hitSourceConditionTimed = new JRadioButton("For a number of rounds");
-            pane.add(hitSourceConditionTimed, JideBoxLayout.FIX);
-            hitSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
-            hitSourceConditionForever = new JRadioButton("Forever");
-            pane.add(hitSourceConditionForever, JideBoxLayout.FIX);
+            sourceConditionTimed = new JRadioButton("For a number of rounds");
+            pane.add(sourceConditionTimed, JideBoxLayout.FIX);
+            sourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
+            sourceConditionForever = new JRadioButton("Forever");
+            pane.add(sourceConditionForever, JideBoxLayout.FIX);
 
             ButtonGroup radioDurationGroup = new ButtonGroup();
-            radioDurationGroup.add(hitSourceConditionTimed);
-            radioDurationGroup.add(hitSourceConditionForever);
+            radioDurationGroup.add(sourceConditionTimed);
+            radioDurationGroup.add(sourceConditionForever);
 
-            updateDeathEffectSourceTimedConditionWidgets(condition);
+            updateEffectSourceTimedConditionWidgets(condition);
 
-            hitSourceConditionClear.addActionListener(new ActionListener() {
+            sourceConditionClear.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitSourceConditionClear, new Boolean(hitSourceConditionClear.isSelected()));
+                    listener.valueChanged(sourceConditionClear, new Boolean(sourceConditionClear.isSelected()));
                 }
             });
-            hitSourceConditionApply.addActionListener(new ActionListener() {
+            sourceConditionApply.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitSourceConditionApply, new Boolean(hitSourceConditionApply.isSelected()));
+                    listener.valueChanged(sourceConditionApply, new Boolean(sourceConditionApply.isSelected()));
                 }
             });
-            hitSourceConditionImmunity.addActionListener(new ActionListener() {
+            sourceConditionImmunity.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitSourceConditionImmunity, new Boolean(hitSourceConditionImmunity.isSelected()));
+                    listener.valueChanged(sourceConditionImmunity, new Boolean(sourceConditionImmunity.isSelected()));
                 }
             });
 
-            hitSourceConditionTimed.addActionListener(new ActionListener() {
+            sourceConditionTimed.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitSourceConditionTimed, new Boolean(hitSourceConditionTimed.isSelected()));
+                    listener.valueChanged(sourceConditionTimed, new Boolean(sourceConditionTimed.isSelected()));
                 }
             });
-            hitSourceConditionForever.addActionListener(new ActionListener() {
+            sourceConditionForever.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitSourceConditionForever, new Boolean(hitSourceConditionForever.isSelected()));
+                    listener.valueChanged(sourceConditionForever, new Boolean(sourceConditionForever.isSelected()));
                 }
             });
             pane.revalidate();
@@ -379,21 +373,21 @@ public class CommonEditor {
         }
 
 
-        public void updateDeathEffectSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
+        public void updateEffectSourceTimedConditionWidgets(E condition) {
             boolean immunity = condition.isImmunity();
             boolean clear = condition.isClear();
             boolean forever = condition.isInfinite();
 
-            hitSourceConditionClear.setSelected(clear);
-            hitSourceConditionApply.setSelected(!clear && !immunity);
-            hitSourceConditionMagnitude.setEnabled(!clear && !immunity);
-            hitSourceConditionImmunity.setSelected(immunity);
+            sourceConditionClear.setSelected(clear);
+            sourceConditionApply.setSelected(!clear && !immunity);
+            sourceConditionMagnitude.setEnabled(!clear && !immunity);
+            sourceConditionImmunity.setSelected(immunity);
 
-            hitSourceConditionTimed.setSelected(!forever);
-            hitSourceConditionTimed.setEnabled(!clear);
-            hitSourceConditionDuration.setEnabled(!clear && !forever);
-            hitSourceConditionForever.setSelected(forever);
-            hitSourceConditionForever.setEnabled(!clear);
+            sourceConditionTimed.setSelected(!forever);
+            sourceConditionTimed.setEnabled(!clear);
+            sourceConditionDuration.setEnabled(!clear && !forever);
+            sourceConditionForever.setSelected(forever);
+            sourceConditionForever.setEnabled(!clear);
         }
     }
 }
