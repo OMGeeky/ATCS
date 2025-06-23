@@ -30,7 +30,12 @@ public final class Common {
             linkConditions(effect.conditions_source, proj, backlink);
         }
     }
-
+    public static void linkIcon(Project proj, String iconId, GameDataElement backlink) {
+        if (iconId != null) {
+            String spritesheetId = iconId.split(":")[0];
+            proj.getSpritesheet(spritesheetId).addBacklink(backlink);
+        }
+    }
     public static class TimedActorConditionEffect extends ActorConditionEffect {
         //Available from parsed state
         public Integer duration = null;

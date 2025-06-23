@@ -219,11 +219,7 @@ public class NPC extends JSONElement {
             Notification.addError("Error linking item " + id + ". No parent project found.");
             return;
         }
-        if (this.icon_id != null) {
-            String spritesheetId = this.icon_id.split(":")[0];
-            proj.getSpritesheet(spritesheetId).addBacklink(this);
-        }
-
+        linkIcon(proj, this.icon_id, this);
         if (this.dialogue_id != null) this.dialogue = proj.getDialogue(this.dialogue_id);
         if (this.dialogue != null) this.dialogue.addBacklink(this);
 

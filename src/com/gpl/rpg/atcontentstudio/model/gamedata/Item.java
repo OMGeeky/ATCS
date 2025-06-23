@@ -216,10 +216,7 @@ public class Item extends JSONElement {
             return;
         }
 
-        if (this.icon_id != null) {
-            String spritesheetId = this.icon_id.split(":")[0];
-            proj.getSpritesheet(spritesheetId).addBacklink(this);
-        }
+        linkIcon(proj, this.icon_id, this);
         if (this.category_id != null) this.category = proj.getItemCategory(this.category_id);
         if (this.category != null) this.category.addBacklink(this);
         if (this.equip_effect != null && this.equip_effect.conditions != null) {
@@ -231,6 +228,7 @@ public class Item extends JSONElement {
         linkEffects(this.kill_effect, proj, this);
         this.state = State.linked;
     }
+
 
     @Override
     public Image getIcon() {
