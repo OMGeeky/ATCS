@@ -1,5 +1,6 @@
 package com.gpl.rpg.atcontentstudio.ui.gamedataeditors;
 
+import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
@@ -105,9 +106,9 @@ public class CommonEditor {
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
         }
 
-        void createHitEffectPaneContent(FieldUpdateListener listener,   boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {
+        void createHitEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {
             effect = e;
-            createDeathEffectPaneContent( listener, writable, e, sourceConditionsModelInput);
+            createDeathEffectPaneContent(listener, writable, e, sourceConditionsModelInput);
 
             String titleTarget = "Actor Conditions applied to the target: ";
             hitTargetConditionsListModel = new NPCEditor.TargetTimedConditionsListModel(effect);
@@ -224,6 +225,68 @@ public class CommonEditor {
             hitTargetConditionForever.setSelected(forever);
             hitTargetConditionForever.setEnabled(!clear);
 
+        }
+
+        @Override
+        public boolean valueChanged(JComponent source, Object value, GameDataElement backlink) {
+            boolean updateHit = super.valueChanged(source, value, backlink);
+            if (!updateHit) {
+                if (source == hitTargetConditionsList) {
+                    updateHit = true;
+                } else if (source == hitTargetConditionBox) {
+                    editor.updateConditionEffect((ActorCondition) value, backlink, selectedHitEffectTargetCondition, hitTargetConditionsListModel);
+                } else if (source == hitTargetConditionClear && (Boolean) value) {
+                    selectedHitEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                    selectedHitEffectTargetCondition.duration = null;
+                    updateHitTargetTimedConditionWidgets(selectedHitEffectTargetCondition);
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionApply && (Boolean) value) {
+                    selectedHitEffectTargetCondition.magnitude = (Integer) hitTargetConditionMagnitude.getValue();
+                    selectedHitEffectTargetCondition.duration = hitTargetConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) hitTargetConditionDuration.getValue();
+                    if (selectedHitEffectTargetCondition.duration == null || selectedHitEffectTargetCondition.duration == ActorCondition.DURATION_NONE) {
+                        selectedHitEffectTargetCondition.duration = 1;
+                    }
+                    updateHitTargetTimedConditionWidgets(selectedHitEffectTargetCondition);
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionImmunity && (Boolean) value) {
+                    selectedHitEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                    selectedHitEffectTargetCondition.duration = hitTargetConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) hitTargetConditionDuration.getValue();
+                    if (selectedHitEffectTargetCondition.duration == null || selectedHitEffectTargetCondition.duration == ActorCondition.DURATION_NONE) {
+                        selectedHitEffectTargetCondition.duration = 1;
+                    }
+                    updateHitTargetTimedConditionWidgets(selectedHitEffectTargetCondition);
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionMagnitude) {
+                    selectedHitEffectTargetCondition.magnitude = (Integer) value;
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionTimed && (Boolean) value) {
+                    selectedHitEffectTargetCondition.duration = (Integer) hitTargetConditionDuration.getValue();
+                    if (selectedHitEffectTargetCondition.duration == null || selectedHitEffectTargetCondition.duration == ActorCondition.DURATION_NONE) {
+                        selectedHitEffectTargetCondition.duration = 1;
+                    }
+                    updateHitTargetTimedConditionWidgets(selectedHitEffectTargetCondition);
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionForever && (Boolean) value) {
+                    selectedHitEffectTargetCondition.duration = ActorCondition.DURATION_FOREVER;
+                    updateHitTargetTimedConditionWidgets(selectedHitEffectTargetCondition);
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionDuration) {
+                    selectedHitEffectTargetCondition.duration = (Integer) value;
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                    updateHit = true;
+                } else if (source == hitTargetConditionChance) {
+                    selectedHitEffectTargetCondition.chance = (Double) value;
+                    hitTargetConditionsListModel.itemChanged(selectedHitEffectTargetCondition);
+                }
+            }
+
+            return updateHit;
         }
     }
 
@@ -396,6 +459,86 @@ public class CommonEditor {
             sourceConditionDuration.setEnabled(!clear && !forever);
             sourceConditionForever.setSelected(forever);
             sourceConditionForever.setEnabled(!clear);
+        }
+
+        public boolean valueChanged(JComponent source, Object value, GameDataElement backlink) {
+            boolean updateHit = false;
+            if (source == effectHPMin) {
+                effect.hp_boost_min = (Integer) value;
+                updateHit = true;
+            } else if (source == effectHPMax) {
+                effect.hp_boost_max = (Integer) value;
+                updateHit = true;
+            } else if (source == effectAPMin) {
+                effect.ap_boost_min = (Integer) value;
+                updateHit = true;
+            } else if (source == effectAPMax) {
+                effect.ap_boost_max = (Integer) value;
+                updateHit = true;
+            } else if (source == sourceConditionsList) {
+                updateHit = true;
+            } else if (source == sourceConditionBox) {
+                if (selectedEffectSourceCondition.condition != null) {
+                    selectedEffectSourceCondition.condition.removeBacklink(backlink);
+                }
+                selectedEffectSourceCondition.condition = (ActorCondition) value;
+                if (selectedEffectSourceCondition.condition != null) {
+                    selectedEffectSourceCondition.condition.addBacklink(backlink);
+                    selectedEffectSourceCondition.condition_id = selectedEffectSourceCondition.condition.id;
+                } else {
+                    selectedEffectSourceCondition.condition_id = null;
+                }
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+            } else if (source == sourceConditionClear && (Boolean) value) {
+                selectedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                selectedEffectSourceCondition.duration = null;
+                updateEffectSourceTimedConditionWidgets(selectedEffectSourceCondition);
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionApply && (Boolean) value) {
+                selectedEffectSourceCondition.magnitude = (Integer) sourceConditionMagnitude.getValue();
+                selectedEffectSourceCondition.duration = sourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) sourceConditionDuration.getValue();
+                if (selectedEffectSourceCondition.duration == null || selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    selectedEffectSourceCondition.duration = 1;
+                }
+                updateEffectSourceTimedConditionWidgets(selectedEffectSourceCondition);
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionImmunity && (Boolean) value) {
+                selectedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                selectedEffectSourceCondition.duration = sourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) sourceConditionDuration.getValue();
+                if (selectedEffectSourceCondition.duration == null || selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    selectedEffectSourceCondition.duration = 1;
+                }
+                updateEffectSourceTimedConditionWidgets(selectedEffectSourceCondition);
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionMagnitude) {
+                selectedEffectSourceCondition.magnitude = (Integer) value;
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionTimed && (Boolean) value) {
+                selectedEffectSourceCondition.duration = (Integer) sourceConditionDuration.getValue();
+                if (selectedEffectSourceCondition.duration == null || selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    selectedEffectSourceCondition.duration = 1;
+                }
+                updateEffectSourceTimedConditionWidgets(selectedEffectSourceCondition);
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionForever && (Boolean) value) {
+                selectedEffectSourceCondition.duration = ActorCondition.DURATION_FOREVER;
+                updateEffectSourceTimedConditionWidgets(selectedEffectSourceCondition);
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionDuration) {
+                selectedEffectSourceCondition.duration = (Integer) value;
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+                updateHit = true;
+            } else if (source == sourceConditionChance) {
+                selectedEffectSourceCondition.chance = (Double) value;
+                sourceConditionsModel.itemChanged(selectedEffectSourceCondition);
+            }
+            return updateHit;
         }
     }
 }
