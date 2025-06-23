@@ -180,20 +180,6 @@ public class NPCEditor extends JSONElementEditor {
         pane.add(combatTraitPane, JideBoxLayout.FIX);
     }
 
-
-    public void updateHitSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-        hitEffectPane.updateEffectSourceTimedConditionWidgets(condition);
-    }
-
-
-    public void updateHitTargetTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-        hitEffectPane.updateHitTargetTimedConditionWidgets(condition);
-    }
-
-    public void updateDeathSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-        deathEffectPane.updateEffectSourceTimedConditionWidgets(condition);
-    }
-
     public static class TargetTimedConditionsListModel extends OrderedListenerListModel<Common.HitEffect, Common.TimedActorConditionEffect> {
         public TargetTimedConditionsListModel(Common.HitEffect effect) {
             super(effect);
