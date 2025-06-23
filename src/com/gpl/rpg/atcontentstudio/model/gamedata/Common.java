@@ -4,11 +4,13 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class Common {
 
+    //region link common stuff
     public static void linkConditions(List<? extends ActorConditionEffect> conditions, Project proj, GameDataElement backlink) {
         if (conditions != null) {
             for (ActorConditionEffect ce : conditions) {
@@ -36,6 +38,106 @@ public final class Common {
             proj.getSpritesheet(spritesheetId).addBacklink(backlink);
         }
     }
+    //endregion
+
+    //region write common stuff
+
+    public static void writeHitReceivedEffectToMap(Map parent, HitReceivedEffect effect) {
+        if(effect != null){
+            writeHitEffectToMap(parent, effect);
+            writeBasicEffectObjectToMap(effect.target, parent, "increaseAttackerCurrentHP", "increaseAttackerCurrentAP");
+        }
+    }
+    public static void writeHitReceivedEffectToMap(Map parent, HitReceivedEffect effect, String key) {
+        if (effect != null) {
+            Map effectJson = new LinkedHashMap();
+            parent.put(key, effectJson);
+            writeHitReceivedEffectToMap(effectJson, effect);
+        }
+    }
+    public static void writeHitEffectToMap(Map parent, HitEffect effect) {
+        if(effect != null){
+            writeDeathEffectToMap(parent, effect);
+            writeTimedActorConditionEffectObjectToMap(effect.conditions_target, parent, "conditionsTarget");
+        }
+    }
+    public static void writeHitEffectToMap(Map parent, HitEffect effect, String key) {
+        if (effect != null) {
+            Map effectJson = new LinkedHashMap();
+            parent.put(key, effectJson);
+            writeHitEffectToMap(effectJson, effect);
+        }
+    }
+    public static void writeDeathEffectToMap(Map parent, DeathEffect effect) {
+        writeBasicEffectObjectToMap(effect, parent, "increaseCurrentHP", "increaseCurrentAP");
+        writeTimedActorConditionEffectObjectToMap(effect.conditions_source, parent, "conditionsSource");
+    }
+    public static void writeDeathEffectToMap(Map parent, DeathEffect effect, String key) {
+        if (effect != null) {
+            Map effectJson = new LinkedHashMap();
+            parent.put(key, effectJson);
+            writeDeathEffectToMap(effectJson, effect);
+        }
+    }
+
+    public static void writeBasicEffectObjectToMap(BasicEffect effect, Map parent, String keyHP, String keyAP) {
+        if (effect.hp_boost_min != null || effect.hp_boost_max != null) {
+            Map hpJson = new LinkedHashMap();
+            parent.put(keyHP, hpJson);
+            if (effect.hp_boost_min != null)
+                hpJson.put("min", effect.hp_boost_min);
+            else hpJson.put("min", 0);
+            if (effect.hp_boost_max != null)
+                hpJson.put("max", effect.hp_boost_max);
+            else hpJson.put("max", 0);
+        }
+
+        if (effect.ap_boost_min != null || effect.ap_boost_max != null) {
+            Map apJson = new LinkedHashMap();
+            parent.put(keyAP, apJson);
+            if (effect.ap_boost_min != null)
+                apJson.put("min", effect.ap_boost_min);
+            else apJson.put("min", 0);
+            if (effect.ap_boost_max != null)
+                apJson.put("max", effect.ap_boost_max);
+            else apJson.put("max", 0);
+        }
+    }
+
+    public static void writeTimedActorConditionEffectObjectToMap(List<TimedActorConditionEffect> list, Map parent, String key) {
+        if (list != null) {
+            List conditionsSourceJson = new ArrayList();
+            parent.put(key, conditionsSourceJson);
+            for (TimedActorConditionEffect condition : list) {
+                Map conditionJson = new LinkedHashMap();
+                conditionsSourceJson.add(conditionJson);
+                writeTimedConditionEffectToMap(condition, conditionJson);
+            }
+        }
+
+    }
+
+    public static void writeConditionEffectToMap(ActorConditionEffect condition, Map parent) {
+        if (condition.condition != null) {
+            parent.put("condition", condition.condition.id);
+        } else if (condition.condition_id != null) {
+            parent.put("condition", condition.condition_id);
+        }
+        if (condition.magnitude != null) {
+            parent.put("magnitude", condition.magnitude);
+        }
+    }
+
+    public static void writeTimedConditionEffectToMap(TimedActorConditionEffect condition, Map parent) {
+        writeConditionEffectToMap(condition, parent);
+        if (condition.duration != null) {
+            parent.put("duration", condition.duration);
+        }
+        if (condition.chance != null) {
+            parent.put("chance", JSONElement.printJsonChance(condition.chance));
+        }
+    }
+    //endregion
     public static class TimedActorConditionEffect extends ActorConditionEffect {
         //Available from parsed state
         public Integer duration = null;
