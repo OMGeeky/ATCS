@@ -263,7 +263,7 @@ public class ItemEditor extends JSONElementEditor {
         BasicLambdaWithArg valueChanged = (selectedReply) -> {
         };
         BasicLambdaWithArg<JPanel> updateEditorPane = (editorPane) -> updateHitSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener);
-        TimedConditionsCellRenderer cellRenderer = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRenderer = new CommonEditor.TimedConditionsCellRenderer();
         String title = "Actor Conditions applied to the source: ";
         var collapsibleItemList = UiUtils.getCollapsibleItemList(
                 listener,
@@ -330,7 +330,7 @@ public class ItemEditor extends JSONElementEditor {
 
         String titleKillSourceConditions = "Actor Conditions applied to the source: ";
         killSourceConditionsModel = new SourceTimedConditionsListModel(killEffect);
-        TimedConditionsCellRenderer cellRendererKillSourceConditions = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererKillSourceConditions = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetKillSourceConditions = (value)->selectedKillEffectCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetKillSourceConditions = ()->selectedKillEffectCondition ;
         BasicLambda selectedResetKillSourceConditions = ()->selectedKillEffectCondition = null;
@@ -379,7 +379,7 @@ public class ItemEditor extends JSONElementEditor {
 
         String titleHitReceivedSourceConditions = "Actor Conditions applied to the player: ";
         hitReceivedSourceConditionsModel = new SourceTimedConditionsListModel(killEffect);
-        TimedConditionsCellRenderer cellRendererHitReceivedSourceConditions = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererHitReceivedSourceConditions = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetHitReceivedSourceConditions = (value)->selectedHitReceivedEffectSourceCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetHitReceivedSourceConditions = ()->selectedHitReceivedEffectSourceCondition ;
         BasicLambda selectedResetHitReceivedSourceConditions = ()->selectedHitReceivedEffectSourceCondition = null;
@@ -405,7 +405,7 @@ public class ItemEditor extends JSONElementEditor {
 
         String titleHitReceivedTargetConditions = "Actor Conditions applied to the attacker: ";
         hitReceivedTargetConditionsModel = new TargetTimedConditionsListModel(hitReceivedEffect);
-        TimedConditionsCellRenderer cellRendererHitReceivedTargetConditions = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererHitReceivedTargetConditions = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetHitReceivedTargetConditions = (value)->selectedHitReceivedEffectTargetCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetHitReceivedTargetConditions = ()->selectedHitReceivedEffectTargetCondition ;
         BasicLambda selectedResetHitReceivedTargetConditions = ()->selectedHitReceivedEffectTargetCondition = null;
@@ -1015,40 +1015,6 @@ public class ItemEditor extends JSONElementEditor {
         @Override
         protected void setItems(List<Common.TimedActorConditionEffect> items) {
             source.conditions_target = items;
-        }
-    }
-
-    public static class TimedConditionsCellRenderer extends DefaultListCellRenderer {
-        private static final long serialVersionUID = 7987880146189575234L;
-
-        @Override
-        public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c instanceof JLabel) {
-                JLabel label = ((JLabel) c);
-                Common.TimedActorConditionEffect effect = (Common.TimedActorConditionEffect) value;
-
-                if (effect.condition != null) {
-
-                    boolean immunity = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration != null && effect.duration > ActorCondition.DURATION_NONE);
-                    boolean clear = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration == null || effect.duration == ActorCondition.DURATION_NONE);
-                    boolean forever = effect.duration != null && effect.duration == ActorCondition.DURATION_FOREVER;
-
-                    if (clear) {
-                        label.setIcon(new ImageIcon(effect.condition.getIcon()));
-                        label.setText(effect.chance + "% chances to clear actor condition " + effect.condition.getDesc());
-                    } else if (immunity) {
-                        label.setIcon(new OverlayIcon(effect.condition.getIcon(), DefaultIcons.getImmunityIcon()));
-                        label.setText(effect.chance + "% chances to give immunity to " + effect.condition.getDesc() + (forever ? " forever" : " for " + effect.duration + " rounds"));
-                    } else {
-                        label.setIcon(new ImageIcon(effect.condition.getIcon()));
-                        label.setText(effect.chance + "% chances to give actor condition " + effect.condition.getDesc() + " x" + effect.magnitude + (forever ? " forever" : " for " + effect.duration + " rounds"));
-                    }
-                } else {
-                    label.setText("New, undefined actor condition effect.");
-                }
-            }
-            return c;
         }
     }
 

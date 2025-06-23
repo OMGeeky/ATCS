@@ -251,7 +251,7 @@ public class NPCEditor extends JSONElementEditor {
 
         String titleSource = "Actor Conditions applied to the source: ";
         hitSourceConditionsListModel = new SourceTimedConditionsListModel(hitEffect);
-        TimedConditionsCellRenderer cellRendererSource = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererSource = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetSource = (value)->selectedHitEffectSourceCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetSource = ()->selectedHitEffectSourceCondition ;
         BasicLambda selectedResetSource = ()->selectedHitEffectSourceCondition = null;
@@ -278,7 +278,7 @@ public class NPCEditor extends JSONElementEditor {
 
         String titleTarget = "Actor Conditions applied to the target: ";
         hitTargetConditionsListModel = new TargetTimedConditionsListModel(hitEffect);
-        TimedConditionsCellRenderer cellRendererTarget = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererTarget = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value)->selectedHitEffectTargetCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = ()->selectedHitEffectTargetCondition ;
         BasicLambda selectedResetTarget = ()->selectedHitEffectTargetCondition = null;
@@ -320,7 +320,7 @@ public class NPCEditor extends JSONElementEditor {
 
         String titleReceivedSource = "Actor Conditions applied to this NPC: ";
         hitReceivedSourceConditionsListModel = new SourceTimedConditionsListModel(hitReceivedEffect);
-        TimedConditionsCellRenderer cellRendererReceivedSource = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererReceivedSource = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetReceivedSource = (value)->selectedHitReceivedEffectSourceCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetReceivedSource = ()->selectedHitReceivedEffectSourceCondition ;
         BasicLambda selectedResetReceivedSource = ()->selectedHitReceivedEffectSourceCondition = null;
@@ -346,7 +346,7 @@ public class NPCEditor extends JSONElementEditor {
 
         String titleReceivedTarget = "Actor Conditions applied to the attacker: ";
         hitReceivedTargetConditionsListModel = new TargetTimedConditionsListModel(hitReceivedEffect);
-        TimedConditionsCellRenderer cellRendererReceivedTarget = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererReceivedTarget = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetReceivedTarget = (value)->selectedHitReceivedEffectTargetCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetReceivedTarget = ()->selectedHitReceivedEffectTargetCondition ;
         BasicLambda selectedResetReceivedTarget = ()->selectedHitReceivedEffectTargetCondition = null;
@@ -384,7 +384,7 @@ public class NPCEditor extends JSONElementEditor {
 
         String titleDeathSource = "Actor Conditions applied to the killer: ";
         deathSourceConditionsListModel = new SourceTimedConditionsListModel(deathEffect);
-        TimedConditionsCellRenderer cellRendererDeathSource = new TimedConditionsCellRenderer();
+        CommonEditor.TimedConditionsCellRenderer cellRendererDeathSource = new CommonEditor.TimedConditionsCellRenderer();
         BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetDeathSource = (value)->selectedDeathEffectSourceCondition = value;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetDeathSource = ()->selectedDeathEffectSourceCondition ;
         BasicLambda selectedResetDeathSource = ()->selectedDeathEffectSourceCondition = null;
@@ -893,40 +893,6 @@ public class NPCEditor extends JSONElementEditor {
         @Override
         protected void setItems(List<Common.TimedActorConditionEffect> items) {
             source.conditions_source = items;
-        }
-    }
-
-    public static class TimedConditionsCellRenderer extends DefaultListCellRenderer {
-        private static final long serialVersionUID = 7987880146189575234L;
-
-        @Override
-        public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c instanceof JLabel) {
-                JLabel label = ((JLabel) c);
-                Common.TimedActorConditionEffect effect = (Common.TimedActorConditionEffect) value;
-
-                if (effect.condition != null) {
-
-                    boolean immunity = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration != null && effect.duration > ActorCondition.DURATION_NONE);
-                    boolean clear = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration == null || effect.duration == ActorCondition.DURATION_NONE);
-                    boolean forever = effect.duration != null && effect.duration == ActorCondition.DURATION_FOREVER;
-
-                    if (clear) {
-                        label.setIcon(new ImageIcon(effect.condition.getIcon()));
-                        label.setText(effect.chance + "% chances to clear actor condition " + effect.condition.getDesc());
-                    } else if (immunity) {
-                        label.setIcon(new OverlayIcon(effect.condition.getIcon(), DefaultIcons.getImmunityIcon()));
-                        label.setText(effect.chance + "% chances to give immunity to " + effect.condition.getDesc() + (forever ? " forever" : " for " + effect.duration + " rounds"));
-                    } else {
-                        label.setIcon(new ImageIcon(effect.condition.getIcon()));
-                        label.setText(effect.chance + "% chances to give actor condition " + effect.condition.getDesc() + " x" + effect.magnitude + (forever ? " forever" : " for " + effect.duration + " rounds"));
-                    }
-                } else {
-                    label.setText("New, undefined actor condition effect.");
-                }
-            }
-            return c;
         }
     }
 
