@@ -31,7 +31,6 @@ public class NPCEditor extends JSONElementEditor {
 
     private Common.TimedActorConditionEffect selectedHitReceivedEffectSourceCondition;
     private Common.TimedActorConditionEffect selectedHitReceivedEffectTargetCondition;
-    private Common.TimedActorConditionEffect selectedDeathEffectSourceCondition;
 
     private JButton npcIcon;
     private JTextField idField;
@@ -100,25 +99,7 @@ public class NPCEditor extends JSONElementEditor {
     private JRadioButton hitReceivedTargetConditionForever;
     private JSpinner hitReceivedTargetConditionDuration;
 
-    private Common.DeathEffect deathEffect;
-    private CollapsiblePanel deathEffectPane;
-    private JSpinner deathEffectHPMin;
-    private JSpinner deathEffectHPMax;
-    private JSpinner deathEffectAPMin;
-    private JSpinner deathEffectAPMax;
-
-    private SourceTimedConditionsListModel deathSourceConditionsListModel;
-    @SuppressWarnings("rawtypes")
-    private JList deathSourceConditionsList;
-    private MyComboBox deathSourceConditionBox;
-    private JSpinner deathSourceConditionChance;
-    private JRadioButton deathSourceConditionClear;
-    private JRadioButton deathSourceConditionApply;
-    private JRadioButton deathSourceConditionImmunity;
-    private JSpinner deathSourceConditionMagnitude;
-    private JRadioButton deathSourceConditionTimed;
-    private JRadioButton deathSourceConditionForever;
-    private JSpinner deathSourceConditionDuration;
+    private CommonEditor.DeathEffectPane deathEffectPane;
 
     private JPanel dialogueGraphPane;
     private DialogueGraphView dialogueGraphView;
@@ -212,8 +193,12 @@ public class NPCEditor extends JSONElementEditor {
         } else {
             hitEffect = npc.hit_effect;
         }
-        hitEffectPane = new CommonEditor.HitEffectPane(this.hitEffectPane.selectedEffectSourceCondition, this.hitEffectPane.selectedHitEffectTargetCondition);
-        hitEffectPane.createHitEffectPaneContent(npc, listener, this, null, npc.writable, hitEffect, new SourceTimedConditionsListModel(hitEffect));
+        if (hitEffectPane == null)
+            hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, "test");
+        hitEffectPane.createHitEffectPaneContent(listener,
+                npc.writable,
+                hitEffect,
+                new SourceTimedConditionsListModel(hitEffect));
         combatTraitPane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
         hitReceivedEffectPane = new CollapsiblePanel("Effect on every hit received: ");
@@ -284,46 +269,20 @@ public class NPCEditor extends JSONElementEditor {
         }
         combatTraitPane.add(hitReceivedEffectPane, JideBoxLayout.FIX);
 
-        deathEffectPane = new CollapsiblePanel("Effect when killed: ");
-        deathEffectPane.setLayout(new JideBoxLayout(deathEffectPane, JideBoxLayout.PAGE_AXIS));
+        Common.DeathEffect deathEffect;
         if (npc.death_effect == null) {
             deathEffect = new Common.DeathEffect();
         } else {
             deathEffect = npc.death_effect;
         }
-        deathEffectHPMin = addIntegerField(deathEffectPane, "Killer HP bonus min: ", deathEffect.hp_boost_min, true, npc.writable, listener);
-        deathEffectHPMax = addIntegerField(deathEffectPane, "Killer HP bonus max: ", deathEffect.hp_boost_max, true, npc.writable, listener);
-        deathEffectAPMin = addIntegerField(deathEffectPane, "Killer AP bonus min: ", deathEffect.ap_boost_min, true, npc.writable, listener);
-        deathEffectAPMax = addIntegerField(deathEffectPane, "Killer AP bonus max: ", deathEffect.ap_boost_max, true, npc.writable, listener);
-
-        String titleDeathSource = "Actor Conditions applied to the killer: ";
-        deathSourceConditionsListModel = new SourceTimedConditionsListModel(deathEffect);
-        CommonEditor.TimedConditionsCellRenderer cellRendererDeathSource = new CommonEditor.TimedConditionsCellRenderer();
-        BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetDeathSource = (value)->selectedDeathEffectSourceCondition = value;
-        BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetDeathSource = ()->selectedDeathEffectSourceCondition ;
-        BasicLambda selectedResetDeathSource = ()->selectedDeathEffectSourceCondition = null;
-        BasicLambdaWithArg<JPanel> updatePaneDeathSource = (editorPane) -> updateDeathSourceTimedConditionEditorPane(editorPane, selectedDeathEffectSourceCondition, listener);
-        var resultDeathSource = UiUtils.getCollapsibleItemList(listener,
-                deathSourceConditionsListModel,
-                selectedResetDeathSource,
-                selectedSetDeathSource,
-                selectedGetDeathSource,
-                (x) -> {},
-                updatePaneDeathSource,
+        if (deathEffectPane == null)
+            deathEffectPane = new CommonEditor.DeathEffectPane("Effect when killed: ", Common.TimedActorConditionEffect::new, this, "Killer");
+        deathEffectPane.createDeathEffectPaneContent(listener,
                 npc.writable,
-                Common.TimedActorConditionEffect::new,
-                cellRendererDeathSource,
-                titleDeathSource,
-                (x) -> null);
-        deathSourceConditionsList = resultDeathSource.list;
-        CollapsiblePanel deathSourceConditionsPane = resultDeathSource.collapsiblePanel;
-        if (npc.death_effect == null || npc.death_effect.conditions_source == null || npc.death_effect.conditions_source.isEmpty()) {
-            deathSourceConditionsPane.collapse();
-        }
-        deathEffectPane.add(deathSourceConditionsPane, JideBoxLayout.FIX);
-
-        combatTraitPane.add(deathEffectPane, JideBoxLayout.FIX);
-
+                deathEffect,
+                new SourceTimedConditionsListModel(deathEffect)
+        );
+        combatTraitPane.add(deathEffectPane.effectPane, JideBoxLayout.FIX);
 
         pane.add(combatTraitPane, JideBoxLayout.FIX);
     }
@@ -518,94 +477,8 @@ public class NPCEditor extends JSONElementEditor {
         hitReceivedTargetConditionForever.setEnabled(!clear);
     }
 
-    public void updateDeathSourceTimedConditionEditorPane(JPanel pane, Common.TimedActorConditionEffect condition, final FieldUpdateListener listener) {
-        pane.removeAll();
-        if (deathSourceConditionBox != null) {
-            removeElementListener(deathSourceConditionBox);
-        }
-
-        boolean writable = ((NPC) target).writable;
-        Project proj = ((NPC) target).getProject();
-
-        deathSourceConditionBox = addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
-        deathSourceConditionChance = addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
-
-        deathSourceConditionClear = new JRadioButton("Clear active condition");
-        pane.add(deathSourceConditionClear, JideBoxLayout.FIX);
-        deathSourceConditionApply = new JRadioButton("Apply condition with magnitude");
-        pane.add(deathSourceConditionApply, JideBoxLayout.FIX);
-        deathSourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
-        deathSourceConditionImmunity = new JRadioButton("Give immunity to condition");
-        pane.add(deathSourceConditionImmunity, JideBoxLayout.FIX);
-
-        ButtonGroup radioEffectGroup = new ButtonGroup();
-        radioEffectGroup.add(deathSourceConditionApply);
-        radioEffectGroup.add(deathSourceConditionClear);
-        radioEffectGroup.add(deathSourceConditionImmunity);
-
-        deathSourceConditionTimed = new JRadioButton("For a number of rounds");
-        pane.add(deathSourceConditionTimed, JideBoxLayout.FIX);
-        deathSourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
-        deathSourceConditionForever = new JRadioButton("Forever");
-        pane.add(deathSourceConditionForever, JideBoxLayout.FIX);
-
-        ButtonGroup radioDurationGroup = new ButtonGroup();
-        radioDurationGroup.add(deathSourceConditionTimed);
-        radioDurationGroup.add(deathSourceConditionForever);
-
-        updateDeathSourceTimedConditionWidgets(condition);
-
-        deathSourceConditionClear.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(deathSourceConditionClear, new Boolean(deathSourceConditionClear.isSelected()));
-            }
-        });
-        deathSourceConditionApply.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(deathSourceConditionApply, new Boolean(deathSourceConditionApply.isSelected()));
-            }
-        });
-        deathSourceConditionImmunity.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(deathSourceConditionImmunity, new Boolean(deathSourceConditionImmunity.isSelected()));
-            }
-        });
-
-        deathSourceConditionTimed.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(deathSourceConditionTimed, new Boolean(deathSourceConditionTimed.isSelected()));
-            }
-        });
-        deathSourceConditionForever.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.valueChanged(deathSourceConditionForever, new Boolean(deathSourceConditionForever.isSelected()));
-            }
-        });
-        pane.revalidate();
-        pane.repaint();
-    }
-
     public void updateDeathSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-
-        boolean immunity = condition.isImmunity();
-        boolean clear = condition.isClear();
-        boolean forever = condition.isInfinite();
-
-        deathSourceConditionClear.setSelected(clear);
-        deathSourceConditionApply.setSelected(!clear && !immunity);
-        deathSourceConditionMagnitude.setEnabled(!clear && !immunity);
-        deathSourceConditionImmunity.setSelected(immunity);
-
-        deathSourceConditionTimed.setSelected(!forever);
-        deathSourceConditionTimed.setEnabled(!clear);
-        deathSourceConditionDuration.setEnabled(!clear && !forever);
-        deathSourceConditionForever.setSelected(forever);
-        deathSourceConditionForever.setEnabled(!clear);
+        deathEffectPane.updateEffectSourceTimedConditionWidgets(condition);
     }
 
     public static class TargetTimedConditionsListModel extends OrderedListenerListModel<Common.HitEffect, Common.TimedActorConditionEffect> {
@@ -1029,80 +902,80 @@ public class NPCEditor extends JSONElementEditor {
             } else if (source == hitReceivedTargetConditionChance) {
                 selectedHitReceivedEffectTargetCondition.chance = (Double) value;
                 hitReceivedTargetConditionsListModel.itemChanged(selectedHitReceivedEffectTargetCondition);
-            } else if (source == deathEffectHPMin) {
-                deathEffect.hp_boost_min = (Integer) value;
+            } else if (source == deathEffectPane.effectHPMin) {
+                deathEffectPane. effect.hp_boost_min = (Integer) value;
                 updateDeath = true;
-            } else if (source == deathEffectHPMax) {
-                deathEffect.hp_boost_max = (Integer) value;
+            } else if (source == deathEffectPane. effectHPMax) {
+                deathEffectPane. effect.hp_boost_max = (Integer) value;
                 updateDeath = true;
-            } else if (source == deathEffectAPMin) {
-                deathEffect.ap_boost_min = (Integer) value;
+            } else if (source == deathEffectPane. effectAPMin) {
+                deathEffectPane. effect.ap_boost_min = (Integer) value;
                 updateDeath = true;
-            } else if (source == deathEffectAPMax) {
-                deathEffect.ap_boost_max = (Integer) value;
+            } else if (source == deathEffectPane. effectAPMax) {
+                deathEffectPane. effect.ap_boost_max = (Integer) value;
                 updateDeath = true;
-            } else if (source == deathSourceConditionsList) {
+            } else if (source == deathEffectPane. sourceConditionsList) {
                 updateDeath = true;
-            } else if (source == deathSourceConditionBox) {
-                if (selectedDeathEffectSourceCondition.condition != null) {
-                    selectedDeathEffectSourceCondition.condition.removeBacklink(npc);
+            } else if (source == deathEffectPane. sourceConditionBox) {
+                if (deathEffectPane.selectedEffectSourceCondition.condition != null) {
+                    deathEffectPane.selectedEffectSourceCondition.condition.removeBacklink(npc);
                 }
-                selectedDeathEffectSourceCondition.condition = (ActorCondition) value;
-                if (selectedDeathEffectSourceCondition.condition != null) {
-                    selectedDeathEffectSourceCondition.condition.addBacklink(npc);
-                    selectedDeathEffectSourceCondition.condition_id = selectedDeathEffectSourceCondition.condition.id;
+                deathEffectPane.selectedEffectSourceCondition.condition = (ActorCondition) value;
+                if (deathEffectPane.selectedEffectSourceCondition.condition != null) {
+                    deathEffectPane.selectedEffectSourceCondition.condition.addBacklink(npc);
+                    deathEffectPane.selectedEffectSourceCondition.condition_id = deathEffectPane.selectedEffectSourceCondition.condition.id;
                 } else {
-                    selectedDeathEffectSourceCondition.condition_id = null;
+                    deathEffectPane.selectedEffectSourceCondition.condition_id = null;
                 }
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
-            } else if (source == deathSourceConditionClear && (Boolean) value) {
-                selectedDeathEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
-                selectedDeathEffectSourceCondition.duration = null;
-                updateDeathSourceTimedConditionWidgets(selectedDeathEffectSourceCondition);
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
+            } else if (source == deathEffectPane. sourceConditionClear && (Boolean) value) {
+                deathEffectPane.selectedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                deathEffectPane.selectedEffectSourceCondition.duration = null;
+                updateDeathSourceTimedConditionWidgets(deathEffectPane.selectedEffectSourceCondition);
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionApply && (Boolean) value) {
-                selectedDeathEffectSourceCondition.magnitude = (Integer) deathSourceConditionMagnitude.getValue();
-                selectedDeathEffectSourceCondition.duration = deathSourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) deathSourceConditionDuration.getValue();
-                if (selectedDeathEffectSourceCondition.duration == null || selectedDeathEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
-                    selectedDeathEffectSourceCondition.duration = 1;
+            } else if (source == deathEffectPane. sourceConditionApply && (Boolean) value) {
+                deathEffectPane.selectedEffectSourceCondition.magnitude = (Integer) deathEffectPane. sourceConditionMagnitude.getValue();
+                deathEffectPane.selectedEffectSourceCondition.duration = deathEffectPane. sourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) deathEffectPane. sourceConditionDuration.getValue();
+                if (deathEffectPane.selectedEffectSourceCondition.duration == null || deathEffectPane.selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    deathEffectPane.selectedEffectSourceCondition.duration = 1;
                 }
-                updateDeathSourceTimedConditionWidgets(selectedDeathEffectSourceCondition);
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+                updateDeathSourceTimedConditionWidgets(deathEffectPane.selectedEffectSourceCondition);
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionImmunity && (Boolean) value) {
-                selectedDeathEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
-                selectedDeathEffectSourceCondition.duration = deathSourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) deathSourceConditionDuration.getValue();
-                if (selectedDeathEffectSourceCondition.duration == null || selectedDeathEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
-                    selectedDeathEffectSourceCondition.duration = 1;
+            } else if (source == deathEffectPane. sourceConditionImmunity && (Boolean) value) {
+                deathEffectPane.selectedEffectSourceCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
+                deathEffectPane.selectedEffectSourceCondition.duration = deathEffectPane. sourceConditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) deathEffectPane. sourceConditionDuration.getValue();
+                if (deathEffectPane.selectedEffectSourceCondition.duration == null || deathEffectPane.selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    deathEffectPane.selectedEffectSourceCondition.duration = 1;
                 }
-                updateDeathSourceTimedConditionWidgets(selectedDeathEffectSourceCondition);
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+                updateDeathSourceTimedConditionWidgets(deathEffectPane.selectedEffectSourceCondition);
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionMagnitude) {
-                selectedDeathEffectSourceCondition.magnitude = (Integer) value;
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+            } else if (source == deathEffectPane. sourceConditionMagnitude) {
+                deathEffectPane.selectedEffectSourceCondition.magnitude = (Integer) value;
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionTimed && (Boolean) value) {
-                selectedDeathEffectSourceCondition.duration = (Integer) deathSourceConditionDuration.getValue();
-                if (selectedDeathEffectSourceCondition.duration == null || selectedDeathEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
-                    selectedDeathEffectSourceCondition.duration = 1;
+            } else if (source == deathEffectPane. sourceConditionTimed && (Boolean) value) {
+                deathEffectPane.selectedEffectSourceCondition.duration = (Integer) deathEffectPane. sourceConditionDuration.getValue();
+                if (deathEffectPane.selectedEffectSourceCondition.duration == null || deathEffectPane.selectedEffectSourceCondition.duration == ActorCondition.DURATION_NONE) {
+                    deathEffectPane.selectedEffectSourceCondition.duration = 1;
                 }
-                updateDeathSourceTimedConditionWidgets(selectedDeathEffectSourceCondition);
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+                updateDeathSourceTimedConditionWidgets(deathEffectPane.selectedEffectSourceCondition);
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionForever && (Boolean) value) {
-                selectedDeathEffectSourceCondition.duration = ActorCondition.DURATION_FOREVER;
-                updateDeathSourceTimedConditionWidgets(selectedDeathEffectSourceCondition);
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+            } else if (source == deathEffectPane. sourceConditionForever && (Boolean) value) {
+                deathEffectPane.selectedEffectSourceCondition.duration = ActorCondition.DURATION_FOREVER;
+                updateDeathSourceTimedConditionWidgets(deathEffectPane.selectedEffectSourceCondition);
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionDuration) {
-                selectedDeathEffectSourceCondition.duration = (Integer) value;
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+            } else if (source == deathEffectPane. sourceConditionDuration) {
+                deathEffectPane.selectedEffectSourceCondition.duration = (Integer) value;
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
                 updateDeath = true;
-            } else if (source == deathSourceConditionChance) {
-                selectedDeathEffectSourceCondition.chance = (Double) value;
-                deathSourceConditionsListModel.itemChanged(selectedDeathEffectSourceCondition);
+            } else if (source == deathEffectPane. sourceConditionChance) {
+                deathEffectPane.selectedEffectSourceCondition.chance = (Double) value;
+                deathEffectPane. sourceConditionsModel.itemChanged(deathEffectPane.selectedEffectSourceCondition);
             }
 
             if (updateHit) {
@@ -1120,10 +993,10 @@ public class NPCEditor extends JSONElementEditor {
                 }
             }
             if (updateDeath) {
-                if (isNull(deathEffect)) {
+                if (isNull(deathEffectPane. effect)) {
                     npc.death_effect = null;
                 } else {
-                    npc.death_effect = deathEffect;
+                    npc.death_effect = deathEffectPane. effect;
                 }
             }
 

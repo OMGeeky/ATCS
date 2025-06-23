@@ -3,7 +3,6 @@ package com.gpl.rpg.atcontentstudio.ui.gamedataeditors;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Common;
-import com.gpl.rpg.atcontentstudio.model.gamedata.NPC;
 import com.gpl.rpg.atcontentstudio.ui.*;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambda;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithArg;
@@ -101,14 +100,14 @@ public class CommonEditor {
         /*
          * create a new HitEffectPane with the selections (probably passed in from last time)
          */
-        public HitEffectPane(Common.TimedActorConditionEffect selectedHitEffectSourceCondition, Common.TimedActorConditionEffect selectedHitEffectTargetCondition) {
-            super(selectedHitEffectSourceCondition);
+        public HitEffectPane(String title, Supplier<?> sourceNewSupplier, Editor editor, String applyToHint) {
+            super(title, sourceNewSupplier, editor, applyToHint);
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
         }
 
-        void createHitEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint, boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModel1) {
+        void createHitEffectPaneContent(FieldUpdateListener listener,   boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {
             effect = e;
-            createDeathEffectPaneContent(npc, listener, editor, applyToHint, writable, e, sourceConditionsModel1, Common.TimedActorConditionEffect::new);
+            createDeathEffectPaneContent( listener, writable, e, sourceConditionsModelInput);
 
             String titleTarget = "Actor Conditions applied to the target: ";
             hitTargetConditionsListModel = new NPCEditor.TargetTimedConditionsListModel(effect);
@@ -116,7 +115,7 @@ public class CommonEditor {
             BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
             BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = () -> selectedHitEffectTargetCondition;
             BasicLambda selectedResetTarget = () -> selectedHitEffectTargetCondition = null;
-            BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(editorPane, selectedHitEffectTargetCondition, listener, editor);
+            BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(editorPane, selectedHitEffectTargetCondition, listener, this.editor);
 
             var resultTarget = UiUtils.getCollapsibleItemList(listener,
                     hitTargetConditionsListModel,
@@ -127,13 +126,13 @@ public class CommonEditor {
                     },
                     updatePaneTarget,
                     writable,
-                    Common.TimedActorConditionEffect::new,
+                    this.conditionSupplier,
                     cellRendererTarget,
                     titleTarget,
                     (x) -> null);
             hitTargetConditionsList = resultTarget.list;
             CollapsiblePanel hitTargetConditionsPane = resultTarget.collapsiblePanel;
-            if (npc.hit_effect == null || npc.hit_effect.conditions_target == null || npc.hit_effect.conditions_target.isEmpty()) {
+            if (effect == null || effect.conditions_target == null || effect.conditions_target.isEmpty()) {
                 hitTargetConditionsPane.collapse();
             }
             effectPane.add(hitTargetConditionsPane, JideBoxLayout.FIX);
@@ -229,6 +228,12 @@ public class CommonEditor {
     }
 
     public static class DeathEffectPane<S, E extends Common.TimedActorConditionEffect, M extends OrderedListenerListModel<S, E>> {
+        protected Supplier<E> conditionSupplier;
+        protected String title;
+        protected Editor editor;
+        protected String applyToHint;
+
+
         Common.DeathEffect effect;
         CollapsiblePanel effectPane;
         JSpinner effectHPMin;
@@ -252,17 +257,20 @@ public class CommonEditor {
         /*
          * create a new DeatchEffectPane with the selections (probably passed in from last time)
          */
-        public DeathEffectPane(E selectedEffectSourceCondition) {
-            this.selectedEffectSourceCondition = selectedEffectSourceCondition;
+        public DeathEffectPane(String title, Supplier<E> conditionSupplier, Editor editor, String applyToHint) {
+            this.title = title;
+            this.conditionSupplier = conditionSupplier;
+            this.editor = editor;
+            this.applyToHint = applyToHint;
         }
 
-        void createDeathEffectPaneContent(NPC npc, FieldUpdateListener listener, Editor editor, String applyToHint, boolean writable, Common.DeathEffect e, M sourceConditionsModel, Supplier<E> sourceNewSupplier) {
+        void createDeathEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.DeathEffect e, M sourceConditionsModel) {
             if (applyToHint == null || applyToHint == "") {
                 applyToHint = "";
             } else {
                 applyToHint = " (%s)".formatted(applyToHint);
             }
-            effectPane = new CollapsiblePanel("Effect on every hit: ");
+            effectPane = new CollapsiblePanel(title);
             effectPane.setLayout(new JideBoxLayout(effectPane, JideBoxLayout.PAGE_AXIS));
 
             effect = e;
@@ -271,7 +279,7 @@ public class CommonEditor {
             effectAPMin = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToHint), effect.ap_boost_min, true, writable, listener);
             effectAPMax = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToHint), effect.ap_boost_max, true, writable, listener);
 
-            String titleSource = "Actor Conditions applied to the source: ";
+            String titleSource = "Actor Conditions applied to the source%s: ".formatted(applyToHint);
             this.sourceConditionsModel = sourceConditionsModel;
             CommonEditor.TimedConditionsCellRenderer cellRendererSource = new CommonEditor.TimedConditionsCellRenderer();
             BasicLambdaWithArg<E> selectedSetSource = (value) -> selectedEffectSourceCondition = value;
@@ -288,7 +296,7 @@ public class CommonEditor {
                     },
                     updatePaneSource,
                     writable,
-                    sourceNewSupplier,
+                    conditionSupplier,
                     cellRendererSource,
                     titleSource,
                     (x) -> null);
