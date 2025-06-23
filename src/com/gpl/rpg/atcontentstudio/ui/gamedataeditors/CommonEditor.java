@@ -81,20 +81,21 @@ public class CommonEditor {
         }
     }
 
-    public static class HitRecievedEffectPane extends HitEffectPane {
+    public static class HitRecievedEffectPane<EFFECT extends Common.HitReceivedEffect, LIST_MODEL_SOURCE, ELEMENT extends Common.TimedActorConditionEffect, MODEL extends OrderedListenerListModel<LIST_MODEL_SOURCE, ELEMENT>> extends HitEffectPane<EFFECT, LIST_MODEL_SOURCE, ELEMENT, MODEL> {
         /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
-        Common.HitReceivedEffect effect;
+        EFFECT effect;
         private JSpinner hitReceivedEffectHPMinTarget;
         private JSpinner hitReceivedEffectHPMaxTarget;
         private JSpinner hitReceivedEffectAPMinTarget;
         private JSpinner hitReceivedEffectAPMaxTarget;
-        public HitRecievedEffectPane(String title, Supplier<?> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
-            super(title, sourceNewSupplier, editor, applyToHint,applyToTargetHint);
+
+        public HitRecievedEffectPane(String title, Supplier<ELEMENT> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
+            super(title, sourceNewSupplier, editor, applyToHint, applyToTargetHint);
         }
 
-        void createHitReceivedEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.HitReceivedEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {
+        void createHitReceivedEffectPaneContent(FieldUpdateListener listener, boolean writable, EFFECT e, MODEL sourceConditionsModelInput, MODEL targetConditionsModelInput) {
             effect = e;
-            createHitEffectPaneContent(listener, writable, e, sourceConditionsModelInput);
+            createHitEffectPaneContent(listener, writable, e, sourceConditionsModelInput, targetConditionsModelInput);
 
             hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "Attacker HP bonus min%s: ".formatted(applyToTargetHint), effect.target.hp_boost_min, true, writable, listener);
             hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "Attacker HP bonus max%s: ".formatted(applyToTargetHint), effect.target.hp_boost_max, true, writable, listener);
@@ -103,15 +104,15 @@ public class CommonEditor {
         }
     }
 
-    public static class HitEffectPane extends DeathEffectPane {
+    public static class HitEffectPane<EFFECT extends Common.HitEffect, LIST_MODEL_SOURCE, ELEMENT extends Common.TimedActorConditionEffect, MODEL extends OrderedListenerListModel<LIST_MODEL_SOURCE, ELEMENT>> extends DeathEffectPane<EFFECT, LIST_MODEL_SOURCE, ELEMENT, MODEL> {
         /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
-        Common.HitEffect effect;
+        EFFECT effect;
 
         String applyToTargetHint;
 
-        NPCEditor.TargetTimedConditionsListModel hitTargetConditionsListModel;
+        MODEL hitTargetConditionsListModel;
         JList hitTargetConditionsList;
-        Common.TimedActorConditionEffect selectedHitEffectTargetCondition;
+        ELEMENT selectedHitEffectTargetCondition;
 
         Editor.MyComboBox hitTargetConditionBox;
         JSpinner hitTargetConditionChance;
@@ -126,21 +127,26 @@ public class CommonEditor {
         /*
          * create a new HitEffectPane with the selections (probably passed in from last time)
          */
-        public HitEffectPane(String title, Supplier<?> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
+        public HitEffectPane(String title, Supplier<ELEMENT> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
             super(title, sourceNewSupplier, editor, applyToHint);
             this.selectedHitEffectTargetCondition = selectedHitEffectTargetCondition;
             this.applyToTargetHint = applyToTargetHint;
         }
 
-        void createHitEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.HitEffect e, NPCEditor.SourceTimedConditionsListModel sourceConditionsModelInput) {
+        void createHitEffectPaneContent(FieldUpdateListener listener, boolean writable, EFFECT e, MODEL sourceConditionsModelInput, MODEL hitTargetConditionsListModel1) {
             effect = e;
+            hitTargetConditionsListModel = hitTargetConditionsListModel1;
             createDeathEffectPaneContent(listener, writable, e, sourceConditionsModelInput);
+        }
+
+        @Override
+        protected void addLists(FieldUpdateListener listener, boolean writable) {
+            super.addLists(listener, writable);
 
             String titleTarget = "Actor Conditions applied to the target: ";
-            hitTargetConditionsListModel = new NPCEditor.TargetTimedConditionsListModel(effect);
             CommonEditor.TimedConditionsCellRenderer cellRendererTarget = new CommonEditor.TimedConditionsCellRenderer();
-            BasicLambdaWithArg<Common.TimedActorConditionEffect> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
-            BasicLambdaWithReturn<Common.TimedActorConditionEffect> selectedGetTarget = () -> selectedHitEffectTargetCondition;
+            BasicLambdaWithArg<ELEMENT> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
+            BasicLambdaWithReturn<ELEMENT> selectedGetTarget = () -> selectedHitEffectTargetCondition;
             BasicLambda selectedResetTarget = () -> selectedHitEffectTargetCondition = null;
             BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(editorPane, selectedHitEffectTargetCondition, listener, this.editor);
 
@@ -316,22 +322,22 @@ public class CommonEditor {
         }
     }
 
-    public static class DeathEffectPane<S, E extends Common.TimedActorConditionEffect, M extends OrderedListenerListModel<S, E>> {
-        protected Supplier<E> conditionSupplier;
+    public static class DeathEffectPane<EFFECT extends Common.DeathEffect, LIST_MODEL_SOURCE, ELEMENT extends Common.TimedActorConditionEffect, MODEL extends OrderedListenerListModel<LIST_MODEL_SOURCE, ELEMENT>> {
+        protected Supplier<ELEMENT> conditionSupplier;
         protected String title;
         protected Editor editor;
         protected String applyToHint;
 
 
-        Common.DeathEffect effect;
+        EFFECT effect;
         CollapsiblePanel effectPane;
         JSpinner effectHPMin;
         JSpinner effectHPMax;
         JSpinner effectAPMin;
         JSpinner effectAPMax;
-        M sourceConditionsModel;
-        JList<E> sourceConditionsList;
-        E selectedEffectSourceCondition;
+        MODEL sourceConditionsModel;
+        JList<ELEMENT> sourceConditionsList;
+        ELEMENT selectedEffectSourceCondition;
 
         Editor.MyComboBox sourceConditionBox;
         JSpinner sourceConditionChance;
@@ -346,14 +352,17 @@ public class CommonEditor {
         /*
          * create a new DeatchEffectPane with the selections (probably passed in from last time)
          */
-        public DeathEffectPane(String title, Supplier<E> conditionSupplier, Editor editor, String applyToHint) {
+        public DeathEffectPane(String title, Supplier<ELEMENT> conditionSupplier, Editor editor, String applyToHint) {
             this.title = title;
             this.conditionSupplier = conditionSupplier;
             this.editor = editor;
             this.applyToHint = applyToHint;
         }
 
-        void createDeathEffectPaneContent(FieldUpdateListener listener, boolean writable, Common.DeathEffect e, M sourceConditionsModel) {
+        void createDeathEffectPaneContent(FieldUpdateListener listener, boolean writable, EFFECT e, MODEL sourceConditionsModel) {
+            effect = e;
+            this.sourceConditionsModel = sourceConditionsModel;
+
             if (applyToHint == null || applyToHint == "") {
                 applyToHint = "";
             } else {
@@ -362,17 +371,23 @@ public class CommonEditor {
             effectPane = new CollapsiblePanel(title);
             effectPane.setLayout(new JideBoxLayout(effectPane, JideBoxLayout.PAGE_AXIS));
 
-            effect = e;
+
+            addFields(listener, writable);
+            addLists(listener, writable);
+        }
+
+        protected void addFields(FieldUpdateListener listener, boolean writable) {
             effectHPMin = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToHint), effect.hp_boost_min, true, writable, listener);
             effectHPMax = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToHint), effect.hp_boost_max, true, writable, listener);
             effectAPMin = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToHint), effect.ap_boost_min, true, writable, listener);
             effectAPMax = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToHint), effect.ap_boost_max, true, writable, listener);
+        }
 
+        protected void addLists(FieldUpdateListener listener, boolean writable) {
             String titleSource = "Actor Conditions applied to the source%s: ".formatted(applyToHint);
-            this.sourceConditionsModel = sourceConditionsModel;
-            CommonEditor.TimedConditionsCellRenderer cellRendererSource = new CommonEditor.TimedConditionsCellRenderer();
-            BasicLambdaWithArg<E> selectedSetSource = (value) -> selectedEffectSourceCondition = value;
-            BasicLambdaWithReturn<E> selectedGetSource = () -> selectedEffectSourceCondition;
+            TimedConditionsCellRenderer cellRendererSource = new TimedConditionsCellRenderer();
+            BasicLambdaWithArg<ELEMENT> selectedSetSource = (value) -> selectedEffectSourceCondition = value;
+            BasicLambdaWithReturn<ELEMENT> selectedGetSource = () -> selectedEffectSourceCondition;
             BasicLambda selectedResetSource = () -> selectedEffectSourceCondition = null;
             BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> updateEffectSourceTimedConditionEditorPane(editorPane, selectedEffectSourceCondition, listener, editor);
 
@@ -397,7 +412,7 @@ public class CommonEditor {
             effectPane.add(sourceConditionsPane, JideBoxLayout.FIX);
         }
 
-        public void updateEffectSourceTimedConditionEditorPane(JPanel pane, E condition, final FieldUpdateListener listener, Editor e) {
+        public void updateEffectSourceTimedConditionEditorPane(JPanel pane, ELEMENT condition, final FieldUpdateListener listener, Editor e) {
             pane.removeAll();
             if (sourceConditionBox != null) {
                 e.removeElementListener(sourceConditionBox);
@@ -470,7 +485,7 @@ public class CommonEditor {
         }
 
 
-        public void updateEffectSourceTimedConditionWidgets(E condition) {
+        public void updateEffectSourceTimedConditionWidgets(ELEMENT condition) {
             boolean immunity = condition.isImmunity();
             boolean clear = condition.isClear();
             boolean forever = condition.isInfinite();
