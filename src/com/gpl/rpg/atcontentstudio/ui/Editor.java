@@ -19,7 +19,6 @@ import javax.swing.text.DefaultFormatter;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.Console;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1106,10 +1105,10 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
     }
 
 
-    protected <E extends Common.ConditionEffect, T extends OrderedListenerListModel<?, E>> void updateConditionEffect(ActorCondition value,
-                                                                                                                      GameDataElement backlink,
-                                                                                                                      E selectedHitEffectTargetCondition,
-                                                                                                                      T hitTargetConditionsModel) {
+    protected <E extends Common.ActorConditionEffect, T extends OrderedListenerListModel<?, E>> void updateConditionEffect(ActorCondition value,
+                                                                                                                           GameDataElement backlink,
+                                                                                                                           E selectedHitEffectTargetCondition,
+                                                                                                                           T hitTargetConditionsModel) {
         if (selectedHitEffectTargetCondition.condition != null) {
             selectedHitEffectTargetCondition.condition.removeBacklink(backlink);
         }

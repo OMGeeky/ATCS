@@ -315,7 +315,7 @@ public class NPC extends JSONElement {
                 if (newOne != null) newOne.addBacklink(this);
             } else {
                 if (this.hit_effect != null && this.hit_effect.conditions_source != null) {
-                    for (TimedConditionEffect tce : this.hit_effect.conditions_source) {
+                    for (TimedActorConditionEffect tce : this.hit_effect.conditions_source) {
                         if (tce.condition == oldOne) {
                             oldOne.removeBacklink(this);
                             tce.condition = (ActorCondition) newOne;
@@ -324,7 +324,7 @@ public class NPC extends JSONElement {
                     }
                 }
                 if (this.hit_effect != null && this.hit_effect.conditions_target != null) {
-                    for (TimedConditionEffect tce : this.hit_effect.conditions_target) {
+                    for (TimedActorConditionEffect tce : this.hit_effect.conditions_target) {
                         if (tce.condition == oldOne) {
                             oldOne.removeBacklink(this);
                             tce.condition = (ActorCondition) newOne;
@@ -397,7 +397,7 @@ public class NPC extends JSONElement {
             if (this.hit_effect.conditions_source != null) {
                 List conditionsSourceJson = new ArrayList();
                 hitEffectJson.put("conditionsSource", conditionsSourceJson);
-                for (TimedConditionEffect condition : this.hit_effect.conditions_source) {
+                for (TimedActorConditionEffect condition : this.hit_effect.conditions_source) {
                     Map conditionJson = new LinkedHashMap();
                     conditionsSourceJson.add(conditionJson);
                     if (condition.condition != null) {
@@ -414,7 +414,7 @@ public class NPC extends JSONElement {
             if (this.hit_effect.conditions_target != null) {
                 List conditionsTargetJson = new ArrayList();
                 hitEffectJson.put("conditionsTarget", conditionsTargetJson);
-                for (TimedConditionEffect condition : this.hit_effect.conditions_target) {
+                for (TimedActorConditionEffect condition : this.hit_effect.conditions_target) {
                     Map conditionJson = new LinkedHashMap();
                     conditionsTargetJson.add(conditionJson);
                     if (condition.condition != null) {
@@ -475,7 +475,7 @@ public class NPC extends JSONElement {
             if (this.hit_received_effect.conditions_source != null) {
                 List conditionsSourceJson = new ArrayList();
                 hitReceivedEffectJson.put("conditionsSource", conditionsSourceJson);
-                for (TimedConditionEffect condition : this.hit_received_effect.conditions_source) {
+                for (TimedActorConditionEffect condition : this.hit_received_effect.conditions_source) {
                     Map conditionJson = new LinkedHashMap();
                     conditionsSourceJson.add(conditionJson);
                     if (condition.condition != null) {
@@ -492,7 +492,7 @@ public class NPC extends JSONElement {
             if (this.hit_received_effect.conditions_target != null) {
                 List conditionsTargetJson = new ArrayList();
                 hitReceivedEffectJson.put("conditionsTarget", conditionsTargetJson);
-                for (TimedConditionEffect condition : this.hit_received_effect.conditions_target) {
+                for (TimedActorConditionEffect condition : this.hit_received_effect.conditions_target) {
                     Map conditionJson = new LinkedHashMap();
                     conditionsTargetJson.add(conditionJson);
                     if (condition.condition != null) {
@@ -529,7 +529,7 @@ public class NPC extends JSONElement {
             if (this.death_effect.conditions_source != null) {
                 List conditionsSourceJson = new ArrayList();
                 deathEffectJson.put("conditionsSource", conditionsSourceJson);
-                for (TimedConditionEffect condition : this.death_effect.conditions_source) {
+                for (TimedActorConditionEffect condition : this.death_effect.conditions_source) {
                     Map conditionJson = new LinkedHashMap();
                     conditionsSourceJson.add(conditionJson);
                     if (condition.condition != null) {

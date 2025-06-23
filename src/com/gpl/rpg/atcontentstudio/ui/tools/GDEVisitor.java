@@ -96,18 +96,18 @@ public class GDEVisitor {
         if (element.icon_id != null)
             visit(element.getProject().getSpritesheet(element.icon_id.split(":")[0]), visited, includeSource);
         if (element.equip_effect != null && element.equip_effect.conditions != null) {
-            for (Common.ConditionEffect condEffect : element.equip_effect.conditions) {
+            for (Common.ActorConditionEffect condEffect : element.equip_effect.conditions) {
                 visit(condEffect.condition, visited, includeSource);
             }
         }
         if (element.hit_effect != null) {
             if (element.hit_effect.conditions_source != null) {
-                for (Common.ConditionEffect condEffect : element.hit_effect.conditions_source) {
+                for (Common.ActorConditionEffect condEffect : element.hit_effect.conditions_source) {
                     visit(condEffect.condition, visited, includeSource);
                 }
             }
             if (element.hit_effect.conditions_target != null) {
-                for (Common.ConditionEffect condEffect : element.hit_effect.conditions_target) {
+                for (Common.ActorConditionEffect condEffect : element.hit_effect.conditions_target) {
                     visit(condEffect.condition, visited, includeSource);
                 }
             }
@@ -130,12 +130,12 @@ public class GDEVisitor {
             visit(element.getProject().getSpritesheet(element.icon_id.split(":")[0]), visited, includeSource);
         if (element.hit_effect != null) {
             if (element.hit_effect.conditions_source != null) {
-                for (Common.TimedConditionEffect condEffect : element.hit_effect.conditions_source) {
+                for (Common.TimedActorConditionEffect condEffect : element.hit_effect.conditions_source) {
                     visit(condEffect.condition, visited, includeSource);
                 }
             }
             if (element.hit_effect.conditions_target != null) {
-                for (Common.TimedConditionEffect condEffect : element.hit_effect.conditions_target) {
+                for (Common.TimedActorConditionEffect condEffect : element.hit_effect.conditions_target) {
                     visit(condEffect.condition, visited, includeSource);
                 }
             }

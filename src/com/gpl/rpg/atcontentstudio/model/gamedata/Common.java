@@ -9,22 +9,22 @@ import java.util.Map;
 
 public final class Common {
 
-    public static void linkConditions(List<? extends ConditionEffect> conditions, Project proj, GameDataElement backlink) {
+    public static void linkConditions(List<? extends ActorConditionEffect> conditions, Project proj, GameDataElement backlink) {
         if (conditions != null) {
-            for (ConditionEffect ce : conditions) {
+            for (ActorConditionEffect ce : conditions) {
                 if (ce.condition_id != null) ce.condition = proj.getActorCondition(ce.condition_id);
                 if (ce.condition != null) ce.condition.addBacklink(backlink);
             }
         }
     }
 
-    public static class TimedConditionEffect extends ConditionEffect {
+    public static class TimedActorConditionEffect extends ActorConditionEffect {
         //Available from parsed state
         public Integer duration = null;
         public Double chance = null;
 
-        public TimedConditionEffect createClone() {
-            TimedConditionEffect cclone = new TimedConditionEffect();
+        public TimedActorConditionEffect createClone() {
+            TimedActorConditionEffect cclone = new TimedActorConditionEffect();
             cclone.magnitude = this.magnitude;
             cclone.condition_id = this.condition_id;
             cclone.condition = this.condition;
@@ -34,7 +34,7 @@ public final class Common {
         }
     }
 
-    public static class ConditionEffect {
+    public static class ActorConditionEffect {
         //Available from parsed state
         public Integer magnitude = null;
         public String condition_id = null;
@@ -44,13 +44,13 @@ public final class Common {
     }
 
     @SuppressWarnings("rawtypes")
-    public static ArrayList<TimedConditionEffect> parseTimedConditionEffects(List conditionsSourceJson) {
-        ArrayList<TimedConditionEffect> conditions_source;
+    public static ArrayList<TimedActorConditionEffect> parseTimedConditionEffects(List conditionsSourceJson) {
+        ArrayList<TimedActorConditionEffect> conditions_source;
         if (conditionsSourceJson != null && !conditionsSourceJson.isEmpty()) {
             conditions_source = new ArrayList<>();
             for (Object conditionJsonObj : conditionsSourceJson) {
                 Map conditionJson = (Map) conditionJsonObj;
-                TimedConditionEffect condition = new TimedConditionEffect();
+                TimedActorConditionEffect condition = new TimedActorConditionEffect();
                 readConditionEffect(condition, conditionJson);
                 condition.duration = JSONElement.getInteger((Number) conditionJson.get("duration"));
                 if (conditionJson.get("chance") != null)
@@ -64,7 +64,7 @@ public final class Common {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void readConditionEffect(ConditionEffect condition, Map conditionJson) {
+    private static void readConditionEffect(ActorConditionEffect condition, Map conditionJson) {
         condition.condition_id = (String) conditionJson.get("condition");
         condition.magnitude = JSONElement.getInteger((Number) conditionJson.get("magnitude"));
     }
@@ -119,19 +119,21 @@ public final class Common {
         hit_effect.conditions_target = parseTimedConditionEffects(conditionsTargetJson);
     }
 
-
-    public static class DeathEffect {
-        //Available from parsed state
+    public static class BasicEffect {
         public Integer hp_boost_min = null;
         public Integer hp_boost_max = null;
         public Integer ap_boost_min = null;
         public Integer ap_boost_max = null;
-        public List<TimedConditionEffect> conditions_source = null;
+    }
+
+    public static class DeathEffect extends BasicEffect {
+        //Available from parsed state
+        public List<TimedActorConditionEffect> conditions_source = null;
     }
 
     public static class HitEffect extends DeathEffect {
         //Available from parsed state
-        public List<TimedConditionEffect> conditions_target = null;
+        public List<TimedActorConditionEffect> conditions_target = null;
     }
 
     public static class HitReceivedEffect extends Common.HitEffect {
@@ -144,14 +146,11 @@ public final class Common {
 
 
     public static void copyDeathEffectValues(Common.DeathEffect target, Common.DeathEffect source, GameDataElement backlink) {
-        target.ap_boost_max = source.ap_boost_max;
-        target.ap_boost_min = source.ap_boost_min;
-        target.hp_boost_max = source.hp_boost_max;
-        target.hp_boost_min = source.hp_boost_min;
+        copyEffectValues(target, source);
         if (source.conditions_source != null) {
             target.conditions_source = new ArrayList<>();
-            for (Common.TimedConditionEffect c : source.conditions_source) {
-                Common.TimedConditionEffect cclone = c.createClone();
+            for (TimedActorConditionEffect c : source.conditions_source) {
+                TimedActorConditionEffect cclone = c.createClone();
                 if (cclone.condition != null) {
                     cclone.condition.addBacklink(backlink);
                 }
@@ -160,12 +159,19 @@ public final class Common {
         }
     }
 
+    private static void copyEffectValues(BasicEffect target, BasicEffect source) {
+        target.ap_boost_max = source.ap_boost_max;
+        target.ap_boost_min = source.ap_boost_min;
+        target.hp_boost_max = source.hp_boost_max;
+        target.hp_boost_min = source.hp_boost_min;
+    }
+
     public static void copyHitEffectValues(Common.HitEffect target, Common.HitEffect source, GameDataElement backlink) {
         copyDeathEffectValues(target, source, backlink);
         if (source.conditions_target != null) {
             target.conditions_target = new ArrayList<>();
-            for (Common.TimedConditionEffect c : source.conditions_target) {
-                Common.TimedConditionEffect cclone = c.createClone();
+            for (TimedActorConditionEffect c : source.conditions_target) {
+                TimedActorConditionEffect cclone = c.createClone();
                 if (cclone.condition != null) {
                     cclone.condition.addBacklink(backlink);
                 }
