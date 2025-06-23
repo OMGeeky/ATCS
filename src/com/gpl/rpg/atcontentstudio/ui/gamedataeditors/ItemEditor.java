@@ -251,20 +251,17 @@ public class ItemEditor extends JSONElementEditor {
         hitHPMax = addIntegerField(hitEffectPane, "HP bonus max: ", hitEffect.hp_boost_max, true, item.writable, listener);
         hitAPMin = addIntegerField(hitEffectPane, "AP bonus min: ", hitEffect.ap_boost_min, true, item.writable, listener);
         hitAPMax = addIntegerField(hitEffectPane, "AP bonus max: ", hitEffect.ap_boost_max, true, item.writable, listener);
-        hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
 
+        String title = "Actor Conditions applied to the source: ";
+        hitSourceConditionsModel = new SourceTimedConditionsListModel(hitEffect);
+        CommonEditor.TimedConditionsCellRenderer cellRenderer = new CommonEditor.TimedConditionsCellRenderer();
+        BasicLambdaWithArg<Common.TimedActorConditionEffect> setSelected = (selectedItem) -> selectedHitEffectSourceCondition = selectedItem;
         BasicLambdaWithReturn<Common.TimedActorConditionEffect> getSelected = () -> hitSourceConditionsList.getSelectedValue();
-        BasicLambda resetSelected = () -> {
-            selectedHitEffectSourceCondition = null;
-        };
-        BasicLambdaWithArg<Common.TimedActorConditionEffect> setSelected = (selectedItem) -> {
-            selectedHitEffectSourceCondition = selectedItem;
-        };
+        BasicLambda resetSelected = () -> selectedHitEffectSourceCondition = null;
         BasicLambdaWithArg valueChanged = (selectedReply) -> {
         };
         BasicLambdaWithArg<JPanel> updateEditorPane = (editorPane) -> updateHitSourceTimedConditionEditorPane(editorPane, selectedHitEffectSourceCondition, listener);
-        CommonEditor.TimedConditionsCellRenderer cellRenderer = new CommonEditor.TimedConditionsCellRenderer();
-        String title = "Actor Conditions applied to the source: ";
+
         var collapsibleItemList = UiUtils.getCollapsibleItemList(
                 listener,
                 hitSourceConditionsModel,
@@ -285,6 +282,7 @@ public class ItemEditor extends JSONElementEditor {
             hitSourceConditionsPane.collapse();
         }
         hitEffectPane.add(hitSourceConditionsPane, JideBoxLayout.FIX);
+
         String titleHitTargetConditions = "Actor Conditions applied to the target: ";
         hitTargetConditionsModel = new TargetTimedConditionsListModel(hitEffect);
         CommonEditor.TimedConditionsCellRenderer cellRendererHitTargetConditions = new CommonEditor.TimedConditionsCellRenderer();
