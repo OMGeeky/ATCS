@@ -397,7 +397,7 @@ public class NPCEditor extends JSONElementEditor {
     }
 
     public void updateHitSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-        hitEffectPane.updateHitSourceTimedConditionWidgets(condition);
+        hitEffectPane.updateDeathEffectSourceTimedConditionWidgets(condition);
     }
 
 
