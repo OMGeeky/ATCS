@@ -632,10 +632,9 @@ public class ItemEditor extends JSONElementEditor {
     }
 
     public void updateHitTargetTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-
-        boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
-        boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
-        boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
+        boolean immunity = condition.isImmunity();
+        boolean clear = condition.isClear();
+        boolean forever = condition.isInfinite();
 
         hitTargetConditionClear.setSelected(clear);
         hitTargetConditionApply.setSelected(!clear && !immunity);

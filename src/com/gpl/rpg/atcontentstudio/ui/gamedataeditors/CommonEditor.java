@@ -22,9 +22,9 @@ public class CommonEditor {
 
                 if (effect.condition != null) {
 
-                    boolean immunity = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration != null && effect.duration > ActorCondition.DURATION_NONE);
-                    boolean clear = (effect.magnitude == null || effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (effect.duration == null || effect.duration == ActorCondition.DURATION_NONE);
-                    boolean forever = effect.duration != null && effect.duration == ActorCondition.DURATION_FOREVER;
+                    boolean immunity = effect.isImmunity();
+                    boolean clear = effect.isClear();
+                    boolean forever = effect.isInfinite();
 
                     if (clear) {
                         label.setIcon(new ImageIcon(effect.condition.getIcon()));

@@ -32,6 +32,15 @@ public final class Common {
             cclone.duration = this.duration;
             return cclone;
         }
+        public boolean isInfinite(){
+            return duration != null && duration == ActorCondition.DURATION_FOREVER;
+        }
+        public boolean isImmunity(){
+            return (magnitude == null || magnitude == ActorCondition.MAGNITUDE_CLEAR) && (duration != null && duration > ActorCondition.DURATION_NONE);
+        }
+        public boolean isClear(){
+            return (magnitude == null || magnitude == ActorCondition.MAGNITUDE_CLEAR) && (duration == null || duration == ActorCondition.DURATION_NONE);
+        }
     }
 
     public static class ActorConditionEffect {
