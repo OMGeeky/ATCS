@@ -230,17 +230,9 @@ public class NPC extends JSONElement {
         if (this.droplist_id != null) this.droplist = proj.getDroplist(this.droplist_id);
         if (this.droplist != null) this.droplist.addBacklink(this);
 
-        if (this.hit_effect != null) {
-            linkConditions(this.hit_effect.conditions_source, proj, this);
-            linkConditions(this.hit_effect.conditions_target, proj, this);
-        }
-        if (this.hit_received_effect != null) {
-            linkConditions(this.hit_received_effect.conditions_source, proj, this);
-            linkConditions(this.hit_received_effect.conditions_target, proj, this);
-        }
-        if (this.death_effect != null) {
-            linkConditions(this.death_effect.conditions_source, proj, this);
-        }
+        linkEffects(this.hit_effect, proj, this);
+        linkEffects(this.hit_received_effect, proj, this);
+        linkEffects(this.death_effect, proj, this);
         this.state = State.linked;
     }
 

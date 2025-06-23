@@ -226,19 +226,9 @@ public class Item extends JSONElement {
             linkConditions(this.equip_effect.conditions, proj, this);
         }
 
-        if (this.hit_effect != null) {
-            linkConditions(this.hit_effect.conditions_source, proj, this);
-            linkConditions(this.hit_effect.conditions_target, proj, this);
-        }
-
-        if (this.hit_received_effect != null) {
-            linkConditions(this.hit_received_effect.conditions_source, proj, this);
-            linkConditions(this.hit_received_effect.conditions_target, proj, this);
-        }
-
-        if (this.kill_effect != null) {
-            linkConditions(this.kill_effect.conditions_source, proj, this);
-        }
+        linkEffects(this.hit_effect, proj, this);
+        linkEffects(this.hit_received_effect, proj, this);
+        linkEffects(this.kill_effect, proj, this);
         this.state = State.linked;
     }
 

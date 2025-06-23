@@ -17,6 +17,19 @@ public final class Common {
             }
         }
     }
+    public static  void linkEffects(HitEffect effect, Project proj, GameDataElement backlink){
+        linkEffects((DeathEffect) effect, proj, backlink);
+        if (effect != null)
+        {
+            linkConditions(effect.conditions_target, proj, backlink);
+        }
+    }
+    public static  void linkEffects(DeathEffect effect, Project proj, GameDataElement backlink){
+        if (effect != null)
+        {
+            linkConditions(effect.conditions_source, proj, backlink);
+        }
+    }
 
     public static class TimedActorConditionEffect extends ActorConditionEffect {
         //Available from parsed state
