@@ -487,9 +487,9 @@ public class NPCEditor extends JSONElementEditor {
 
     public void updateHitSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
 
-        boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
-        boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
-        boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
+        boolean immunity = condition.isImmunity();
+        boolean clear = condition.isClear();
+        boolean forever = condition.isInfinite();
 
         hitSourceConditionClear.setSelected(clear);
         hitSourceConditionApply.setSelected(!clear && !immunity);
@@ -576,10 +576,9 @@ public class NPCEditor extends JSONElementEditor {
     }
 
     public void updateHitTargetTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-
-        boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
-        boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
-        boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
+        boolean immunity = condition.isImmunity();
+        boolean clear = condition.isClear();
+        boolean forever = condition.isInfinite();
 
         hitTargetConditionClear.setSelected(clear);
         hitTargetConditionApply.setSelected(!clear && !immunity);
@@ -667,10 +666,9 @@ public class NPCEditor extends JSONElementEditor {
     }
 
     public void updateHitReceivedSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
-
-        boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
-        boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
-        boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
+        boolean immunity = condition.isImmunity();
+        boolean clear = condition.isClear();
+        boolean forever = condition.isInfinite();
 
         hitReceivedSourceConditionClear.setSelected(clear);
         hitReceivedSourceConditionApply.setSelected(!clear && !immunity);
@@ -758,9 +756,9 @@ public class NPCEditor extends JSONElementEditor {
 
     public void updateHitReceivedTargetTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
 
-        boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
-        boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
-        boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
+        boolean immunity = condition.isImmunity();
+        boolean clear = condition.isClear();
+        boolean forever = condition.isInfinite();
 
         hitReceivedTargetConditionClear.setSelected(clear);
         hitReceivedTargetConditionApply.setSelected(!clear && !immunity);
@@ -848,9 +846,9 @@ public class NPCEditor extends JSONElementEditor {
 
     public void updateDeathSourceTimedConditionWidgets(Common.TimedActorConditionEffect condition) {
 
-        boolean immunity = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration != null && condition.duration > ActorCondition.DURATION_NONE);
-        boolean clear = (condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR) && (condition.duration == null || condition.duration == ActorCondition.DURATION_NONE);
-        boolean forever = condition.duration != null && condition.duration == ActorCondition.DURATION_FOREVER;
+        boolean immunity = condition.isImmunity();
+        boolean clear = condition.isClear();
+        boolean forever = condition.isInfinite();
 
         deathSourceConditionClear.setSelected(clear);
         deathSourceConditionApply.setSelected(!clear && !immunity);
