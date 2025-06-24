@@ -2,7 +2,7 @@ package com.gpl.rpg.atcontentstudio.model;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.Notification;
-import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
+import com.gpl.rpg.atcontentstudio.io.JsonSerializable;
 import com.gpl.rpg.atcontentstudio.io.SettingsSave;
 import com.gpl.rpg.atcontentstudio.model.GameSource.Type;
 import com.gpl.rpg.atcontentstudio.model.bookmarks.BookmarksRoot;
@@ -11,13 +11,11 @@ import com.gpl.rpg.atcontentstudio.model.maps.TMXMap;
 import com.gpl.rpg.atcontentstudio.model.maps.TMXMapSet;
 import com.gpl.rpg.atcontentstudio.model.maps.Worldmap;
 import com.gpl.rpg.atcontentstudio.model.maps.WorldmapSegment;
-import com.gpl.rpg.atcontentstudio.model.saves.SavedGamesSet;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.model.tools.writermode.WriterModeData;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import com.gpl.rpg.atcontentstudio.ui.WorkerDialog;
 import com.gpl.rpg.atcontentstudio.utils.FileUtils;
-import org.json.simple.JSONArray;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,7 +40,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 
-public class Project implements ProjectTreeNode, Serializable {
+public class Project implements ProjectTreeNode, Serializable, JsonSerializable {
 
     private static final long serialVersionUID = 4807454973303366758L;
     private static final String drawablePath = TMXMapSet.DEFAULT_REL_PATH_TO_DRAWABLE.replace("\\", "/");
@@ -50,6 +48,7 @@ public class Project implements ProjectTreeNode, Serializable {
 
     //Every instance field that is not transient will be saved in this file.
     public static final String SETTINGS_FILE = ".project";
+    public static final String SETTINGS_FILE_JSON = ".project.json";
 
     public String name;
 
@@ -58,7 +57,6 @@ public class Project implements ProjectTreeNode, Serializable {
 
     public GameSource baseContent; //A.k.a library
 
-    public GameSource referencedContent; //Pointers to base content
     public transient GameSource alteredContent; //Copied from base content (does not overwrite yet)
     public transient GameSource createdContent; //Stand-alone.
     public transient BookmarksRoot bookmarks;
@@ -72,6 +70,29 @@ public class Project implements ProjectTreeNode, Serializable {
 
     public Properties knownSpritesheetsProperties;
 
+    @Override
+    public Map toMap() {
+        Map map = new HashMap();
+        map.put("name", name.toString());
+        map.put("baseFolder", baseFolder.getPath());
+        map.put("open", open);
+        map.put("baseContent", baseContent.toMap());
+        map.put("sourceSetToUse", sourceSetToUse.toString());
+        return map;
+    }
+
+    @Override
+    public void fromMap(Map map) {
+        if(map==null)return;
+        name = (String) map.get("name");
+        baseFolder = new File((String) map.get("baseFolder"));
+        open = (boolean) map.get("open");
+
+        baseContent = new GameSource((Map) map.get("baseContent"), this);
+
+        sourceSetToUse = Enum.valueOf(ResourceSet.class, (String)map.get("sourceSetToUse"));
+    }
+
     public static enum ResourceSet {
         gameData,
         debugData,
@@ -80,7 +101,17 @@ public class Project implements ProjectTreeNode, Serializable {
 
     public ResourceSet sourceSetToUse;
 
-    public Project(Workspace w, String name, File source, ResourceSet sourceSet) {
+    public Project(Workspace w, File projectFile) {
+        this.parent = w;
+        loadSpritesheetProperties();
+        Map json = FileUtils.mapFromJsonFile(projectFile);
+        this.fromMap(json);
+
+        initializeData();
+        linkAll();
+        save();
+    }
+    public Project(Workspace w, String name, File source, ResourceSet sourceSet){
         this.parent = w;
         this.name = name;
         this.sourceSetToUse = sourceSet;
@@ -93,24 +124,20 @@ public class Project implements ProjectTreeNode, Serializable {
             Notification.addError("Eror creating project root folder: " + e.getMessage());
             e.printStackTrace();
         }
+
+        loadSpritesheetProperties();
+        baseContent = new GameSource(source, this);
         open = true;
+        initializeData();
+        linkAll();
+        save();
+    }
+
+    private void initializeData() {
         v = new SavedSlotCollection();
 
-        knownSpritesheetsProperties = new Properties();
-        try {
-            knownSpritesheetsProperties.load(Project.class.getResourceAsStream("/spritesheets.properties"));
-        } catch (IOException e) {
-            Notification.addWarn("Unable to load default spritesheets properties.");
-            e.printStackTrace();
-        }
-
-
-        baseContent = new GameSource(source, this);
-
-//		referencedContent = new GameSource(this, GameSource.Type.referenced);
-
-        alteredContent = new GameSource(this, GameSource.Type.altered);
-        createdContent = new GameSource(this, GameSource.Type.created);
+        alteredContent = new GameSource(this, Type.altered);
+        createdContent = new GameSource(this, Type.created);
         bookmarks = new BookmarksRoot(this);
 
 //        saves = new SavedGamesSet(this);
@@ -121,10 +148,6 @@ public class Project implements ProjectTreeNode, Serializable {
         v.add(baseContent);
 //        v.add(saves);
         v.add(bookmarks);
-
-        linkAll();
-
-        save();
     }
 
 
@@ -207,12 +230,20 @@ public class Project implements ProjectTreeNode, Serializable {
 
     public static Project fromFolder(Workspace w, File projRoot) {
         Project p;
-        File f = new File(projRoot, Project.SETTINGS_FILE);
-        if (!f.exists()) {
-            Notification.addError("Unable to find " + SETTINGS_FILE + " for project " + projRoot.getName());
-            return null;
+
+        File fJson = new File(projRoot, Project.SETTINGS_FILE_JSON);
+        if (fJson.exists()) {
+            p = new Project(w, fJson);
         } else {
-            p = (Project) SettingsSave.loadInstance(f, "Project");
+            File f = new File(projRoot, Project.SETTINGS_FILE);
+            if (!f.exists()) {
+                Notification.addError("Unable to find " + SETTINGS_FILE + " for project " + projRoot.getName());
+                return null;
+            } else {
+                p = (Project) SettingsSave.loadInstance(f, "Project");
+            }
+            p.save();
+
         }
         p.refreshTransients(w);
         return p;
@@ -223,13 +254,7 @@ public class Project implements ProjectTreeNode, Serializable {
 
         projectElementListeners = new HashMap<Class<? extends GameDataElement>, List<ProjectElementListener>>();
 
-        try {
-            knownSpritesheetsProperties = new Properties();
-            knownSpritesheetsProperties.load(Project.class.getResourceAsStream("/spritesheets.properties"));
-        } catch (IOException e) {
-            Notification.addWarn("Unable to load default spritesheets properties.");
-            e.printStackTrace();
-        }
+        loadSpritesheetProperties();
 
         if (sourceSetToUse == null) {
             sourceSetToUse = ResourceSet.allFiles;
@@ -257,6 +282,16 @@ public class Project implements ProjectTreeNode, Serializable {
 
         linkAll();
 
+    }
+
+    private void loadSpritesheetProperties() {
+        knownSpritesheetsProperties = new Properties();
+        try {
+            knownSpritesheetsProperties.load(Project.class.getResourceAsStream("/spritesheets.properties"));
+        } catch (IOException e) {
+            Notification.addWarn("Unable to load default spritesheets properties.");
+            e.printStackTrace();
+        }
     }
 
     public void linkAll() {
@@ -303,7 +338,7 @@ public class Project implements ProjectTreeNode, Serializable {
     }
 
     public void save() {
-        SettingsSave.saveInstance(this, new File(baseFolder, Project.SETTINGS_FILE), "Project " + this.name);
+        FileUtils.writeStringToFile(FileUtils.toJsonString(toMap()),new File(baseFolder, Project.SETTINGS_FILE_JSON), "Project " + this.name);
     }
 
 

@@ -53,6 +53,15 @@ public class FileUtils {
         return o;
     }
 
+    public static Map mapFromJsonFile(File file){
+        String json = readFileToString(file);
+        if (json == null) {
+            return null;
+        }
+        Map map = (Map)FileUtils.fromJsonString(json);
+        return map;
+    }
+
     public static boolean writeStringToFile(String toWrite, File file, String type) {
         return writeStringToFile(toWrite, file, type, true);
     }

@@ -111,7 +111,7 @@ public class Workspace implements ProjectTreeNode, Serializable, JsonSerializabl
     public static void setActive(File workspaceRoot) {
         Workspace w;
         File f2 = new File(workspaceRoot, WS_SETTINGS_FILE_JSON);
-        if (workspaceRoot.exists() && f2.exists()) {
+        if (f2.exists()) {
             w = loadWorkspaceFromJson(workspaceRoot, f2);
             w.refreshTransients();
         } else {
@@ -134,12 +134,9 @@ public class Workspace implements ProjectTreeNode, Serializable, JsonSerializabl
 
     private static Workspace loadWorkspaceFromJson(File workspaceRoot, File settingsFile) {
         Workspace w = w = new Workspace(workspaceRoot);
-        String json = FileUtils.readFileToString(settingsFile);
+        Map json = FileUtils.mapFromJsonFile(settingsFile);
         if (json!= null) {
-            Map map = (Map)FileUtils.fromJsonString(json);
-            if(map!= null){
-                w.fromMap(map);
-            }
+            w.fromMap(json);
         }
         return w;
     }
