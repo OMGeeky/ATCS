@@ -5,6 +5,8 @@ import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
 import com.gpl.rpg.atcontentstudio.io.JsonSerializable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -40,6 +42,17 @@ public class FileUtils {
         return writer.toString();
     }
 
+    public static Object fromJsonString(String json) {
+        Object o;
+        try {
+            JSONParser parser = new JSONParser();
+            o = parser.parse(json);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return o;
+    }
+
     public static boolean writeStringToFile(String toWrite, File file, String type) {
         return writeStringToFile(toWrite, file, type, true);
     }
@@ -59,6 +72,24 @@ public class FileUtils {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static String readFileToString(File settingsFile) {
+        String json;
+        try{
+            FileReader file = new FileReader(settingsFile);
+            BufferedReader reader = new BufferedReader(file);
+            StringBuilder builder = new StringBuilder();
+            int c;
+            while ((c = reader.read()) != -1) {
+                builder.append((char) c);
+            }
+            json = builder.toString();
+        }catch (IOException e){
+            json = null;
+            e.printStackTrace();
+        }
+        return json;
     }
 
     public static void deleteDir(File dir) {

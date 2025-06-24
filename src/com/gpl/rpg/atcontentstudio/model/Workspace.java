@@ -2,27 +2,29 @@ package com.gpl.rpg.atcontentstudio.model;
 
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.Notification;
+import com.gpl.rpg.atcontentstudio.io.JsonSerializable;
 import com.gpl.rpg.atcontentstudio.io.SettingsSave;
 import com.gpl.rpg.atcontentstudio.model.GameSource.Type;
 import com.gpl.rpg.atcontentstudio.model.gamedata.GameDataSet;
 import com.gpl.rpg.atcontentstudio.ui.ProjectsTree.ProjectsTreeModel;
 import com.gpl.rpg.atcontentstudio.ui.WorkerDialog;
+import com.gpl.rpg.atcontentstudio.utils.FileUtils;
+import org.jsoup.SerializationException;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.*;
 
-public class Workspace implements ProjectTreeNode, Serializable {
+public class Workspace implements ProjectTreeNode, Serializable, JsonSerializable {
 
     private static final long serialVersionUID = 7938633033601384956L;
 
     public static final String WS_SETTINGS_FILE = ".workspace";
+    public static final String WS_SETTINGS_FILE_JSON = ".workspace.json";
 
     public static Workspace activeWorkspace;
 
@@ -38,6 +40,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
     public transient ProjectsTreeModel projectsTreeModel = null;
 
     public Workspace(File workspaceRoot) {
+        boolean freshWorkspace = false;
         baseFolder = workspaceRoot;
         if (!workspaceRoot.exists()) {
             try {
@@ -49,35 +52,96 @@ public class Workspace implements ProjectTreeNode, Serializable {
             }
         }
         settings = new WorkspaceSettings(this);
-        settingsFile = new File(workspaceRoot, WS_SETTINGS_FILE);
+        settingsFile = new File(workspaceRoot, WS_SETTINGS_FILE_JSON);
         if (!settingsFile.exists()) {
             try {
                 settingsFile.createNewFile();
+                freshWorkspace = true;
             } catch (IOException e) {
                 Notification.addError("Error creating workspace datafile: "
                                               + e.getMessage());
                 e.printStackTrace();
             }
+            Notification.addSuccess("New workspace created: "
+                                            + workspaceRoot.getAbsolutePath());
         }
-        Notification.addSuccess("New workspace created: "
-                                        + workspaceRoot.getAbsolutePath());
-        save();
+        if (freshWorkspace)
+            save();
+    }
+
+    @Override
+    public Map toMap() {
+        Map map = new HashMap();
+        map.put("serialVersionUID", serialVersionUID);
+        map.put("preferences", preferences.toMap());
+        map.put("projectsName", (new ArrayList<String>(projectsName)));
+        map.put("projectsOpenByName", projectsOpenByName);
+        List<String> l = new ArrayList<>(knownMapSourcesFolders.size());
+        for (File f: knownMapSourcesFolders){
+            l.add(f.getPath());
+        }
+        map.put("knownMapSourcesFolders", l);
+        return map;
+    }
+
+    @Override
+    public void fromMap(Map map) {
+        if(serialVersionUID != (long) map.get("serialVersionUID")){
+            throw new SerializationException("wrong seriaVersionUID");
+        }
+
+        preferences.fromMap((Map) map.get("preferences"));
+
+        projectsName = new HashSet<>((List<String>) map.getOrDefault("projectsName", new HashSet<String>()));
+
+        projectsOpenByName = (Map<String, Boolean>) map.getOrDefault("projectsOpenByName", new HashMap<String, Boolean>() );
+
+        List<String> knownMapSourcesFolders1 = (List<String>) map.getOrDefault("knownMapSourcesFolders", new ArrayList<String>());
+        knownMapSourcesFolders = new HashSet<>();
+        if (knownMapSourcesFolders1 != null){
+            int size = knownMapSourcesFolders1.size();
+            for (String path: knownMapSourcesFolders1) {
+                //TODO: catch invalid paths...?
+                knownMapSourcesFolders.add(new File(path));
+            }
+        }
+
     }
 
     public static void setActive(File workspaceRoot) {
         Workspace w;
-        File f = new File(workspaceRoot, WS_SETTINGS_FILE);
-        if (!workspaceRoot.exists() || !f.exists()) {
-            w = new Workspace(workspaceRoot);
+        File f2 = new File(workspaceRoot, WS_SETTINGS_FILE_JSON);
+        if (workspaceRoot.exists() && f2.exists()) {
+            w = loadWorkspaceFromJson(workspaceRoot, f2);
+            w.refreshTransients();
         } else {
-            w = (Workspace) SettingsSave.loadInstance(f, "Workspace");
-            if (w == null) {
+            Notification.addInfo("Could not find json workspace file. Falling back to binary");
+            File f = new File(workspaceRoot, WS_SETTINGS_FILE);
+            if (!workspaceRoot.exists() || !f.exists()) {
                 w = new Workspace(workspaceRoot);
             } else {
-                w.refreshTransients();
+                w = (Workspace) SettingsSave.loadInstance(f, "Workspace");
+                if (w == null) {
+                    w = new Workspace(workspaceRoot);
+                    w.save();
+                } else {
+                    w.refreshTransients();
+                }
             }
         }
         activeWorkspace = w;
+    }
+
+    private static Workspace loadWorkspaceFromJson(File workspaceRoot, File settingsFile) {
+        Workspace w = w = new Workspace(workspaceRoot);
+        String json = FileUtils.readFileToString(settingsFile);
+        if (json!= null) {
+            Map map = (Map)FileUtils.fromJsonString(json);
+            if(map!= null){
+                w.fromMap(map);
+            }
+        }
+        return w;
     }
 
     public static void saveActive() {
@@ -86,7 +150,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
 
     public void save() {
         settings.save();
-        SettingsSave.saveInstance(this, settingsFile, "Workspace");
+        FileUtils.writeStringToFile(FileUtils.toJsonString(this), settingsFile, "Workspace");
     }
 
     @Override
@@ -356,5 +420,4 @@ public class Workspace implements ProjectTreeNode, Serializable {
         }
         return false;
     }
-
 }
