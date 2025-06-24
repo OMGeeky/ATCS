@@ -105,6 +105,29 @@ public class CommonEditor {
             hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToTargetHint), effect.target.ap_boost_min, true, writable, listener);
             hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToTargetHint), effect.target.ap_boost_max, true, writable, listener);
         }
+
+
+        @Override
+        public boolean valueChanged(JComponent source, Object value, GameDataElement backlink) {
+            boolean updateHitReceived = super.valueChanged(source, value, backlink);
+            if (!updateHitReceived) {
+                if (source == hitReceivedEffectHPMinTarget) {
+                    effect.target.hp_boost_min = (Integer) value;
+                    updateHitReceived = true;
+                } else if (source == hitReceivedEffectHPMaxTarget) {
+                    effect.target.hp_boost_max = (Integer) value;
+                    updateHitReceived = true;
+                } else if (source == hitReceivedEffectAPMinTarget) {
+                    effect.target.ap_boost_min = (Integer) value;
+                    updateHitReceived = true;
+                } else if (source == hitReceivedEffectAPMaxTarget) {
+                    effect.target.ap_boost_max = (Integer) value;
+                    updateHitReceived = true;
+                }
+            }
+
+            return updateHitReceived;
+        }
     }
 
     public static class HitEffectPane<EFFECT extends Common.HitEffect, LIST_MODEL_SOURCE, ELEMENT extends Common.TimedActorConditionEffect, MODEL extends OrderedListenerListModel<LIST_MODEL_SOURCE, ELEMENT>> extends DeathEffectPane<EFFECT, LIST_MODEL_SOURCE, ELEMENT, MODEL> {
