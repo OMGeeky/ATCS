@@ -6,3 +6,5 @@ There are probably a lot of things that could be optimized, which will not be on
 
 
 - check, why for example the "Forever" button is active for not altered entities (ex.: NPC->hitEffect) if they have a condition already there
+  - apparently that's always been like that... (or at least on the most recent main branch)
+
