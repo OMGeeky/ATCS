@@ -374,6 +374,8 @@ public class ItemEditor extends JSONElementEditor {
                     updateKill = true;
                     hitReceivedEffectPane.effectPane.setVisible(false);
                     item.hit_received_effect = null;
+                    updateHitReceived = true;
+                    updateEquip = true;
                     killEffectPane.effectPane.setTitle(useLabel);
                     ItemEditor.this.revalidate();
                     ItemEditor.this.repaint();
@@ -383,6 +385,7 @@ public class ItemEditor extends JSONElementEditor {
                     killEffectPane.effectPane.setVisible(true);
                     updateKill = true;
                     hitReceivedEffectPane.effectPane.setVisible(true);
+                    updateHitReceived = true;
                     updateEquip = true;
                     killEffectPane.effectPane.setTitle(killLabel);
                     ItemEditor.this.revalidate();
