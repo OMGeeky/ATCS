@@ -27,8 +27,7 @@ public class CommonEditor {
         @Override
         public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c instanceof JLabel) {
-                JLabel label = ((JLabel) c);
+            if (c instanceof JLabel label) {
                 Common.TimedActorConditionEffect effect = (Common.TimedActorConditionEffect) value;
 
                 if (effect.condition != null) {
@@ -39,13 +38,16 @@ public class CommonEditor {
 
                     if (clear) {
                         label.setIcon(new ImageIcon(effect.condition.getIcon()));
-                        label.setText(effect.chance + "% chances to clear actor condition " + effect.condition.getDesc());
+                        label.setText(
+                                effect.chance + "% chances to clear actor condition " + effect.condition.getDesc());
                     } else if (immunity) {
                         label.setIcon(new OverlayIcon(effect.condition.getIcon(), DefaultIcons.getImmunityIcon()));
-                        label.setText(effect.chance + "% chances to give immunity to " + effect.condition.getDesc() + (forever ? " forever" : " for " + effect.duration + " rounds"));
+                        label.setText(
+                                effect.chance + "% chances to give immunity to " + effect.condition.getDesc() + (forever ? " forever" : " for " + effect.duration + " rounds"));
                     } else {
                         label.setIcon(new ImageIcon(effect.condition.getIcon()));
-                        label.setText(effect.chance + "% chances to give actor condition " + effect.condition.getDesc() + " x" + effect.magnitude + (forever ? " forever" : " for " + effect.duration + " rounds"));
+                        label.setText(
+                                effect.chance + "% chances to give actor condition " + effect.condition.getDesc() + " x" + effect.magnitude + (forever ? " forever" : " for " + effect.duration + " rounds"));
                     }
                 } else {
                     label.setText("New, undefined actor condition effect.");
@@ -61,8 +63,7 @@ public class CommonEditor {
         @Override
         public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c instanceof JLabel) {
-                JLabel label = ((JLabel) c);
+            if (c instanceof JLabel label) {
                 Common.ActorConditionEffect effect = (Common.ActorConditionEffect) value;
 
                 if (effect.condition != null) {
@@ -97,13 +98,18 @@ public class CommonEditor {
             effect = e;
             createHitEffectPaneContent(listener, writable, e, sourceConditionsModelInput, targetConditionsModelInput);
         }
+
         @Override
         protected void addFields(FieldUpdateListener listener, boolean writable) {
             super.addFields(listener, writable);
-            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToTargetHint), effect.target.hp_boost_min, true, writable, listener);
-            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToTargetHint), effect.target.hp_boost_max, true, writable, listener);
-            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToTargetHint), effect.target.ap_boost_min, true, writable, listener);
-            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToTargetHint), effect.target.ap_boost_max, true, writable, listener);
+            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToTargetHint),
+                                                           effect.target.hp_boost_min, true, writable, listener);
+            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToTargetHint),
+                                                           effect.target.hp_boost_max, true, writable, listener);
+            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToTargetHint),
+                                                           effect.target.ap_boost_min, true, writable, listener);
+            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToTargetHint),
+                                                           effect.target.ap_boost_max, true, writable, listener);
         }
 
 
@@ -180,21 +186,14 @@ public class CommonEditor {
             BasicLambdaWithArg<ELEMENT> selectedSetTarget = (value) -> selectedHitEffectTargetCondition = value;
             BasicLambdaWithReturn<ELEMENT> selectedGetTarget = () -> selectedHitEffectTargetCondition;
             BasicLambda selectedResetTarget = () -> selectedHitEffectTargetCondition = null;
-            BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(editorPane, selectedHitEffectTargetCondition, listener, this.editor);
+            BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> updateHitTargetTimedConditionEditorPane(
+                    editorPane, selectedHitEffectTargetCondition, listener, this.editor);
 
-            var resultTarget = UiUtils.getCollapsibleItemList(listener,
-                    hitTargetConditionsListModel,
-                    selectedResetTarget,
-                    selectedSetTarget,
-                    selectedGetTarget,
-                    (x) -> {
-                    },
-                    updatePaneTarget,
-                    writable,
-                    this.conditionSupplier,
-                    cellRendererTarget,
-                    titleTarget,
-                    (x) -> null);
+            var resultTarget = UiUtils.getCollapsibleItemList(listener, hitTargetConditionsListModel,
+                                                              selectedResetTarget, selectedSetTarget, selectedGetTarget,
+                                                              (x) -> {
+                                                              }, updatePaneTarget, writable, this.conditionSupplier,
+                                                              cellRendererTarget, titleTarget, (x) -> null);
             hitTargetConditionsList = resultTarget.list;
             CollapsiblePanel hitTargetConditionsPane = resultTarget.collapsiblePanel;
             if (effect == null || effect.conditions_target == null || effect.conditions_target.isEmpty()) {
@@ -212,13 +211,16 @@ public class CommonEditor {
             boolean writable = e.target.writable;
             Project proj = e.target.getProject();
 
-            hitTargetConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
-            hitTargetConditionChance = e.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
+            hitTargetConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition,
+                                                           writable, listener);
+            hitTargetConditionChance = Editor.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
             hitTargetConditionClear = new JRadioButton("Clear active condition");
             pane.add(hitTargetConditionClear, JideBoxLayout.FIX);
             hitTargetConditionApply = new JRadioButton("Apply condition with magnitude");
             pane.add(hitTargetConditionApply, JideBoxLayout.FIX);
-            hitTargetConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
+            hitTargetConditionMagnitude = addIntegerField(pane, "Magnitude: ",
+                                                          condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0,
+                                                          1, false, writable, listener);
             hitTargetConditionImmunity = new JRadioButton("Give immunity to condition");
             pane.add(hitTargetConditionImmunity, JideBoxLayout.FIX);
 
@@ -229,7 +231,8 @@ public class CommonEditor {
 
             hitTargetConditionTimed = new JRadioButton("For a number of rounds");
             pane.add(hitTargetConditionTimed, JideBoxLayout.FIX);
-            hitTargetConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
+            hitTargetConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable,
+                                                         listener);
             hitTargetConditionForever = new JRadioButton("Forever");
             pane.add(hitTargetConditionForever, JideBoxLayout.FIX);
 
@@ -242,32 +245,32 @@ public class CommonEditor {
             hitTargetConditionClear.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitTargetConditionClear, new Boolean(hitTargetConditionClear.isSelected()));
+                    listener.valueChanged(hitTargetConditionClear, hitTargetConditionClear.isSelected());
                 }
             });
             hitTargetConditionApply.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitTargetConditionApply, new Boolean(hitTargetConditionApply.isSelected()));
+                    listener.valueChanged(hitTargetConditionApply, hitTargetConditionApply.isSelected());
                 }
             });
             hitTargetConditionImmunity.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitTargetConditionImmunity, new Boolean(hitTargetConditionImmunity.isSelected()));
+                    listener.valueChanged(hitTargetConditionImmunity, hitTargetConditionImmunity.isSelected());
                 }
             });
 
             hitTargetConditionTimed.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitTargetConditionTimed, new Boolean(hitTargetConditionTimed.isSelected()));
+                    listener.valueChanged(hitTargetConditionTimed, hitTargetConditionTimed.isSelected());
                 }
             });
             hitTargetConditionForever.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(hitTargetConditionForever, new Boolean(hitTargetConditionForever.isSelected()));
+                    listener.valueChanged(hitTargetConditionForever, hitTargetConditionForever.isSelected());
                 }
             });
             pane.revalidate();
@@ -298,7 +301,8 @@ public class CommonEditor {
                 if (source == hitTargetConditionsList) {
                     updateHit = true;
                 } else if (source == hitTargetConditionBox) {
-                    editor.updateConditionEffect((ActorCondition) value, backlink, selectedHitEffectTargetCondition, hitTargetConditionsListModel);
+                    editor.updateConditionEffect((ActorCondition) value, backlink, selectedHitEffectTargetCondition,
+                                                 hitTargetConditionsListModel);
                 } else if (source == hitTargetConditionClear && (Boolean) value) {
                     selectedHitEffectTargetCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
                     selectedHitEffectTargetCondition.duration = null;
@@ -409,10 +413,14 @@ public class CommonEditor {
         }
 
         protected void addFields(FieldUpdateListener listener, boolean writable) {
-            effectHPMin = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToHint), effect.hp_boost_min, true, writable, listener);
-            effectHPMax = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToHint), effect.hp_boost_max, true, writable, listener);
-            effectAPMin = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToHint), effect.ap_boost_min, true, writable, listener);
-            effectAPMax = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToHint), effect.ap_boost_max, true, writable, listener);
+            effectHPMin = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToHint), effect.hp_boost_min,
+                                          true, writable, listener);
+            effectHPMax = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToHint), effect.hp_boost_max,
+                                          true, writable, listener);
+            effectAPMin = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToHint), effect.ap_boost_min,
+                                          true, writable, listener);
+            effectAPMax = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToHint), effect.ap_boost_max,
+                                          true, writable, listener);
         }
 
         protected void addLists(FieldUpdateListener listener, boolean writable) {
@@ -421,21 +429,12 @@ public class CommonEditor {
             BasicLambdaWithArg<ELEMENT> selectedSetSource = (value) -> selectedEffectSourceCondition = value;
             BasicLambdaWithReturn<ELEMENT> selectedGetSource = () -> selectedEffectSourceCondition;
             BasicLambda selectedResetSource = () -> selectedEffectSourceCondition = null;
-            BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> updateEffectSourceTimedConditionEditorPane(editorPane, selectedEffectSourceCondition, listener, editor);
+            BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> updateEffectSourceTimedConditionEditorPane(
+                    editorPane, selectedEffectSourceCondition, listener, editor);
 
-            var resultSource = UiUtils.getCollapsibleItemList(listener,
-                    this.sourceConditionsModel,
-                    selectedResetSource,
-                    selectedSetSource,
-                    selectedGetSource,
-                    (x) -> {
-                    },
-                    updatePaneSource,
-                    writable,
-                    conditionSupplier,
-                    cellRendererSource,
-                    titleSource,
-                    (x) -> null);
+            var resultSource = UiUtils.getCollapsibleItemList(listener, this.sourceConditionsModel, selectedResetSource,
+                                                              selectedSetSource, selectedGetSource, (x) -> {
+                    }, updatePaneSource, writable, conditionSupplier, cellRendererSource, titleSource, (x) -> null);
             sourceConditionsList = resultSource.list;
             CollapsiblePanel sourceConditionsPane = resultSource.collapsiblePanel;
             if (effect == null || effect.conditions_source == null || effect.conditions_source.isEmpty()) {
@@ -453,14 +452,17 @@ public class CommonEditor {
             boolean writable = e.target.writable;
             Project proj = e.target.getProject();
 
-            sourceConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable, listener);
-            sourceConditionChance = e.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
+            sourceConditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable,
+                                                        listener);
+            sourceConditionChance = Editor.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
 
             sourceConditionClear = new JRadioButton("Clear active condition");
             pane.add(sourceConditionClear, JideBoxLayout.FIX);
             sourceConditionApply = new JRadioButton("Apply condition with magnitude");
             pane.add(sourceConditionApply, JideBoxLayout.FIX);
-            sourceConditionMagnitude = addIntegerField(pane, "Magnitude: ", condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0, 1, false, writable, listener);
+            sourceConditionMagnitude = addIntegerField(pane, "Magnitude: ",
+                                                       condition.magnitude == null ? null : condition.magnitude >= 0 ? condition.magnitude : 0,
+                                                       1, false, writable, listener);
             sourceConditionImmunity = new JRadioButton("Give immunity to condition");
             pane.add(sourceConditionImmunity, JideBoxLayout.FIX);
 
@@ -471,7 +473,8 @@ public class CommonEditor {
 
             sourceConditionTimed = new JRadioButton("For a number of rounds");
             pane.add(sourceConditionTimed, JideBoxLayout.FIX);
-            sourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable, listener);
+            sourceConditionDuration = addIntegerField(pane, "Duration: ", condition.duration, 1, false, writable,
+                                                      listener);
             sourceConditionForever = new JRadioButton("Forever");
             pane.add(sourceConditionForever, JideBoxLayout.FIX);
 
@@ -484,32 +487,32 @@ public class CommonEditor {
             sourceConditionClear.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(sourceConditionClear, new Boolean(sourceConditionClear.isSelected()));
+                    listener.valueChanged(sourceConditionClear, sourceConditionClear.isSelected());
                 }
             });
             sourceConditionApply.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(sourceConditionApply, new Boolean(sourceConditionApply.isSelected()));
+                    listener.valueChanged(sourceConditionApply, sourceConditionApply.isSelected());
                 }
             });
             sourceConditionImmunity.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(sourceConditionImmunity, new Boolean(sourceConditionImmunity.isSelected()));
+                    listener.valueChanged(sourceConditionImmunity, sourceConditionImmunity.isSelected());
                 }
             });
 
             sourceConditionTimed.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(sourceConditionTimed, new Boolean(sourceConditionTimed.isSelected()));
+                    listener.valueChanged(sourceConditionTimed, sourceConditionTimed.isSelected());
                 }
             });
             sourceConditionForever.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    listener.valueChanged(sourceConditionForever, new Boolean(sourceConditionForever.isSelected()));
+                    listener.valueChanged(sourceConditionForever, sourceConditionForever.isSelected());
                 }
             });
             pane.revalidate();
