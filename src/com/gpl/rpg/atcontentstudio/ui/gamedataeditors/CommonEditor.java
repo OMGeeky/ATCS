@@ -350,6 +350,11 @@ public class CommonEditor {
             if (conditionBox != null) {
                 editor.removeElementListener(conditionBox);
             }
+            if (condition == null) {
+                pane.revalidate();
+                pane.repaint();
+                return;
+            }
 
             boolean writable = editor.target.writable;
             Project proj = editor.target.getProject();
