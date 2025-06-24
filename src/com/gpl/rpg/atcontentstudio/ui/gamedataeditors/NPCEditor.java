@@ -53,9 +53,9 @@ public class NPCEditor extends JSONElementEditor {
     private JSpinner blockChance;
     private JSpinner dmgRes;
 
-    private CommonEditor.HitEffectPane hitEffectPane;
-    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane;
-    private CommonEditor.DeathEffectPane deathEffectPane;
+    private CommonEditor.HitEffectPane hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
+    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", Common.TimedActorConditionEffect::new, this, "NPC", "Attacker");
+    private CommonEditor.DeathEffectPane deathEffectPane = new CommonEditor.DeathEffectPane("Effect when killed: ", Common.TimedActorConditionEffect::new, this, "Killer");
 
     private JPanel dialogueGraphPane;
     private DialogueGraphView dialogueGraphView;
@@ -149,8 +149,6 @@ public class NPCEditor extends JSONElementEditor {
         } else {
             hitEffect = npc.hit_effect;
         }
-        if (hitEffectPane == null)
-            hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
         hitEffectPane.createHitEffectPaneContent(listener, npc.writable, hitEffect, new CommonEditor.SourceTimedConditionsListModel(hitEffect), new CommonEditor.TargetTimedConditionsListModel(hitEffect));
         combatTraitPane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
@@ -160,8 +158,6 @@ public class NPCEditor extends JSONElementEditor {
         } else {
             hitReceivedEffect = npc.hit_received_effect;
         }
-        if (hitReceivedEffectPane == null)
-            hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", Common.TimedActorConditionEffect::new, this, "NPC", "Attacker");
         hitReceivedEffectPane.createHitReceivedEffectPaneContent(listener, npc.writable, hitReceivedEffect, new CommonEditor.SourceTimedConditionsListModel(hitReceivedEffect), new CommonEditor.TargetTimedConditionsListModel(hitReceivedEffect));
         combatTraitPane.add(hitReceivedEffectPane.effectPane, JideBoxLayout.FIX);
 
@@ -171,10 +167,7 @@ public class NPCEditor extends JSONElementEditor {
         } else {
             deathEffect = npc.death_effect;
         }
-        if (deathEffectPane == null)
-            deathEffectPane = new CommonEditor.DeathEffectPane("Effect when killed: ", Common.TimedActorConditionEffect::new, this, "Killer");
-        deathEffectPane.createDeathEffectPaneContent(listener, npc.writable, deathEffect, new CommonEditor.SourceTimedConditionsListModel(deathEffect)
-        );
+        deathEffectPane.createDeathEffectPaneContent(listener, npc.writable, deathEffect, new CommonEditor.SourceTimedConditionsListModel(deathEffect));
         combatTraitPane.add(deathEffectPane.effectPane, JideBoxLayout.FIX);
 
         pane.add(combatTraitPane, JideBoxLayout.FIX);
@@ -274,11 +267,11 @@ public class NPCEditor extends JSONElementEditor {
                 npc.block_chance = (Integer) value;
             } else if (source == dmgRes) {
                 npc.damage_resistance = (Integer) value;
-            } else if(hitEffectPane != null &&hitEffectPane.valueChanged(source, value, npc)) {
+            } else if(hitEffectPane.valueChanged(source, value, npc)) {
                 updateHit = true;
-            } else if (hitReceivedEffectPane != null && hitReceivedEffectPane.valueChanged(source, value, npc)) {
+            } else if (hitReceivedEffectPane.valueChanged(source, value, npc)) {
                 updateHitReceived = true;
-            } else if (deathEffectPane != null && deathEffectPane.valueChanged(source, value, npc)) {
+            } else if (deathEffectPane.valueChanged(source, value, npc)) {
                 updateDeath = true;
             }
 

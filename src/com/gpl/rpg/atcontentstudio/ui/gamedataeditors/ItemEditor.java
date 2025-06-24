@@ -68,9 +68,9 @@ public class ItemEditor extends JSONElementEditor {
     private JRadioButton equipConditionImmunity;
     private JSpinner equipConditionMagnitude;
 
-    private CommonEditor.HitEffectPane hitEffectPane;
-    private CommonEditor.DeathEffectPane killEffectPane;
-    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane;
+    private CommonEditor.HitEffectPane hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
+    private CommonEditor.DeathEffectPane killEffectPane = new CommonEditor.DeathEffectPane(killLabel, Common.TimedActorConditionEffect::new, this, null);
+    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", Common.TimedActorConditionEffect::new, this, null, null);
 
     public ItemEditor(Item item) {
         super(item, item.getDesc(), item.getIcon());
@@ -159,8 +159,6 @@ public class ItemEditor extends JSONElementEditor {
         } else {
             hitEffect = item.hit_effect;
         }
-        if (hitEffectPane == null)
-            hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
         hitEffectPane.createHitEffectPaneContent(listener, item.writable, hitEffect, new CommonEditor.SourceTimedConditionsListModel(hitEffect), new CommonEditor.TargetTimedConditionsListModel(hitEffect));
         pane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
@@ -170,8 +168,6 @@ public class ItemEditor extends JSONElementEditor {
         } else {
             killEffect = item.kill_effect;
         }
-        if (killEffectPane == null)
-            killEffectPane = new CommonEditor.DeathEffectPane(killLabel, Common.TimedActorConditionEffect::new, this, null);
         killEffectPane.createDeathEffectPaneContent(listener, item.writable, killEffect, new CommonEditor.SourceTimedConditionsListModel(killEffect));
         pane.add(killEffectPane.effectPane, JideBoxLayout.FIX);
 
@@ -181,8 +177,6 @@ public class ItemEditor extends JSONElementEditor {
         } else {
             hitReceivedEffect = item.hit_received_effect;
         }
-        if (hitReceivedEffectPane == null)
-            hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", Common.TimedActorConditionEffect::new, this, null, null);
         hitReceivedEffectPane.createHitReceivedEffectPaneContent(listener, item.writable, hitReceivedEffect, new CommonEditor.SourceTimedConditionsListModel(hitReceivedEffect), new CommonEditor.TargetTimedConditionsListModel(hitReceivedEffect));
         pane.add(killEffectPane.effectPane, JideBoxLayout.FIX);
 
