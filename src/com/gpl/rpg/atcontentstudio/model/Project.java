@@ -64,7 +64,7 @@ public class Project implements ProjectTreeNode, Serializable {
     public transient BookmarksRoot bookmarks;
 
 
-    public SavedGamesSet saves; //For simulations.
+//    public SavedGamesSet saves; //For simulations.
 
     public transient SavedSlotCollection v;
 
@@ -113,13 +113,13 @@ public class Project implements ProjectTreeNode, Serializable {
         createdContent = new GameSource(this, GameSource.Type.created);
         bookmarks = new BookmarksRoot(this);
 
-        saves = new SavedGamesSet(this);
+//        saves = new SavedGamesSet(this);
 
         v.add(createdContent);
         v.add(alteredContent);
 //		v.add(referencedContent);
         v.add(baseContent);
-        v.add(saves);
+//        v.add(saves);
         v.add(bookmarks);
 
         linkAll();
@@ -244,14 +244,14 @@ public class Project implements ProjectTreeNode, Serializable {
         createdContent = new GameSource(this, GameSource.Type.created);
         bookmarks = new BookmarksRoot(this);
 
-        saves.refreshTransients();
+//        saves.refreshTransients();
 
         v = new SavedSlotCollection();
         v.add(createdContent);
         v.add(alteredContent);
 //		v.add(referencedContent);
         v.add(baseContent);
-        v.add(saves);
+//        v.add(saves);
         v.add(bookmarks);
 
 
@@ -982,7 +982,7 @@ public class Project implements ProjectTreeNode, Serializable {
 
 
     public void addSave(File selectedFile) {
-        saves.addSave(selectedFile);
+//        saves.addSave(selectedFile);
     }
 
 
