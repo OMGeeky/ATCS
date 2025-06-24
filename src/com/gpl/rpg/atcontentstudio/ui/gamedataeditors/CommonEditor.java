@@ -321,20 +321,28 @@ public class CommonEditor {
             this.editor = editor;
         }
 
-        public  void updateEffectTimedConditionWidgets(ELEMENT condition) {
+        public void updateEffectTimedConditionWidgets(ELEMENT condition) {
+            boolean writable = editor.target.writable;
+
             boolean immunity = condition.isImmunity();
             boolean clear = condition.isClear();
             boolean forever = condition.isInfinite();
 
             conditionClear.setSelected(clear);
             conditionApply.setSelected(!clear && !immunity);
-            conditionMagnitude.setEnabled(!clear && !immunity);
             conditionImmunity.setSelected(immunity);
             conditionTimed.setSelected(!forever);
-            conditionTimed.setEnabled(!clear);
-            conditionDuration.setEnabled(!clear && !forever);
             conditionForever.setSelected(forever);
-            conditionForever.setEnabled(!clear);
+
+            conditionDuration.setEnabled(!clear && !forever && writable);
+
+            conditionClear.setEnabled(writable);
+            conditionApply.setEnabled(writable);
+            conditionMagnitude.setEnabled(!clear && !immunity && writable);
+
+            conditionImmunity.setEnabled(writable);
+            conditionTimed.setEnabled(!clear && writable);
+            conditionForever.setEnabled(!clear && writable);
         }
 
         public void updateEffectTimedConditionEditorPane(JPanel pane, ELEMENT condition, final FieldUpdateListener listener) {
