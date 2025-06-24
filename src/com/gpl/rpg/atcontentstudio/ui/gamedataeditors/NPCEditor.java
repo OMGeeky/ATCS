@@ -212,38 +212,6 @@ public class NPCEditor extends JSONElementEditor {
         }
     }
 
-    public static boolean isNull(Common.HitEffect effect) {
-        if (effect.ap_boost_min != null) return false;
-        if (effect.ap_boost_max != null) return false;
-        if (effect.hp_boost_min != null) return false;
-        if (effect.hp_boost_max != null) return false;
-        if (effect.conditions_source != null) return false;
-        if (effect.conditions_target != null) return false;
-        return true;
-    }
-
-    public static boolean isNull(Common.HitReceivedEffect effect) {
-        if (effect.ap_boost_min != null) return false;
-        if (effect.ap_boost_max != null) return false;
-        if (effect.hp_boost_min != null) return false;
-        if (effect.hp_boost_max != null) return false;
-        if (effect.target.ap_boost_min != null) return false;
-        if (effect.target.ap_boost_max != null) return false;
-        if (effect.target.hp_boost_min != null) return false;
-        if (effect.target.hp_boost_max != null) return false;
-        if (effect.conditions_source != null) return false;
-        if (effect.conditions_target != null) return false;
-        return true;
-    }
-
-    public static boolean isNull(Common.DeathEffect effect) {
-        if (effect.ap_boost_min != null) return false;
-        if (effect.ap_boost_max != null) return false;
-        if (effect.hp_boost_min != null) return false;
-        if (effect.hp_boost_max != null) return false;
-        if (effect.conditions_source != null) return false;
-        return true;
-    }
 
     public class NPCFieldUpdater implements FieldUpdateListener {
 
@@ -346,21 +314,21 @@ public class NPCEditor extends JSONElementEditor {
             }
 
             if (updateHit) {
-                if (isNull(hitEffectPane.effect)) {
+                if (hitEffectPane.effect.isNull()) {
                     npc.hit_effect = null;
                 } else {
                     npc.hit_effect = hitEffectPane.effect;
                 }
             }
             if (updateHitReceived) {
-                if (isNull(hitEffectPane.effect)) {
+                if (hitEffectPane.effect.isNull()) {
                     npc.hit_received_effect = null;
                 } else {
                     npc.hit_received_effect = hitReceivedEffectPane.effect;
                 }
             }
             if (updateDeath) {
-                if (isNull(deathEffectPane. effect)) {
+                if (deathEffectPane.effect.isNull()) {
                     npc.death_effect = null;
                 } else {
                     npc.death_effect = deathEffectPane. effect;

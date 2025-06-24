@@ -270,21 +270,47 @@ public final class Common {
         public Integer hp_boost_max = null;
         public Integer ap_boost_min = null;
         public Integer ap_boost_max = null;
+
+        public boolean isNull() {
+            if (ap_boost_min != null) return false;
+            if (ap_boost_max != null) return false;
+            if (hp_boost_min != null) return false;
+            if (hp_boost_max != null) return false;
+            return true;
+        }
     }
 
     public static class DeathEffect extends BasicEffect {
         //Available from parsed state
         public List<TimedActorConditionEffect> conditions_source = null;
+        @Override
+        public boolean isNull(){
+            if(!super.isNull()) return false;
+            if (conditions_source != null) return false;
+            return true;
+        }
     }
 
     public static class HitEffect extends DeathEffect {
         //Available from parsed state
         public List<TimedActorConditionEffect> conditions_target = null;
+        @Override
+        public boolean isNull(){
+            if(!super.isNull()) return false;
+            if (conditions_target != null) return false;
+            return true;
+        }
     }
 
     public static class HitReceivedEffect extends Common.HitEffect {
         //Available from parsed state
         public BasicEffect target = new BasicEffect();
+        @Override
+        public boolean isNull(){
+            if(!super.isNull()) return false;
+            if (!target.isNull()) return false;
+            return true;
+        }
     }
 
 
