@@ -50,6 +50,7 @@ public class AboutEditor extends Editor {
                     "Quentin Delvallet<br/>" +
                     "Žižkin<br/>" +
                     "Gonk<br/>" +
+                    "<a href=\"https://github.com/OMGeeky\">OMGeeky</a><br/>" +
                     "<br/>" +
                     "This project uses the following libraries:<br/>" +
                     "<a href=\"http://code.google.com/p/json-simple/\">JSON.simple</a> by Yidong Fang & Chris Nokleberg.<br/>" +
