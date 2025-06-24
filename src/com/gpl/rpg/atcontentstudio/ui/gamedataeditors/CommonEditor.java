@@ -445,18 +445,14 @@ public class CommonEditor {
             } else if (source == conditionApply && (Boolean) value) {
                 selectedCondition.magnitude = (Integer) conditionMagnitude.getValue();
                 selectedCondition.duration = conditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) conditionDuration.getValue();
-                if (selectedCondition.duration == null || selectedCondition.duration == ActorCondition.DURATION_NONE) {
-                    selectedCondition.duration = 1;
-                }
+                setDurationToDefaultIfNone();
                 updateEffectTimedConditionWidgets(selectedCondition);
                 conditionsModel.itemChanged(selectedCondition);
                 updateHit = true;
             } else if (source == conditionImmunity && (Boolean) value) {
                 selectedCondition.magnitude = ActorCondition.MAGNITUDE_CLEAR;
                 selectedCondition.duration = conditionForever.isSelected() ? ActorCondition.DURATION_FOREVER : (Integer) conditionDuration.getValue();
-                if (selectedCondition.duration == null || selectedCondition.duration == ActorCondition.DURATION_NONE) {
-                    selectedCondition.duration = 1;
-                }
+                setDurationToDefaultIfNone();
                 updateEffectTimedConditionWidgets(selectedCondition);
                 conditionsModel.itemChanged(selectedCondition);
                 updateHit = true;
@@ -466,9 +462,7 @@ public class CommonEditor {
                 updateHit = true;
             } else if (source == conditionTimed && (Boolean) value) {
                 selectedCondition.duration = (Integer) conditionDuration.getValue();
-                if (selectedCondition.duration == null || selectedCondition.duration == ActorCondition.DURATION_NONE) {
-                    selectedCondition.duration = 1;
-                }
+                setDurationToDefaultIfNone();
                 updateEffectTimedConditionWidgets(selectedCondition);
                 conditionsModel.itemChanged(selectedCondition);
                 updateHit = true;
@@ -486,6 +480,12 @@ public class CommonEditor {
                 conditionsModel.itemChanged(selectedCondition);
             }
             return updateHit;
+        }
+
+        private void setDurationToDefaultIfNone() {
+            if (selectedCondition.duration == null || selectedCondition.duration == ActorCondition.DURATION_NONE) {
+                selectedCondition.duration = 1;
+            }
         }
     }
 
