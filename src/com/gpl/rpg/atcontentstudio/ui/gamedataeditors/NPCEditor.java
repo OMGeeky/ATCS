@@ -321,7 +321,7 @@ public class NPCEditor extends JSONElementEditor {
                 }
             }
             if (updateHitReceived) {
-                if (hitEffectPane.effect.isNull()) {
+                if (hitReceivedEffectPane.effect.isNull()) {
                     npc.hit_received_effect = null;
                 } else {
                     npc.hit_received_effect = hitReceivedEffectPane.effect;
