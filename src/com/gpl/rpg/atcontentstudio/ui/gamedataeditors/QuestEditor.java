@@ -5,7 +5,9 @@ import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
 import com.gpl.rpg.atcontentstudio.model.gamedata.Quest;
 import com.gpl.rpg.atcontentstudio.model.gamedata.QuestStage;
-import com.gpl.rpg.atcontentstudio.ui.*;
+import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
+import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambda;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithArg;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithReturn;
@@ -13,11 +15,7 @@ import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,23 +62,24 @@ public class QuestEditor extends JSONElementEditor {
         String title = "Quest stages: ";
         StagesCellRenderer cellRenderer = new StagesCellRenderer();
         stagesListModel = new StagesListModel(quest);
-        BasicLambdaWithArg<QuestStage> selectedSet = (value)->selectedStage = value;
-        BasicLambdaWithReturn<QuestStage> selectedGet = ()->selectedStage ;
-        BasicLambda selectedReset = ()->selectedStage = null;
+        BasicLambdaWithArg<QuestStage> selectedSet = (value) -> selectedStage = value;
+        BasicLambdaWithReturn<QuestStage> selectedGet = () -> selectedStage;
+        BasicLambda selectedReset = () -> selectedStage = null;
         BasicLambdaWithArg<JPanel> updatePane = (editorPane) -> updateStageEditorPane(editorPane, selectedStage, listener);
 
         var result = UiUtils.getCollapsibleItemList(listener,
-                stagesListModel,
-                selectedReset,
-                selectedSet,
-                selectedGet,
-                (x) -> {},
-                updatePane,
-                quest.writable,
-                () -> new QuestStage(quest),
-                cellRenderer,
-                title,
-                (x) -> null);
+                                                    stagesListModel,
+                                                    selectedReset,
+                                                    selectedSet,
+                                                    selectedGet,
+                                                    (x) -> {
+                                                    },
+                                                    updatePane,
+                                                    quest.writable,
+                                                    () -> new QuestStage(quest),
+                                                    cellRenderer,
+                                                    title,
+                                                    (x) -> null);
         stagesList = result.list;
 
         if (quest.stages == null || quest.stages.isEmpty()) {

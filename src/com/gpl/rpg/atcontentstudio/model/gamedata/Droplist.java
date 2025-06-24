@@ -128,10 +128,10 @@ public class Droplist extends JSONElement {
 
     @Override
     public void link() {
-		if (shouldSkipParseOrLink()) {
-			return;
-		}
-		ensureParseIfNeeded();
+        if (shouldSkipParseOrLink()) {
+            return;
+        }
+        ensureParseIfNeeded();
         Project proj = getProject();
         if (proj == null) {
             Notification.addError("Error linking droplist " + id + ". No parent project found.");

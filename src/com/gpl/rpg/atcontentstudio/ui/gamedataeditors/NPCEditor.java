@@ -3,9 +3,13 @@ package com.gpl.rpg.atcontentstudio.ui.gamedataeditors;
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
-import com.gpl.rpg.atcontentstudio.model.gamedata.*;
+import com.gpl.rpg.atcontentstudio.model.gamedata.Dialogue;
+import com.gpl.rpg.atcontentstudio.model.gamedata.Droplist;
+import com.gpl.rpg.atcontentstudio.model.gamedata.NPC;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
-import com.gpl.rpg.atcontentstudio.ui.*;
+import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
+import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
 import com.gpl.rpg.atcontentstudio.ui.gamedataeditors.dialoguetree.DialogueGraphView;
 import com.gpl.rpg.atcontentstudio.utils.UiUtils;
 import com.jidesoft.swing.JideBoxLayout;
@@ -15,7 +19,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.*;
@@ -57,7 +60,8 @@ public class NPCEditor extends JSONElementEditor {
     private JSpinner dmgRes;
 
     private CommonEditor.HitEffectPane hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", TimedActorConditionEffect::new, this, null, null);
-    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", TimedActorConditionEffect::new, this, "NPC", "Attacker");
+    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", TimedActorConditionEffect::new, this, "NPC",
+                                                                                                              "Attacker");
     private CommonEditor.DeathEffectPane deathEffectPane = new CommonEditor.DeathEffectPane("Effect when killed: ", TimedActorConditionEffect::new, this, "Killer");
 
     private JPanel dialogueGraphPane;
@@ -170,7 +174,6 @@ public class NPCEditor extends JSONElementEditor {
     }
 
 
-
     public class NPCFieldUpdater implements FieldUpdateListener {
 
         @Override
@@ -263,7 +266,7 @@ public class NPCEditor extends JSONElementEditor {
                 npc.block_chance = (Integer) value;
             } else if (source == dmgRes) {
                 npc.damage_resistance = (Integer) value;
-            } else if(hitEffectPane.valueChanged(source, value, npc)) {
+            } else if (hitEffectPane.valueChanged(source, value, npc)) {
                 updateHit = true;
             } else if (hitReceivedEffectPane.valueChanged(source, value, npc)) {
                 updateHitReceived = true;
@@ -289,7 +292,7 @@ public class NPCEditor extends JSONElementEditor {
                 if (deathEffectPane.effect.isNull()) {
                     npc.death_effect = null;
                 } else {
-                    npc.death_effect = deathEffectPane. effect;
+                    npc.death_effect = deathEffectPane.effect;
                 }
             }
 

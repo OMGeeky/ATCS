@@ -4,9 +4,14 @@ import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
-import com.gpl.rpg.atcontentstudio.model.gamedata.*;
+import com.gpl.rpg.atcontentstudio.model.gamedata.ActorCondition;
+import com.gpl.rpg.atcontentstudio.model.gamedata.Item;
+import com.gpl.rpg.atcontentstudio.model.gamedata.ItemCategory;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
-import com.gpl.rpg.atcontentstudio.ui.*;
+import com.gpl.rpg.atcontentstudio.ui.CollapsiblePanel;
+import com.gpl.rpg.atcontentstudio.ui.FieldUpdateListener;
+import com.gpl.rpg.atcontentstudio.ui.IntegerBasedCheckBox;
+import com.gpl.rpg.atcontentstudio.ui.OrderedListenerListModel;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambda;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithArg;
 import com.gpl.rpg.atcontentstudio.utils.BasicLambdaWithReturn;
@@ -97,7 +102,8 @@ public class ItemEditor extends JSONElementEditor {
         typeBox = addEnumValueBox(pane, "Type: ", Item.DisplayType.values(), item.display_type, item.writable, listener);
         manualPriceBox = addIntegerBasedCheckBox(pane, "Has manual price", item.has_manual_price, item.writable, listener);
         baseManualPrice = item.base_market_cost;
-        baseCostField = addIntegerField(pane, "Base market cost: ", (item.has_manual_price != null && item.has_manual_price == 1) ? item.base_market_cost : item.computePrice(), false, item.writable, listener);
+        baseCostField = addIntegerField(pane, "Base market cost: ", (item.has_manual_price != null && item.has_manual_price == 1) ? item.base_market_cost : item.computePrice(), false, item.writable,
+                                        listener);
         if (!manualPriceBox.isSelected()) {
             baseCostField.setEnabled(false);
         }
@@ -128,22 +134,23 @@ public class ItemEditor extends JSONElementEditor {
         String titleEquipConditions = "Actor Conditions applied when equipped: ";
         equipConditionsModel = new EquipConditionsListModel(equipEffect);
         CommonEditor.ConditionsCellRenderer cellRendererEquipConditions = new CommonEditor.ConditionsCellRenderer();
-        BasicLambdaWithArg<ActorConditionEffect> selectedSetEquipConditions = (value)->selectedEquipEffectCondition = value;
-        BasicLambdaWithReturn<ActorConditionEffect> selectedGetEquipConditions = ()->selectedEquipEffectCondition ;
-        BasicLambda selectedResetEquipConditions = ()->selectedEquipEffectCondition = null;
+        BasicLambdaWithArg<ActorConditionEffect> selectedSetEquipConditions = (value) -> selectedEquipEffectCondition = value;
+        BasicLambdaWithReturn<ActorConditionEffect> selectedGetEquipConditions = () -> selectedEquipEffectCondition;
+        BasicLambda selectedResetEquipConditions = () -> selectedEquipEffectCondition = null;
         BasicLambdaWithArg<JPanel> updatePaneEquipConditions = (editorPane) -> updateEquipConditionEditorPane(editorPane, selectedEquipEffectCondition, listener);
         var resultEquipConditions = UiUtils.getCollapsibleItemList(listener,
-                equipConditionsModel,
-                selectedResetEquipConditions,
-                selectedSetEquipConditions,
-                selectedGetEquipConditions,
-                (x) -> {},
-                updatePaneEquipConditions,
-                item.writable,
-                ActorConditionEffect::new,
-                cellRendererEquipConditions,
-                titleEquipConditions,
-                (x) -> null);
+                                                                   equipConditionsModel,
+                                                                   selectedResetEquipConditions,
+                                                                   selectedSetEquipConditions,
+                                                                   selectedGetEquipConditions,
+                                                                   (x) -> {
+                                                                   },
+                                                                   updatePaneEquipConditions,
+                                                                   item.writable,
+                                                                   ActorConditionEffect::new,
+                                                                   cellRendererEquipConditions,
+                                                                   titleEquipConditions,
+                                                                   (x) -> null);
         equipConditionsList = resultEquipConditions.list;
         CollapsiblePanel equipConditionsPane = resultEquipConditions.collapsiblePanel;
         if (item.equip_effect == null || item.equip_effect.conditions == null || item.equip_effect.conditions.isEmpty()) {

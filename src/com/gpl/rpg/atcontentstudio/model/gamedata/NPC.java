@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,10 +186,10 @@ public class NPC extends JSONElement {
 
     @Override
     public void link() {
-		if (shouldSkipParseOrLink()) {
-			return;
-		}
-		ensureParseIfNeeded();
+        if (shouldSkipParseOrLink()) {
+            return;
+        }
+        ensureParseIfNeeded();
         Project proj = getProject();
         if (proj == null) {
             Notification.addError("Error linking item " + id + ". No parent project found.");
@@ -345,7 +344,8 @@ public class NPC extends JSONElement {
             avgCrit = (double) (critical_skill / 100.0) * critical_multiplier;
         }
         double avgAttackHP = attacksPerTurn * ((double) (attack_chance != null ? attack_chance : 0) / 100.0) * avgDamagePotential * (1 + avgCrit);
-        double avgDefenseHP = ((max_hp != null ? max_hp : 1) * (1 + ((double) (block_chance != null ? block_chance : 0) / 100.0))) + (EXP_FACTOR_DAMAGERESISTANCE * (damage_resistance != null ? damage_resistance : 0));
+        double avgDefenseHP = ((max_hp != null ? max_hp : 1) * (1 + ((double) (block_chance != null ? block_chance : 0) / 100.0))) +
+                (EXP_FACTOR_DAMAGERESISTANCE * (damage_resistance != null ? damage_resistance : 0));
         double attackConditionBonus = 0;
         if (hit_effect != null && hit_effect.conditions_target != null && hit_effect.conditions_target.size() > 0) {
             attackConditionBonus = 50;

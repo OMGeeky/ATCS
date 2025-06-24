@@ -1541,7 +1541,9 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (map.needsSaving()) {
-                        int confirm = JOptionPane.showConfirmDialog(TMXMapEditor.this, "You have unsaved changes in ATCS.\nYou'd better save your changes in ATCS before opening this map with the external editor.\nDo you want to save before opening the file?", "Save before opening?", JOptionPane.YES_NO_CANCEL_OPTION);
+                        int confirm = JOptionPane.showConfirmDialog(TMXMapEditor.this,
+                                                                    "You have unsaved changes in ATCS.\nYou'd better save your changes in ATCS before opening this map with the external editor.\nDo you want to save before opening the file?",
+                                                                    "Save before opening?", JOptionPane.YES_NO_CANCEL_OPTION);
                         if (confirm == JOptionPane.CANCEL_OPTION) return;
                         if (confirm == JOptionPane.YES_OPTION) {
                             map.save();
@@ -1559,7 +1561,9 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (map.needsSaving()) {
-                        int confirm = JOptionPane.showConfirmDialog(TMXMapEditor.this, "You modified this map in ATCS. All ATCS-made changes will be lost if you confirm.\n On the other hand, if you save using ATCS, all external changes will be lost.\n Do you want to reload?", "Confirm reload?", JOptionPane.OK_CANCEL_OPTION);
+                        int confirm = JOptionPane.showConfirmDialog(TMXMapEditor.this,
+                                                                    "You modified this map in ATCS. All ATCS-made changes will be lost if you confirm.\n On the other hand, if you save using ATCS, all external changes will be lost.\n Do you want to reload?",
+                                                                    "Confirm reload?", JOptionPane.OK_CANCEL_OPTION);
                         if (confirm == JOptionPane.CANCEL_OPTION) return;
                     }
                     reload.setEnabled(false);
@@ -1581,11 +1585,14 @@ public class TMXMapEditor extends Editor implements TMXMap.MapChangedOnDiskListe
                 public void actionPerformed(ActionEvent e) {
                     if (map.state != TMXMap.State.saved) {
                         if (map.changedOnDisk) {
-                            int confirm = JOptionPane.showConfirmDialog(TMXMapEditor.this, "You modified this map in an external tool. All external changes will be lost if you confirm.\n On the other hand, if you reload in ATCS, all ATCS-made changes will be lost.\n Do you want to save?", "Confirm save?", JOptionPane.OK_CANCEL_OPTION);
+                            int confirm = JOptionPane.showConfirmDialog(TMXMapEditor.this,
+                                                                        "You modified this map in an external tool. All external changes will be lost if you confirm.\n On the other hand, if you reload in ATCS, all ATCS-made changes will be lost.\n Do you want to save?",
+                                                                        "Confirm save?", JOptionPane.OK_CANCEL_OPTION);
                             if (confirm == JOptionPane.CANCEL_OPTION) return;
                             File backup = FileUtils.backupFile(map.tmxFile);
                             if (backup != null) {
-                                JOptionPane.showMessageDialog(TMXMapEditor.this, "The externally-modified file was backed up as " + backup.getAbsolutePath(), "File backed up", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(TMXMapEditor.this, "The externally-modified file was backed up as " + backup.getAbsolutePath(), "File backed up",
+                                                              JOptionPane.INFORMATION_MESSAGE);
                             } else {
                                 JOptionPane.showMessageDialog(TMXMapEditor.this, "The externally-modified file could not be backed up.", "File backup failed", JOptionPane.ERROR_MESSAGE);
                             }

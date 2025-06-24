@@ -1,6 +1,5 @@
 package com.gpl.rpg.atcontentstudio.ui;
 
-import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
 import java.util.Collection;

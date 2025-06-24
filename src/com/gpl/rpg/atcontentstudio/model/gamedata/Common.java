@@ -10,7 +10,7 @@ import java.util.Map;
 
 public final class Common {
 
-    public static <T extends ActorConditionEffect> void actorConditionElementChanged(List<T> list, GameDataElement oldOne, GameDataElement newOne,GameDataElement backlink){
+    public static <T extends ActorConditionEffect> void actorConditionElementChanged(List<T> list, GameDataElement oldOne, GameDataElement newOne, GameDataElement backlink) {
         if (list != null) {
             for (T c : list) {
                 if (c.condition == oldOne) {
@@ -22,6 +22,7 @@ public final class Common {
         }
 
     }
+
     //region link common stuff
     public static void linkConditions(List<? extends ActorConditionEffect> conditions, Project proj, GameDataElement backlink) {
         if (conditions != null) {
@@ -31,19 +32,20 @@ public final class Common {
             }
         }
     }
-    public static  void linkEffects(HitEffect effect, Project proj, GameDataElement backlink){
+
+    public static void linkEffects(HitEffect effect, Project proj, GameDataElement backlink) {
         linkEffects((DeathEffect) effect, proj, backlink);
-        if (effect != null)
-        {
+        if (effect != null) {
             linkConditions(effect.conditions_target, proj, backlink);
         }
     }
-    public static  void linkEffects(DeathEffect effect, Project proj, GameDataElement backlink){
-        if (effect != null)
-        {
+
+    public static void linkEffects(DeathEffect effect, Project proj, GameDataElement backlink) {
+        if (effect != null) {
             linkConditions(effect.conditions_source, proj, backlink);
         }
     }
+
     public static void linkIcon(Project proj, String iconId, GameDataElement backlink) {
         if (iconId != null) {
             String spritesheetId = iconId.split(":")[0];
@@ -63,6 +65,7 @@ public final class Common {
             else parent.put("max", defaultValue);
         }
     }
+
     public static void writeMinMaxToMap(Map parent, String key, Integer min, Integer max, int defaultValue) {
         if (min != null || max != null) {
             Map minMaxMap = new LinkedHashMap();
@@ -70,6 +73,7 @@ public final class Common {
             writeMinMaxToMap(minMaxMap, min, max, defaultValue);
         }
     }
+
     public static void writeDescriptionToMap(Map parent, String description) {
         if (description != null) parent.put("description", description);
     }
@@ -77,12 +81,14 @@ public final class Common {
     public static void writeIconToMap(Map parent, String icon_id) {
         if (icon_id != null) parent.put("iconID", icon_id);
     }
+
     public static void writeHitReceivedEffectToMap(Map parent, HitReceivedEffect effect) {
-        if(effect != null){
+        if (effect != null) {
             writeHitEffectToMap(parent, effect);
             writeBasicEffectObjectToMap(effect.target, parent, "increaseAttackerCurrentHP", "increaseAttackerCurrentAP");
         }
     }
+
     public static void writeHitReceivedEffectToMap(Map parent, HitReceivedEffect effect, String key) {
         if (effect != null) {
             Map effectJson = new LinkedHashMap();
@@ -90,12 +96,14 @@ public final class Common {
             writeHitReceivedEffectToMap(effectJson, effect);
         }
     }
+
     public static void writeHitEffectToMap(Map parent, HitEffect effect) {
-        if(effect != null){
+        if (effect != null) {
             writeDeathEffectToMap(parent, effect);
             writeTimedActorConditionEffectObjectToMap(effect.conditions_target, parent, "conditionsTarget");
         }
     }
+
     public static void writeHitEffectToMap(Map parent, HitEffect effect, String key) {
         if (effect != null) {
             Map effectJson = new LinkedHashMap();
@@ -103,10 +111,12 @@ public final class Common {
             writeHitEffectToMap(effectJson, effect);
         }
     }
+
     public static void writeDeathEffectToMap(Map parent, DeathEffect effect) {
         writeBasicEffectObjectToMap(effect, parent, "increaseCurrentHP", "increaseCurrentAP");
         writeTimedActorConditionEffectObjectToMap(effect.conditions_source, parent, "conditionsSource");
     }
+
     public static void writeDeathEffectToMap(Map parent, DeathEffect effect, String key) {
         if (effect != null) {
             Map effectJson = new LinkedHashMap();
@@ -154,6 +164,7 @@ public final class Common {
             parent.put("chance", JSONElement.printJsonChance(condition.chance));
         }
     }
+
     //endregion
     public static class TimedActorConditionEffect extends ActorConditionEffect {
         //Available from parsed state
@@ -169,12 +180,15 @@ public final class Common {
             cclone.duration = this.duration;
             return cclone;
         }
-        public boolean isInfinite(){
+
+        public boolean isInfinite() {
             return duration != null && duration.equals(ActorCondition.DURATION_FOREVER);
         }
-        public boolean isImmunity(){
+
+        public boolean isImmunity() {
             return (super.isClear()) && (duration != null && duration > ActorCondition.DURATION_NONE);
         }
+
         @Override
         public boolean isClear() {
             return (super.isClear()) && (duration == null || duration.equals(ActorCondition.DURATION_NONE));
@@ -188,7 +202,8 @@ public final class Common {
 
         //Available from linked state
         public ActorCondition condition = null;
-        public boolean isClear(){
+
+        public boolean isClear() {
             return magnitude == null || magnitude.equals(ActorCondition.MAGNITUDE_CLEAR);
         }
     }
@@ -287,9 +302,10 @@ public final class Common {
     public static class DeathEffect extends BasicEffect {
         //Available from parsed state
         public List<TimedActorConditionEffect> conditions_source = null;
+
         @Override
-        public boolean isNull(){
-            if(!super.isNull()) return false;
+        public boolean isNull() {
+            if (!super.isNull()) return false;
             if (conditions_source != null) return false;
             return true;
         }
@@ -298,9 +314,10 @@ public final class Common {
     public static class HitEffect extends DeathEffect {
         //Available from parsed state
         public List<TimedActorConditionEffect> conditions_target = null;
+
         @Override
-        public boolean isNull(){
-            if(!super.isNull()) return false;
+        public boolean isNull() {
+            if (!super.isNull()) return false;
             if (conditions_target != null) return false;
             return true;
         }
@@ -309,9 +326,10 @@ public final class Common {
     public static class HitReceivedEffect extends Common.HitEffect {
         //Available from parsed state
         public BasicEffect target = new BasicEffect();
+
         @Override
-        public boolean isNull(){
-            if(!super.isNull()) return false;
+        public boolean isNull() {
+            if (!super.isNull()) return false;
             if (!target.isNull()) return false;
             return true;
         }

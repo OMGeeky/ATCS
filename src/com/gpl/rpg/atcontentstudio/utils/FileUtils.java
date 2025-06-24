@@ -147,7 +147,8 @@ public class FileUtils {
                     case Windows:
                         System.err.println("Trying the Windows way with mklink");
                         try {
-                            Runtime.getRuntime().exec("cmd.exe /C mklink " + (targetFile.isDirectory() ? "/J " : "") + "\"" + linkFile.getAbsolutePath() + "\" \"" + targetFile.getAbsolutePath() + "\"");
+                            Runtime.getRuntime().exec(
+                                    "cmd.exe /C mklink " + (targetFile.isDirectory() ? "/J " : "") + "\"" + linkFile.getAbsolutePath() + "\" \"" + targetFile.getAbsolutePath() + "\"");
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }

@@ -220,7 +220,8 @@ public class GameDataCategory<E extends JSONElement> extends ArrayList<E> implem
                         break;
                     }
                 }
-                events.add(new SaveEvent(SaveEvent.Type.alsoSave, node, true, "There are " + containedIds.get(node.id) + " elements with this ID in this category. Change the conflicting IDs before saving."));
+                events.add(new SaveEvent(SaveEvent.Type.alsoSave, node, true,
+                                         "There are " + containedIds.get(node.id) + " elements with this ID in this category. Change the conflicting IDs before saving."));
             }
         }
         if (checkImpactedCategory && impactedCategory != null) {

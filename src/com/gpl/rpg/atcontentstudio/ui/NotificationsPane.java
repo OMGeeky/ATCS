@@ -5,7 +5,6 @@ import com.gpl.rpg.atcontentstudio.Notification;
 import com.gpl.rpg.atcontentstudio.NotificationListener;
 
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.util.LinkedHashMap;

@@ -234,7 +234,8 @@ public class DialogueEditor extends JSONElementEditor {
                 case changeMapFilter:
                     rewardMap = addMapBox(pane, ((Dialogue) target).getProject(), "Map Name: ", reward.map, writable, listener);
                     rewardObjId = null;
-                    rewardObjIdCombo = addEnumValueBox(pane, "Color Filter", TMXMap.ColorFilter.values(), reward.reward_obj_id != null ? TMXMap.ColorFilter.valueOf(reward.reward_obj_id) : TMXMap.ColorFilter.none, writable, listener);
+                    rewardObjIdCombo = addEnumValueBox(pane, "Color Filter", TMXMap.ColorFilter.values(),
+                                                       reward.reward_obj_id != null ? TMXMap.ColorFilter.valueOf(reward.reward_obj_id) : TMXMap.ColorFilter.none, writable, listener);
                     rewardObj = null;
                     rewardValue = null;
                     break;
@@ -278,7 +279,8 @@ public class DialogueEditor extends JSONElementEditor {
                     if (!immunity) radioGroup.add(rewardConditionClear);
 
                     if (immunity) {
-                        rewardConditionTimed.setSelected(reward.reward_value == null || (!reward.reward_value.equals(ActorCondition.DURATION_FOREVER) && !reward.reward_value.equals(ActorCondition.MAGNITUDE_CLEAR)));
+                        rewardConditionTimed.setSelected(
+                                reward.reward_value == null || (!reward.reward_value.equals(ActorCondition.DURATION_FOREVER) && !reward.reward_value.equals(ActorCondition.MAGNITUDE_CLEAR)));
                         rewardConditionForever.setSelected(reward.reward_value != null && !reward.reward_value.equals(ActorCondition.DURATION_FOREVER));
                         rewardConditionClear.setSelected(reward.reward_value != null && !reward.reward_value.equals(ActorCondition.MAGNITUDE_CLEAR));
                     } else {

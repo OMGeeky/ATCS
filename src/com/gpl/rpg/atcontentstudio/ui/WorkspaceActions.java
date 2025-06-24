@@ -65,11 +65,13 @@ public class WorkspaceActions {
     public ATCSAction deleteProject = new ATCSAction("Delete project", "Deletes the project, and all created/altered data, from disk") {
         public void actionPerformed(ActionEvent e) {
             if (selectedNode instanceof Project) {
-                if (JOptionPane.showConfirmDialog(ATContentStudio.frame, "Are you sure you wish to delete this project ?\nAll files created for it will be deleted too...", "Delete this project ?", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                if (JOptionPane.showConfirmDialog(ATContentStudio.frame, "Are you sure you wish to delete this project ?\nAll files created for it will be deleted too...", "Delete this project ?",
+                                                  JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                     Workspace.deleteProject((Project) selectedNode);
                 }
             } else if (selectedNode instanceof ClosedProject) {
-                if (JOptionPane.showConfirmDialog(ATContentStudio.frame, "Are you sure you wish to delete this project ?\nAll files created for it will be deleted too...", "Delete this project ?", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                if (JOptionPane.showConfirmDialog(ATContentStudio.frame, "Are you sure you wish to delete this project ?\nAll files created for it will be deleted too...", "Delete this project ?",
+                                                  JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                     Workspace.deleteProject((ClosedProject) selectedNode);
                 }
             }
@@ -380,7 +382,8 @@ public class WorkspaceActions {
     public ATCSAction exitATCS = new ATCSAction("Exit", "Closes the program") {
         public void actionPerformed(ActionEvent e) {
             if (Workspace.activeWorkspace.needsSaving()) {
-                int answer = JOptionPane.showConfirmDialog(ATContentStudio.frame, "There are unsaved changes in your workspace.\nExiting ATCS will discard these changes.\nDo you really want to exit?", "Unsaved changes. Confirm exit.", JOptionPane.YES_NO_OPTION);
+                int answer = JOptionPane.showConfirmDialog(ATContentStudio.frame, "There are unsaved changes in your workspace.\nExiting ATCS will discard these changes.\nDo you really want to exit?",
+                                                           "Unsaved changes. Confirm exit.", JOptionPane.YES_NO_OPTION);
                 if (answer == JOptionPane.YES_OPTION) {
                     System.exit(0);
                 }

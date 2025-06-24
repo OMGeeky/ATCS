@@ -206,10 +206,10 @@ public class Item extends JSONElement {
 
     @Override
     public void link() {
-		if (shouldSkipParseOrLink()) {
-			return;
-		}
-		ensureParseIfNeeded();
+        if (shouldSkipParseOrLink()) {
+            return;
+        }
+        ensureParseIfNeeded();
         Project proj = getProject();
         if (proj == null) {
             Notification.addError("Error linking item " + id + ". No parent project found.");
@@ -381,7 +381,7 @@ public class Item extends JSONElement {
         }
         writeHitEffectToMap(itemJson, this.hit_effect, "hitEffect");
         writeHitReceivedEffectToMap(itemJson, this.hit_received_effect, "hitReceivedEffect");
-        
+
         String key;
         if (this.category != null && this.category.action_type != null && this.category.action_type == ItemCategory.ActionType.equip) {
             key = "killEffect";
@@ -438,7 +438,8 @@ public class Item extends JSONElement {
 
     public int calculateEquipCost(boolean isWeapon) {
         final int costBC = (int) (3 * Math.pow(Math.max(0, zeroForNull(equip_effect.increase_block_chance)), 2.5) + 28 * zeroForNull(equip_effect.increase_block_chance));
-        final int costAC = (int) (0.4 * Math.pow(Math.max(0, zeroForNull(equip_effect.increase_attack_chance)), 2.5) - 6 * Math.pow(Math.abs(Math.min(0, zeroForNull(equip_effect.increase_attack_chance))), 2.7));
+        final int costAC = (int) (0.4 * Math.pow(Math.max(0, zeroForNull(equip_effect.increase_attack_chance)), 2.5) - 6 * Math.pow(
+                Math.abs(Math.min(0, zeroForNull(equip_effect.increase_attack_chance))), 2.7));
         final int costAP = isWeapon ?
                 (int) (0.2 * Math.pow(10.0f / zeroForNull(equip_effect.increase_attack_cost), 8) - 25 * zeroForNull(equip_effect.increase_attack_cost))
                 : -3125 * zeroForNull(equip_effect.increase_attack_cost);

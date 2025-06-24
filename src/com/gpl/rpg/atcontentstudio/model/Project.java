@@ -1105,13 +1105,15 @@ public class Project implements ProjectTreeNode, Serializable {
 //		}
         Map<Class<? extends GameDataElement>, List<String>> writtenFilesPerDataType = new LinkedHashMap<Class<? extends GameDataElement>, List<String>>();
         List<String> writtenFiles;
-        writtenFiles = writeDataDeltaForDataType(createdContent.gameData.actorConditions, alteredContent.gameData.actorConditions, baseContent.gameData.actorConditions, ActorCondition.class, tmpJsonDataDir);
+        writtenFiles = writeDataDeltaForDataType(createdContent.gameData.actorConditions, alteredContent.gameData.actorConditions, baseContent.gameData.actorConditions, ActorCondition.class,
+                                                 tmpJsonDataDir);
         writtenFilesPerDataType.put(ActorCondition.class, writtenFiles);
         writtenFiles = writeDataDeltaForDataType(createdContent.gameData.dialogues, alteredContent.gameData.dialogues, baseContent.gameData.dialogues, Dialogue.class, tmpJsonDataDir);
         writtenFilesPerDataType.put(Dialogue.class, writtenFiles);
         writtenFiles = writeDataDeltaForDataType(createdContent.gameData.droplists, alteredContent.gameData.droplists, baseContent.gameData.droplists, Droplist.class, tmpJsonDataDir);
         writtenFilesPerDataType.put(Droplist.class, writtenFiles);
-        writtenFiles = writeDataDeltaForDataType(createdContent.gameData.itemCategories, alteredContent.gameData.itemCategories, baseContent.gameData.itemCategories, ItemCategory.class, tmpJsonDataDir);
+        writtenFiles = writeDataDeltaForDataType(createdContent.gameData.itemCategories, alteredContent.gameData.itemCategories, baseContent.gameData.itemCategories, ItemCategory.class,
+                                                 tmpJsonDataDir);
         writtenFilesPerDataType.put(ItemCategory.class, writtenFiles);
         writtenFiles = writeDataDeltaForDataType(createdContent.gameData.items, alteredContent.gameData.items, baseContent.gameData.items, Item.class, tmpJsonDataDir);
         writtenFilesPerDataType.put(Item.class, writtenFiles);

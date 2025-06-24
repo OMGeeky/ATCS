@@ -21,7 +21,7 @@ public abstract class JSONElement extends GameDataElement {
 
     @SuppressWarnings("rawtypes")
     public void parse() {
-		if (shouldSkipParse()) {
+        if (shouldSkipParse()) {
             return;
         }
         JSONParser parser = new JSONParser();

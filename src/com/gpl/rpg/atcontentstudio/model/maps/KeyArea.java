@@ -101,7 +101,8 @@ public class KeyArea extends MapObject {
 
     public void updateNameFromRequirementChange() {
         if (oldSchoolRequirement && Requirement.RequirementType.questProgress.equals(requirement.type) && (requirement.negated == null || !requirement.negated)) {
-            name = (requirement.negated != null && requirement.negated) ? "NOT " : "" + requirement.required_obj_id + ":" + ((requirement.required_value == null) ? "" : Integer.toString(requirement.required_value));
+            name = (requirement.negated != null && requirement.negated) ? "NOT " : "" + requirement.required_obj_id + ":" + ((requirement.required_value == null) ? "" : Integer.toString(
+                    requirement.required_value));
         } else if (oldSchoolRequirement) {
             int i = 0;
             String futureName = requirement.type.toString() + "#" + Integer.toString(i);

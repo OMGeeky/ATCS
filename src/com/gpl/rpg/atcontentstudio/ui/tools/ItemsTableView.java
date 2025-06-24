@@ -307,7 +307,9 @@ public class ItemsTableView extends ElementTableView {
                 case 22:
                     return (!canUse && item.hit_received_effect != null) ? item.hit_received_effect.ap_boost_max : null;//"On hit recv - AP max";
                 case 23:
-                    return (!canUse && item.hit_received_effect != null && item.hit_received_effect.conditions_source != null) ? item.hit_received_effect.conditions_source.size() : null;//"On hit recv - # conditions";
+                    return (!canUse &&
+                            item.hit_received_effect != null &&
+                            item.hit_received_effect.conditions_source != null) ? item.hit_received_effect.conditions_source.size() : null;//"On hit recv - # conditions";
                 case 24:
                     return (!canUse && item.hit_received_effect != null) ? item.hit_received_effect.hp_boost_min : null;//"On hit recv - Tgt HP min";
                 case 25:

@@ -189,6 +189,7 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         });
         return tfField;
     }
+
     public static <T extends JTextComponent> T addTextComponent(JPanel pane, String label, boolean editable, final FieldUpdateListener listener, T tfField, boolean specialNewLinesHandling, boolean scrollable) {
         JPanel tfPane = new JPanel();
         tfPane.setLayout(new JideBoxLayout(tfPane, JideBoxLayout.LINE_AXIS, 6));
@@ -196,9 +197,9 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         tfPane.add(tfLabel, JideBoxLayout.FIX);
         tfField.setEditable(editable);
         JComponent component;
-        if (scrollable){
+        if (scrollable) {
             component = new JScrollPane(tfField);
-        }else{
+        } else {
             component = tfField;
         }
         tfPane.add(component, JideBoxLayout.VARY);
@@ -218,21 +219,21 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
             @Override
             public void removeUpdate(DocumentEvent e) {
                 String text = tfField.getText();
-                if(specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
+                if (specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
                 listener.valueChanged(tfField, text);
             }
 
             @Override
             public void insertUpdate(DocumentEvent e) {
                 String text = tfField.getText();
-                if(specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
+                if (specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
                 listener.valueChanged(tfField, text);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
                 String text = tfField.getText();
-                if(specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
+                if (specialNewLinesHandling) text = text.replaceAll("\n", Matcher.quoteReplacement("\n"));
                 listener.valueChanged(tfField, text);
             }
         });
@@ -291,11 +292,12 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         });
         return spinner;
     }
+
     public static JSpinner addIntegerField(JPanel pane, String label, Integer initialValue, Integer defaultValue, boolean allowNegatives, boolean editable, final FieldUpdateListener listener) {
         int value = initialValue != null ? initialValue : defaultValue;
-		int minimum = allowNegatives ? Integer.MIN_VALUE : 0;
+        int minimum = allowNegatives ? Integer.MIN_VALUE : 0;
         int maximum = Integer.MAX_VALUE;
-        return addNumberField(pane, label, editable, listener,  minimum, maximum, 1, value, defaultValue);
+        return addNumberField(pane, label, editable, listener, minimum, maximum, 1, value, defaultValue);
     }
 
 
@@ -361,7 +363,10 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
         entryTypeBox.setEnabled(editable);
         tfPane.add(entryTypeBox, JideBoxLayout.FIX);
         /////////////////////////////////////////////////////////////////////////////////////////////////// make sure "chance" is between 1 and 100. If lower than 1 get 1. If higher than 100, get chance/maxChance * 100... Then do the same with defaultChance, in case no value exist.
-        final SpinnerNumberModel percentModel = new SpinnerNumberModel(initialValue != null ? ((chance > 1 ? chance : 1) < 100 ? chance : (chance * 100 / maxChance)) : ((defaultChance > 1 ? defaultChance : 1) < 100 ? defaultChance : (defaultChance * 100 / defaultMaxChance)), 1, 100, 1);
+        final SpinnerNumberModel percentModel = new SpinnerNumberModel(
+                initialValue != null ? ((chance > 1 ? chance : 1) < 100 ? chance : (chance * 100 / maxChance)) : ((defaultChance > 1 ? defaultChance : 1) < 100 ? defaultChance : (defaultChance * 100 /
+                        defaultMaxChance)),
+                1, 100, 1);
         final SpinnerNumberModel ratioChanceModel = new SpinnerNumberModel(initialValue != null ? chance : defaultChance, 1, Integer.MAX_VALUE, 1);
 
         final JSpinner chanceSpinner = new JSpinner(currentFormIsRatio ? ratioChanceModel : percentModel);
@@ -1105,10 +1110,10 @@ public abstract class Editor extends JPanel implements ProjectElementListener {
     }
 
 
-     public <E extends Common.ActorConditionEffect, T extends OrderedListenerListModel<?, E>> void updateConditionEffect(ActorCondition value,
-                                                                                                                         GameDataElement backlink,
-                                                                                                                         E selectedHitEffectTargetCondition,
-                                                                                                                         T hitTargetConditionsModel) {
+    public <E extends Common.ActorConditionEffect, T extends OrderedListenerListModel<?, E>> void updateConditionEffect(ActorCondition value,
+                                                                                                                        GameDataElement backlink,
+                                                                                                                        E selectedHitEffectTargetCondition,
+                                                                                                                        T hitTargetConditionsModel) {
         if (selectedHitEffectTargetCondition.condition != null) {
             selectedHitEffectTargetCondition.condition.removeBacklink(backlink);
         }

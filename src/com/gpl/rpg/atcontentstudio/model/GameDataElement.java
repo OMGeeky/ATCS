@@ -203,18 +203,19 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
 
     public abstract List<SaveEvent> attemptSave();
 
-	/**
-	 * Checks if the current state indicates that parsing/linking should be skipped.
-	 * @return true if the operation should be skipped, false otherwise
-	 */
-	protected boolean shouldSkipParseOrLink() {
+    /**
+     * Checks if the current state indicates that parsing/linking should be skipped.
+     *
+     * @return true if the operation should be skipped, false otherwise
+     */
+    protected boolean shouldSkipParseOrLink() {
         if (shouldSkipParse()) return true;
         if (this.state == State.linked) {
-			//Already linked.
-			return true;
-		}
-		return false;
-	}
+            //Already linked.
+            return true;
+        }
+        return false;
+    }
 
     protected boolean shouldSkipParse() {
         if (this.state == State.created || this.state == State.modified || this.state == State.saved) {
@@ -225,12 +226,12 @@ public abstract class GameDataElement implements ProjectTreeNode, Serializable {
     }
 
     /**
-	 * Ensures the element is parsed if needed based on its current state.
-	 */
-	protected void ensureParseIfNeeded() {
-		if (this.state == State.init) {
-			//Not parsed yet.
-			this.parse();
-		}
-	}
+     * Ensures the element is parsed if needed based on its current state.
+     */
+    protected void ensureParseIfNeeded() {
+        if (this.state == State.init) {
+            //Not parsed yet.
+            this.parse();
+        }
+    }
 }

@@ -48,7 +48,12 @@ public class CommonEditor {
                     } else {
                         label.setIcon(new ImageIcon(effect.condition.getIcon()));
                         label.setText(
-                                effect.chance + "% chances to give actor condition " + effect.condition.getDesc() + " x" + effect.magnitude + (forever ? " forever" : " for " + effect.duration + " rounds"));
+                                effect.chance +
+                                        "% chances to give actor condition " +
+                                        effect.condition.getDesc() +
+                                        " x" +
+                                        effect.magnitude +
+                                        (forever ? " forever" : " for " + effect.duration + " rounds"));
                     }
                 } else {
                     label.setText("New, undefined actor condition effect.");
@@ -143,7 +148,7 @@ public class CommonEditor {
 
         protected final String applyToTargetHint;
         private JList hitTargetConditionsList;
-        private final ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT, MODEL> hitTargetConditionPane ;
+        private final ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT, MODEL> hitTargetConditionPane;
 
         /*
          * create a new HitEffectPane with the selections (probably passed in from last time)
@@ -193,7 +198,7 @@ public class CommonEditor {
         @Override
         public boolean valueChanged(JComponent source, Object value, GameDataElement backlink) {
             boolean updateHit = false;
-            if(super.valueChanged(source, value, backlink)){
+            if (super.valueChanged(source, value, backlink)) {
                 updateHit = true;
             } else if (source == hitTargetConditionsList) {
                 updateHit = true;
@@ -295,7 +300,7 @@ public class CommonEditor {
                 updateHit = true;
             } else if (source == sourceConditionsList) {
                 updateHit = true;
-            } else if (sourceConditionPane.valueChanged(source, value, backlink)){
+            } else if (sourceConditionPane.valueChanged(source, value, backlink)) {
                 updateHit = true;
             }
             return updateHit;
@@ -360,7 +365,7 @@ public class CommonEditor {
             Project proj = editor.target.getProject();
 
             conditionBox = editor.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable,
-                                                  listener);
+                                                       listener);
             conditionChance = Editor.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
 
             conditionClear = new JRadioButton("Clear active condition");

@@ -152,13 +152,13 @@ public class ATContentStudio {
                 style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
                 style.append("font-size:" + font.getSize() + "pt;");
                 style.append("background-color: rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue()
-                        + ");");
+                                     + ");");
 
                 JEditorPane ep = new JEditorPane("text/html",
-                        "<html><body style=\"" + style + "\">" + "You are not running the latest ATCS version.<br/>"
-                                + "You can get the latest version (" + lastLine + ") by clicking the link below.<br/>"
-                                + "<a href=\"" + DOWNLOAD_URL + "\">" + DOWNLOAD_URL + "</a><br/>" + "<br/>"
-                                + "</body></html>");
+                                                 "<html><body style=\"" + style + "\">" + "You are not running the latest ATCS version.<br/>"
+                                                         + "You can get the latest version (" + lastLine + ") by clicking the link below.<br/>"
+                                                         + "<a href=\"" + DOWNLOAD_URL + "\">" + DOWNLOAD_URL + "</a><br/>" + "<br/>"
+                                                         + "</body></html>");
 
                 ep.setEditable(false);
                 ep.setBorder(null);

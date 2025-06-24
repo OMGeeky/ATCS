@@ -152,12 +152,14 @@ public class AboutEditor extends Editor {
 
         editorTabsHolder.add("Welcome", getInfoPane(WELCOME_STRING, "text/html"));
         editorTabsHolder.add("JSON.simple License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.JSON.simple.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
-        editorTabsHolder.add("RSyntaxTextArea License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/RSyntaxTextArea.License.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
+        editorTabsHolder.add("RSyntaxTextArea License",
+                             getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/RSyntaxTextArea.License.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("JIDE Common Layer License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.JIDE.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("libtiled-java License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.libtiled.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("prefuse License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/license-prefuse.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("BeanShell License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.LGPLv3.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
-        editorTabsHolder.add("SipHash for Java License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.siphash-zackehh.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
+        editorTabsHolder.add("SipHash for Java License",
+                             getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.siphash-zackehh.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("jsoup License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.jsoup.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("General PO Parser License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.GPLv3.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));
         editorTabsHolder.add("Minify.java License", getInfoPane(new Scanner(ATContentStudio.class.getResourceAsStream("/LICENSE.minify.txt"), "UTF-8").useDelimiter("\\A").next(), "text/text"));

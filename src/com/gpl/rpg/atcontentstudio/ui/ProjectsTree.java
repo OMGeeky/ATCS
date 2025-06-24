@@ -624,19 +624,25 @@ public class ProjectsTree extends JPanel {
 
         public void insertNode(TreePath node) {
             for (TreeModelListener l : listeners) {
-                l.treeNodesInserted(new TreeModelEvent(node.getLastPathComponent(), node.getParentPath().getPath(), new int[]{((ProjectTreeNode) node.getParentPath().getLastPathComponent()).getIndex((ProjectTreeNode) node.getLastPathComponent())}, new Object[]{node.getLastPathComponent()}));
+                l.treeNodesInserted(new TreeModelEvent(node.getLastPathComponent(), node.getParentPath().getPath(),
+                                                       new int[]{((ProjectTreeNode) node.getParentPath().getLastPathComponent()).getIndex((ProjectTreeNode) node.getLastPathComponent())},
+                                                       new Object[]{node.getLastPathComponent()}));
             }
         }
 
         public void changeNode(TreePath node) {
             for (TreeModelListener l : listeners) {
-                l.treeNodesChanged(new TreeModelEvent(node.getLastPathComponent(), node.getParentPath(), new int[]{((ProjectTreeNode) node.getParentPath().getLastPathComponent()).getIndex((ProjectTreeNode) node.getLastPathComponent())}, new Object[]{node.getLastPathComponent()}));
+                l.treeNodesChanged(new TreeModelEvent(node.getLastPathComponent(), node.getParentPath(),
+                                                      new int[]{((ProjectTreeNode) node.getParentPath().getLastPathComponent()).getIndex((ProjectTreeNode) node.getLastPathComponent())},
+                                                      new Object[]{node.getLastPathComponent()}));
             }
         }
 
         public void removeNode(TreePath node) {
             for (TreeModelListener l : listeners) {
-                l.treeNodesRemoved(new TreeModelEvent(node.getLastPathComponent(), node.getParentPath(), new int[]{((ProjectTreeNode) node.getParentPath().getLastPathComponent()).getIndex((ProjectTreeNode) node.getLastPathComponent())}, new Object[]{node.getLastPathComponent()}));
+                l.treeNodesRemoved(new TreeModelEvent(node.getLastPathComponent(), node.getParentPath(),
+                                                      new int[]{((ProjectTreeNode) node.getParentPath().getLastPathComponent()).getIndex((ProjectTreeNode) node.getLastPathComponent())},
+                                                      new Object[]{node.getLastPathComponent()}));
             }
         }
 

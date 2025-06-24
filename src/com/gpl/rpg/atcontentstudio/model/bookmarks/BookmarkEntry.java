@@ -91,7 +91,13 @@ public class BookmarkEntry implements BookmarkNode {
             if (text.length() > 60) {
                 text = text.substring(0, 57) + "...";
             }
-            return ((GameDataElement) bookmarkedElement).getDataType().toString() + "/" + ((Quest) ((QuestStage) bookmarkedElement).parent).id + "#" + ((QuestStage) bookmarkedElement).progress + ":" + text;
+            return ((GameDataElement) bookmarkedElement).getDataType().toString() +
+                    "/" +
+                    ((Quest) ((QuestStage) bookmarkedElement).parent).id +
+                    "#" +
+                    ((QuestStage) bookmarkedElement).progress +
+                    ":" +
+                    text;
         } else {
             return ((GameDataElement) bookmarkedElement).getDataType().toString() + "/" + ((GameDataElement) bookmarkedElement).getDesc();
         }

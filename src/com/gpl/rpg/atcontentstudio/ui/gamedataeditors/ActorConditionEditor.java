@@ -89,7 +89,7 @@ public class ActorConditionEditor extends JSONElementEditor {
         } else {
             roundEffect = new ActorCondition.RoundEffect();
         }
-        roundVisualField = addEnumValueBox(roundEffectPane, "Visual effect ID:", ActorCondition.VisualEffectID.values(), roundEffect.visual_effect, ac.writable, listener);//addTextField(roundEffectPane, "Visual effect ID: ", roundEffect.visual_effect, ac.writable, listener);
+        roundVisualField = addEnumValueBox(roundEffectPane, "Visual effect ID:", ActorCondition.VisualEffectID.values(), roundEffect.visual_effect, ac.writable, listener);
         roundHpMinField = addIntegerField(roundEffectPane, "HP Bonus Min: ", roundEffect.hp_boost_min, true, ac.writable, listener);
         roundHpMaxField = addIntegerField(roundEffectPane, "HP Bonus Max: ", roundEffect.hp_boost_max, true, ac.writable, listener);
         roundApMinField = addIntegerField(roundEffectPane, "AP Bonus Min: ", roundEffect.ap_boost_min, true, ac.writable, listener);
@@ -106,7 +106,7 @@ public class ActorConditionEditor extends JSONElementEditor {
         } else {
             fullRoundEffect = new ActorCondition.RoundEffect();
         }
-        fullRoundVisualField = addEnumValueBox(fullRoundEffectPane, "Visual effect ID:", ActorCondition.VisualEffectID.values(), fullRoundEffect.visual_effect, ac.writable, listener);//addTextField(fullRoundEffectPane, "Visual effect ID: ", fullRoundEffect.visual_effect, ac.writable, listener);
+        fullRoundVisualField = addEnumValueBox(fullRoundEffectPane, "Visual effect ID:", ActorCondition.VisualEffectID.values(), fullRoundEffect.visual_effect, ac.writable, listener);
         fullRoundHpMinField = addIntegerField(fullRoundEffectPane, "HP Bonus min: ", fullRoundEffect.hp_boost_min, true, ac.writable, listener);
         fullRoundHpMaxField = addIntegerField(fullRoundEffectPane, "HP Bonus max: ", fullRoundEffect.hp_boost_max, true, ac.writable, listener);
         fullRoundApMinField = addIntegerField(fullRoundEffectPane, "AP Bonus min: ", fullRoundEffect.ap_boost_min, true, ac.writable, listener);
@@ -505,18 +505,17 @@ public class ActorConditionEditor extends JSONElementEditor {
         }
 
         private boolean isEmpty(ActorCondition.RoundEffect round_effect) {
-            return round_effect == null || (
-                    round_effect.visual_effect == null &&
+            return round_effect == null ||
+                    (round_effect.visual_effect == null &&
                             round_effect.hp_boost_min == null &&
                             round_effect.hp_boost_max == null &&
                             round_effect.ap_boost_min == null &&
-                            round_effect.ap_boost_max == null
-            );
+                            round_effect.ap_boost_max == null);
         }
 
         private boolean isEmpty(ActorCondition.AbilityEffect ability_effect) {
-            return ability_effect == null || (
-                    ability_effect.max_hp_boost == null &&
+            return ability_effect == null ||
+                    (ability_effect.max_hp_boost == null &&
                             ability_effect.max_ap_boost == null &&
                             ability_effect.increase_move_cost == null &&
                             ability_effect.increase_use_cost == null &&
@@ -527,8 +526,7 @@ public class ActorConditionEditor extends JSONElementEditor {
                             ability_effect.increase_damage_max == null &&
                             ability_effect.increase_critical_skill == null &&
                             ability_effect.increase_block_chance == null &&
-                            ability_effect.increase_damage_resistance == null
-            );
+                            ability_effect.increase_damage_resistance == null);
         }
     }
 

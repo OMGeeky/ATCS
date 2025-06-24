@@ -17,7 +17,8 @@ public class UiUtils {
         public CollapsiblePanel collapsiblePanel;
         public JList<E> list;
     }
-    public static JPanel createRefreshButtonPane(ActionListener reloadButtonEditor){
+
+    public static JPanel createRefreshButtonPane(ActionListener reloadButtonEditor) {
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new JideBoxLayout(buttonPane, JideBoxLayout.LINE_AXIS));
         JButton reloadButton = new JButton("Refresh graph");
@@ -64,8 +65,8 @@ public class UiUtils {
                 moveDownBtn.setEnabled(false);
             } else {
                 deleteBtn.setEnabled(true);
-                    moveUpBtn.setEnabled(list.getSelectedIndex() > 0);
-                    moveDownBtn.setEnabled(list.getSelectedIndex() < (listModel.getSize() - 1));
+                moveUpBtn.setEnabled(list.getSelectedIndex() > 0);
+                moveDownBtn.setEnabled(list.getSelectedIndex() < (listModel.getSize() - 1));
 
             }
             updateEditorPane.doIt(editorPane);

@@ -44,7 +44,7 @@ public class Workspace implements ProjectTreeNode, Serializable {
                 workspaceRoot.mkdir();
             } catch (SecurityException e) {
                 Notification.addError("Error creating workspace directory: "
-                        + e.getMessage());
+                                              + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -55,12 +55,12 @@ public class Workspace implements ProjectTreeNode, Serializable {
                 settingsFile.createNewFile();
             } catch (IOException e) {
                 Notification.addError("Error creating workspace datafile: "
-                        + e.getMessage());
+                                              + e.getMessage());
                 e.printStackTrace();
             }
         }
         Notification.addSuccess("New workspace created: "
-                + workspaceRoot.getAbsolutePath());
+                                        + workspaceRoot.getAbsolutePath());
         save();
     }
 
@@ -169,26 +169,26 @@ public class Workspace implements ProjectTreeNode, Serializable {
     public static void createProject(final String projectName,
                                      final File gameSourceFolder, final Project.ResourceSet sourceSet) {
         WorkerDialog.showTaskMessage("Creating project " + projectName + "...",
-                ATContentStudio.frame, new Runnable() {
+                                     ATContentStudio.frame, new Runnable() {
                     @Override
                     public void run() {
                         if (activeWorkspace.projectsName.contains(projectName)) {
                             Notification.addError("A project named "
-                                    + projectName
-                                    + " already exists in this workspace.");
+                                                          + projectName
+                                                          + " already exists in this workspace.");
                             return;
                         }
                         Project p = new Project(activeWorkspace, projectName,
-                                gameSourceFolder, sourceSet);
+                                                gameSourceFolder, sourceSet);
                         activeWorkspace.projects.add(p);
                         activeWorkspace.projectsName.add(projectName);
                         activeWorkspace.projectsOpenByName.put(projectName,
-                                p.open);
+                                                               p.open);
                         activeWorkspace.knownMapSourcesFolders
                                 .add(gameSourceFolder);
                         p.notifyCreated();
                         Notification.addSuccess("Project " + projectName
-                                + " successfully created");
+                                                        + " successfully created");
                         saveActive();
                     }
                 });
@@ -210,19 +210,19 @@ public class Workspace implements ProjectTreeNode, Serializable {
 
     public static void openProject(final ClosedProject cp) {
         WorkerDialog.showTaskMessage("Opening project " + cp.name + "...",
-                ATContentStudio.frame, new Runnable() {
+                                     ATContentStudio.frame, new Runnable() {
                     @Override
                     public void run() {
                         int index = activeWorkspace.projects.indexOf(cp);
                         if (index < 0) {
                             Notification
                                     .addError("Cannot open unknown project "
-                                            + cp.name);
+                                                      + cp.name);
                             return;
                         }
                         cp.childrenRemoved(new ArrayList<ProjectTreeNode>());
                         Project p = Project.fromFolder(activeWorkspace,
-                                new File(activeWorkspace.baseFolder, cp.name));
+                                                       new File(activeWorkspace.baseFolder, cp.name));
                         p.open();
                         activeWorkspace.projects.set(index, p);
                         activeWorkspace.projectsOpenByName.put(p.name, true);
@@ -246,14 +246,14 @@ public class Workspace implements ProjectTreeNode, Serializable {
                     } else {
                         Notification
                                 .addError("Failed to open project "
-                                        + projectName
-                                        + ". Removing it from workspace (not from filesystem though).");
+                                                  + projectName
+                                                  + ". Removing it from workspace (not from filesystem though).");
                         projectsFailed.add(projectName);
                     }
                 } else {
                     Notification.addError("Unable to find project "
-                            + projectName
-                            + "'s root folder. Removing it from workspace");
+                                                  + projectName
+                                                  + "'s root folder. Removing it from workspace");
                     projectsFailed.add(projectName);
                 }
             } else {
@@ -299,10 +299,10 @@ public class Workspace implements ProjectTreeNode, Serializable {
         activeWorkspace.projectsName.remove(cp.name);
         if (delete(new File(activeWorkspace.baseFolder, cp.name))) {
             Notification.addSuccess("Closed project " + cp.name
-                    + " successfully deleted.");
+                                            + " successfully deleted.");
         } else {
             Notification.addError("Error while deleting closed project "
-                    + cp.name + ". Files may remain in the workspace.");
+                                          + cp.name + ". Files may remain in the workspace.");
         }
         saveActive();
     }
@@ -314,10 +314,10 @@ public class Workspace implements ProjectTreeNode, Serializable {
         activeWorkspace.projectsName.remove(p.name);
         if (delete(p.baseFolder)) {
             Notification.addSuccess("Project " + p.name
-                    + " successfully deleted.");
+                                            + " successfully deleted.");
         } else {
             Notification.addError("Error while deleting project " + p.name
-                    + ". Files may remain in the workspace.");
+                                          + ". Files may remain in the workspace.");
         }
         saveActive();
     }

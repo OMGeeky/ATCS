@@ -112,10 +112,10 @@ public class Quest extends JSONElement {
 
     @Override
     public void link() {
-		if (shouldSkipParseOrLink()) {
-			return;
-		}
-		ensureParseIfNeeded();
+        if (shouldSkipParseOrLink()) {
+            return;
+        }
+        ensureParseIfNeeded();
 
         for (QuestStage stage : stages) {
             stage.link();
