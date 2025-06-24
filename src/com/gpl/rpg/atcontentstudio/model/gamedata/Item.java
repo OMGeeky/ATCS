@@ -388,11 +388,7 @@ public class Item extends JSONElement {
         } else if (this.category != null && this.category.action_type != null && this.category.action_type == ItemCategory.ActionType.use) {
             key = "useEffect";
         } else {
-            try {
-                throw new IllegalArgumentException("Could not create JSON-Map for Item: Failed to determine if the items should be used or equipped.");
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
+            System.out.println("Could not create JSON-Map for Item: Failed to determine if the item should be used or equipped.");
             key = null;
         }
         if (key != null) {
