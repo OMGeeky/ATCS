@@ -224,7 +224,7 @@ public class ItemEditor extends JSONElementEditor {
         radioEffectGroup.add(equipConditionWithMagnitude);
         radioEffectGroup.add(equipConditionImmunity);
 
-        boolean immunity = condition.magnitude == null || condition.magnitude == ActorCondition.MAGNITUDE_CLEAR;
+        boolean immunity = condition.magnitude == null || condition.magnitude.equals(ActorCondition.MAGNITUDE_CLEAR);
         equipConditionImmunity.setSelected(immunity);
         equipConditionWithMagnitude.setSelected(!immunity);
         equipConditionMagnitude.setEnabled(!immunity);

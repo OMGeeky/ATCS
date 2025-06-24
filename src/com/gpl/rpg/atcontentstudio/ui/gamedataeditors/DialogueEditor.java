@@ -278,12 +278,12 @@ public class DialogueEditor extends JSONElementEditor {
                     if (!immunity) radioGroup.add(rewardConditionClear);
 
                     if (immunity) {
-                        rewardConditionTimed.setSelected(reward.reward_value == null || (reward.reward_value != ActorCondition.DURATION_FOREVER && reward.reward_value != ActorCondition.MAGNITUDE_CLEAR));
-                        rewardConditionForever.setSelected(reward.reward_value != null && reward.reward_value != ActorCondition.DURATION_FOREVER);
-                        rewardConditionClear.setSelected(reward.reward_value != null && reward.reward_value != ActorCondition.MAGNITUDE_CLEAR);
+                        rewardConditionTimed.setSelected(reward.reward_value == null || (!reward.reward_value.equals(ActorCondition.DURATION_FOREVER) && !reward.reward_value.equals(ActorCondition.MAGNITUDE_CLEAR)));
+                        rewardConditionForever.setSelected(reward.reward_value != null && !reward.reward_value.equals(ActorCondition.DURATION_FOREVER));
+                        rewardConditionClear.setSelected(reward.reward_value != null && !reward.reward_value.equals(ActorCondition.MAGNITUDE_CLEAR));
                     } else {
-                        rewardConditionTimed.setSelected(reward.reward_value != null && reward.reward_value != ActorCondition.DURATION_FOREVER);
-                        rewardConditionForever.setSelected(reward.reward_value == null || reward.reward_value == ActorCondition.DURATION_FOREVER);
+                        rewardConditionTimed.setSelected(reward.reward_value != null && !reward.reward_value.equals(ActorCondition.DURATION_FOREVER));
+                        rewardConditionForever.setSelected(reward.reward_value == null || reward.reward_value.equals(ActorCondition.DURATION_FOREVER));
                     }
                     rewardValue.setEnabled(rewardConditionTimed.isSelected());
 
@@ -662,7 +662,7 @@ public class DialogueEditor extends JSONElementEditor {
                     label.setIcon(new ImageIcon(DefaultIcons.getObjectLayerIcon()));
                     break;
                 case actorCondition:
-                    boolean rewardClear = reward.reward_value != null && reward.reward_value.intValue() == ActorCondition.MAGNITUDE_CLEAR;
+                    boolean rewardClear = reward.reward_value != null && reward.reward_value.equals(ActorCondition.MAGNITUDE_CLEAR);
                     if (rewardClear) {
                         label.setText("Clear actor condition " + rewardObjDesc);
                     } else {

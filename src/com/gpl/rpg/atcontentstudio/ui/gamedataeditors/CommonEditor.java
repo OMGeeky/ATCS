@@ -68,7 +68,7 @@ public class CommonEditor {
                 Common.ActorConditionEffect effect = (Common.ActorConditionEffect) value;
 
                 if (effect.condition != null) {
-                    if (effect.magnitude == ActorCondition.MAGNITUDE_CLEAR) {
+                    if (effect.isClear()) {
                         label.setIcon(new OverlayIcon(effect.condition.getIcon(), DefaultIcons.getImmunityIcon()));
                         label.setText("Immune to actor condition " + effect.condition.getDesc());
                     } else {

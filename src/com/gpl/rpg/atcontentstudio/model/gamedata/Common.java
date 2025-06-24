@@ -170,13 +170,14 @@ public final class Common {
             return cclone;
         }
         public boolean isInfinite(){
-            return duration != null && duration == ActorCondition.DURATION_FOREVER;
+            return duration != null && duration.equals(ActorCondition.DURATION_FOREVER);
         }
         public boolean isImmunity(){
-            return (magnitude == null || magnitude == ActorCondition.MAGNITUDE_CLEAR) && (duration != null && duration > ActorCondition.DURATION_NONE);
+            return (super.isClear()) && (duration != null && duration > ActorCondition.DURATION_NONE);
         }
-        public boolean isClear(){
-            return (magnitude == null || magnitude == ActorCondition.MAGNITUDE_CLEAR) && (duration == null || duration == ActorCondition.DURATION_NONE);
+        @Override
+        public boolean isClear() {
+            return (super.isClear()) && (duration == null || duration.equals(ActorCondition.DURATION_NONE));
         }
     }
 
@@ -187,6 +188,9 @@ public final class Common {
 
         //Available from linked state
         public ActorCondition condition = null;
+        public boolean isClear(){
+            return magnitude == null || magnitude.equals(ActorCondition.MAGNITUDE_CLEAR);
+        }
     }
 
     @SuppressWarnings("rawtypes")
