@@ -1,14 +1,61 @@
 package com.gpl.rpg.atcontentstudio.utils;
 
+import com.gpl.rpg.atcontentstudio.Notification;
+import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class FileUtils {
+
+    public static String toJsonString(Map json) {
+        StringWriter writer = new JsonPrettyWriter();
+        try {
+            JSONObject.writeJSONString(json, writer);
+        } catch (IOException e) {
+            //Impossible with a StringWriter
+        }
+        return writer.toString();
+    }
+    public static String toJsonString(List json) {
+        StringWriter writer = new JsonPrettyWriter();
+        try {
+            JSONArray.writeJSONString(json, writer);
+        } catch (IOException e) {
+            //Impossible with a StringWriter
+        }
+        return writer.toString();
+    }
+
+    public static boolean writeStringToFile(String toWrite, File file, String type) {
+        return writeStringToFile(toWrite, file, type, true);
+    }
+    public static boolean writeStringToFile(String toWrite, File file, String type, boolean notifyOnSuccess) {
+        try {
+            FileWriter w = new FileWriter(file);
+            w.write(toWrite);
+            w.close();
+            if(type != null) {
+                Notification.addSuccess(type + " saved.");
+            }
+            return true;
+        } catch (IOException e) {
+            if(type != null) {
+                Notification.addError("Error while saving " + type + " : " + e.getMessage());
+            }
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static void deleteDir(File dir) {
         if (dir.exists()) {

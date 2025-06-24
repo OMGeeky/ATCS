@@ -1211,22 +1211,9 @@ public class Project implements ProjectTreeNode, Serializable {
         }
         for (String fName : dataToWritePerFilename.keySet()) {
             File jsonFile = new File(targetFolder, fName);
-            StringWriter writer = new JsonPrettyWriter();
-            try {
-                JSONArray.writeJSONString(dataToWritePerFilename.get(fName), writer);
-            } catch (IOException e) {
-                //Impossible with a StringWriter
-            }
-            String textToWrite = writer.toString();
-            try {
-                FileWriter w = new FileWriter(jsonFile);
-                w.write(textToWrite);
-                w.close();
-//				Notification.addSuccess("Json file "+jsonFile.getAbsolutePath()+" saved.");
-            } catch (IOException e) {
-                Notification.addError("Error while writing json file " + jsonFile.getAbsolutePath() + " : " + e.getMessage());
-                e.printStackTrace();
-            }
+
+            String textToWrite = FileUtils.toJsonString(dataToWritePerFilename.get(fName));
+            FileUtils.writeStringToFile(textToWrite, jsonFile, "JSON file '"+jsonFile.getAbsolutePath()+"'", false);
         }
         return filenamesToWrite;
     }

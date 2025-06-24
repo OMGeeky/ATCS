@@ -4,6 +4,7 @@ import com.gpl.rpg.atcontentstudio.Notification;
 import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.SaveEvent;
+import com.gpl.rpg.atcontentstudio.utils.FileUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -73,15 +74,9 @@ public abstract class JSONElement extends GameDataElement {
     public abstract Map toJson();
 
     public String toJsonString() {
-        StringWriter writer = new JsonPrettyWriter();
-        try {
-            JSONObject.writeJSONString(this.toJson(), writer);
-        } catch (IOException e) {
-            //Impossible with a StringWriter
-        }
-        return writer.toString();
+        Map json = this.toJson();
+        return FileUtils.toJsonString(json);
     }
-
 
     @Override
     public GameDataSet getDataSet() {
