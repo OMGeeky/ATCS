@@ -151,7 +151,7 @@ public class NPCEditor extends JSONElementEditor {
         }
         if (hitEffectPane == null)
             hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
-        hitEffectPane.createHitEffectPaneContent(listener, npc.writable, hitEffect, new SourceTimedConditionsListModel(hitEffect), new TargetTimedConditionsListModel(hitEffect));
+        hitEffectPane.createHitEffectPaneContent(listener, npc.writable, hitEffect, new CommonEditor.SourceTimedConditionsListModel(hitEffect), new CommonEditor.TargetTimedConditionsListModel(hitEffect));
         combatTraitPane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
         Common.HitReceivedEffect hitReceivedEffect;
@@ -162,7 +162,7 @@ public class NPCEditor extends JSONElementEditor {
         }
         if (hitReceivedEffectPane == null)
             hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", Common.TimedActorConditionEffect::new, this, "NPC", "Attacker");
-        hitReceivedEffectPane.createHitReceivedEffectPaneContent(listener, npc.writable, hitReceivedEffect, new SourceTimedConditionsListModel(hitReceivedEffect), new TargetTimedConditionsListModel(hitReceivedEffect));
+        hitReceivedEffectPane.createHitReceivedEffectPaneContent(listener, npc.writable, hitReceivedEffect, new CommonEditor.SourceTimedConditionsListModel(hitReceivedEffect), new CommonEditor.TargetTimedConditionsListModel(hitReceivedEffect));
         combatTraitPane.add(hitReceivedEffectPane.effectPane, JideBoxLayout.FIX);
 
         Common.DeathEffect deathEffect;
@@ -173,44 +173,13 @@ public class NPCEditor extends JSONElementEditor {
         }
         if (deathEffectPane == null)
             deathEffectPane = new CommonEditor.DeathEffectPane("Effect when killed: ", Common.TimedActorConditionEffect::new, this, "Killer");
-        deathEffectPane.createDeathEffectPaneContent(listener, npc.writable, deathEffect, new SourceTimedConditionsListModel(deathEffect)
+        deathEffectPane.createDeathEffectPaneContent(listener, npc.writable, deathEffect, new CommonEditor.SourceTimedConditionsListModel(deathEffect)
         );
         combatTraitPane.add(deathEffectPane.effectPane, JideBoxLayout.FIX);
 
         pane.add(combatTraitPane, JideBoxLayout.FIX);
     }
 
-    public static class TargetTimedConditionsListModel extends OrderedListenerListModel<Common.HitEffect, Common.TimedActorConditionEffect> {
-        public TargetTimedConditionsListModel(Common.HitEffect effect) {
-            super(effect);
-        }
-
-        @Override
-        protected List<Common.TimedActorConditionEffect> getItems() {
-            return source.conditions_target;
-        }
-
-        @Override
-        protected void setItems(List<Common.TimedActorConditionEffect> items) {
-            source.conditions_target = items;
-        }
-    }
-
-    public static class SourceTimedConditionsListModel extends OrderedListenerListModel<Common.DeathEffect, Common.TimedActorConditionEffect> {
-        public SourceTimedConditionsListModel(Common.DeathEffect effect) {
-            super(effect);
-        }
-
-        @Override
-        protected List<Common.TimedActorConditionEffect> getItems() {
-            return source.conditions_source;
-        }
-
-        @Override
-        protected void setItems(List<Common.TimedActorConditionEffect> items) {
-            source.conditions_source = items;
-        }
-    }
 
 
     public class NPCFieldUpdater implements FieldUpdateListener {

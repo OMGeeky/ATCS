@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static com.gpl.rpg.atcontentstudio.ui.Editor.addIntegerField;
@@ -617,4 +618,41 @@ public class CommonEditor {
             return updateHit;
         }
     }
+
+
+    //region list-models
+
+    public static class TargetTimedConditionsListModel extends OrderedListenerListModel<Common.HitEffect, Common.TimedActorConditionEffect> {
+        public TargetTimedConditionsListModel(Common.HitEffect effect) {
+            super(effect);
+        }
+
+        @Override
+        protected java.util.List<Common.TimedActorConditionEffect> getItems() {
+            return source.conditions_target;
+        }
+
+        @Override
+        protected void setItems(java.util.List<Common.TimedActorConditionEffect> items) {
+            source.conditions_target = items;
+        }
+    }
+
+    public static class SourceTimedConditionsListModel extends OrderedListenerListModel<Common.DeathEffect, Common.TimedActorConditionEffect> {
+        public SourceTimedConditionsListModel(Common.DeathEffect effect) {
+            super(effect);
+        }
+
+        @Override
+        protected java.util.List<Common.TimedActorConditionEffect> getItems() {
+            return source.conditions_source;
+        }
+
+        @Override
+        protected void setItems(List<Common.TimedActorConditionEffect> items) {
+            source.conditions_source = items;
+        }
+    }
+
+    //endregion
 }
