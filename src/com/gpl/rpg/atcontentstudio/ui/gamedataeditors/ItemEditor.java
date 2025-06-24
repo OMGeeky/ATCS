@@ -18,6 +18,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.gpl.rpg.atcontentstudio.model.gamedata.Common.*;
 
 public class ItemEditor extends JSONElementEditor {
 
@@ -30,7 +33,7 @@ public class ItemEditor extends JSONElementEditor {
     private static final String useLabel = "Effect on use: ";
 
 
-    private Common.ActorConditionEffect selectedEquipEffectCondition;
+    private ActorConditionEffect selectedEquipEffectCondition;
 
 
     private JButton itemIcon;
@@ -68,9 +71,9 @@ public class ItemEditor extends JSONElementEditor {
     private JRadioButton equipConditionImmunity;
     private JSpinner equipConditionMagnitude;
 
-    private CommonEditor.HitEffectPane hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", Common.TimedActorConditionEffect::new, this, null, null);
-    private CommonEditor.DeathEffectPane killEffectPane = new CommonEditor.DeathEffectPane(killLabel, Common.TimedActorConditionEffect::new, this, null);
-    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", Common.TimedActorConditionEffect::new, this, null, null);
+    private CommonEditor.HitEffectPane hitEffectPane = new CommonEditor.HitEffectPane("Effect on every hit: ", TimedActorConditionEffect::new, this, null, null);
+    private CommonEditor.DeathEffectPane killEffectPane = new CommonEditor.DeathEffectPane(killLabel, TimedActorConditionEffect::new, this, null);
+    private CommonEditor.HitRecievedEffectPane hitReceivedEffectPane = new CommonEditor.HitRecievedEffectPane("Effect on every hit received: ", TimedActorConditionEffect::new, this, null, null);
 
     public ItemEditor(Item item) {
         super(item, item.getDesc(), item.getIcon());
@@ -125,8 +128,8 @@ public class ItemEditor extends JSONElementEditor {
         String titleEquipConditions = "Actor Conditions applied when equipped: ";
         equipConditionsModel = new EquipConditionsListModel(equipEffect);
         CommonEditor.ConditionsCellRenderer cellRendererEquipConditions = new CommonEditor.ConditionsCellRenderer();
-        BasicLambdaWithArg<Common.ActorConditionEffect> selectedSetEquipConditions = (value)->selectedEquipEffectCondition = value;
-        BasicLambdaWithReturn<Common.ActorConditionEffect> selectedGetEquipConditions = ()->selectedEquipEffectCondition ;
+        BasicLambdaWithArg<ActorConditionEffect> selectedSetEquipConditions = (value)->selectedEquipEffectCondition = value;
+        BasicLambdaWithReturn<ActorConditionEffect> selectedGetEquipConditions = ()->selectedEquipEffectCondition ;
         BasicLambda selectedResetEquipConditions = ()->selectedEquipEffectCondition = null;
         BasicLambdaWithArg<JPanel> updatePaneEquipConditions = (editorPane) -> updateEquipConditionEditorPane(editorPane, selectedEquipEffectCondition, listener);
         var resultEquipConditions = UiUtils.getCollapsibleItemList(listener,
@@ -137,7 +140,7 @@ public class ItemEditor extends JSONElementEditor {
                 (x) -> {},
                 updatePaneEquipConditions,
                 item.writable,
-                Common.ActorConditionEffect::new,
+                ActorConditionEffect::new,
                 cellRendererEquipConditions,
                 titleEquipConditions,
                 (x) -> null);
@@ -153,31 +156,24 @@ public class ItemEditor extends JSONElementEditor {
             equipEffectPane.collapse();
         }
 
-        Common.HitEffect hitEffect;
-        if (item.hit_effect == null) {
-            hitEffect = new Common.HitEffect();
-        } else {
-            hitEffect = item.hit_effect;
-        }
-        hitEffectPane.createHitEffectPaneContent(listener, item.writable, hitEffect, new CommonEditor.SourceTimedConditionsListModel(hitEffect), new CommonEditor.TargetTimedConditionsListModel(hitEffect));
+        HitEffect hitEffect = Objects.requireNonNullElseGet(item.hit_effect, HitEffect::new);
+        hitEffectPane.createHitEffectPaneContent(listener, item.writable, hitEffect,
+                                                 new CommonEditor.SourceTimedConditionsListModel(hitEffect),
+                                                 new CommonEditor.TargetTimedConditionsListModel(hitEffect));
         pane.add(hitEffectPane.effectPane, JideBoxLayout.FIX);
 
-        Common.DeathEffect killEffect;
-        if (item.kill_effect == null) {
-            killEffect = new Common.DeathEffect();
-        } else {
-            killEffect = item.kill_effect;
-        }
-        killEffectPane.createDeathEffectPaneContent(listener, item.writable, killEffect, new CommonEditor.SourceTimedConditionsListModel(killEffect));
+        DeathEffect killEffect = Objects.requireNonNullElseGet(item.kill_effect, DeathEffect::new);
+        killEffectPane.createDeathEffectPaneContent(listener, item.writable, killEffect,
+                                                    new CommonEditor.SourceTimedConditionsListModel(killEffect));
         pane.add(killEffectPane.effectPane, JideBoxLayout.FIX);
 
-        Common.HitReceivedEffect hitReceivedEffect;
-        if (item.hit_received_effect == null) {
-            hitReceivedEffect = new Common.HitReceivedEffect();
-        } else {
-            hitReceivedEffect = item.hit_received_effect;
-        }
-        hitReceivedEffectPane.createHitReceivedEffectPaneContent(listener, item.writable, hitReceivedEffect, new CommonEditor.SourceTimedConditionsListModel(hitReceivedEffect), new CommonEditor.TargetTimedConditionsListModel(hitReceivedEffect));
+        HitReceivedEffect hitReceivedEffect = Objects.requireNonNullElseGet(item.hit_received_effect,
+                                                                            HitReceivedEffect::new);
+        hitReceivedEffectPane.createHitReceivedEffectPaneContent(listener, item.writable, hitReceivedEffect,
+                                                                 new CommonEditor.SourceTimedConditionsListModel(
+                                                                         hitReceivedEffect),
+                                                                 new CommonEditor.TargetTimedConditionsListModel(
+                                                                         hitReceivedEffect));
         pane.add(killEffectPane.effectPane, JideBoxLayout.FIX);
 
 
@@ -203,7 +199,7 @@ public class ItemEditor extends JSONElementEditor {
 
     }
 
-    public void updateEquipConditionEditorPane(JPanel pane, Common.ActorConditionEffect condition, final FieldUpdateListener listener) {
+    public void updateEquipConditionEditorPane(JPanel pane, ActorConditionEffect condition, final FieldUpdateListener listener) {
         pane.removeAll();
         if (equipConditionBox != null) {
             removeElementListener(equipConditionBox);
@@ -251,18 +247,18 @@ public class ItemEditor extends JSONElementEditor {
         pane.repaint();
     }
 
-    public static class EquipConditionsListModel extends OrderedListenerListModel<Item.EquipEffect, Common.ActorConditionEffect> {
+    public static class EquipConditionsListModel extends OrderedListenerListModel<Item.EquipEffect, ActorConditionEffect> {
         public EquipConditionsListModel(Item.EquipEffect equipEffect) {
             super(equipEffect);
         }
 
         @Override
-        protected List<Common.ActorConditionEffect> getItems() {
+        protected List<ActorConditionEffect> getItems() {
             return source.conditions;
         }
 
         @Override
-        protected void setItems(List<Common.ActorConditionEffect> conditions) {
+        protected void setItems(List<ActorConditionEffect> conditions) {
             source.conditions = conditions;
         }
     }
