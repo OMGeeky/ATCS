@@ -141,22 +141,22 @@ public class CommonEditor {
         /// this should just be a convenience field, to access it, without casting. DO NOT SET WITHOUT ALSO SETTING THE FIELD IN THE SUPER-CLASS!
         public EFFECT effect;
 
-        protected String applyToTargetHint;
+        protected final String applyToTargetHint;
         private JList hitTargetConditionsList;
-        private ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT, MODEL> hitTargetConditionPane = new ConditionEffectEditorPane<>();
+        private final ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT, MODEL> hitTargetConditionPane ;
 
         /*
          * create a new HitEffectPane with the selections (probably passed in from last time)
          */
         public HitEffectPane(String title, Supplier<ELEMENT> sourceNewSupplier, Editor editor, String applyToHint, String applyToTargetHint) {
             super(title, sourceNewSupplier, editor, applyToHint);
+            hitTargetConditionPane = new ConditionEffectEditorPane<>(editor);
 
             if (applyToTargetHint == null || applyToTargetHint == "") {
-                applyToTargetHint = "";
+                this.applyToTargetHint = "";
             } else {
-                applyToTargetHint = " (%s)".formatted(applyToTargetHint);
+                this.applyToTargetHint = " (%s)".formatted(applyToTargetHint);
             }
-            this.applyToTargetHint = applyToTargetHint;
         }
 
         void createHitEffectPaneContent(FieldUpdateListener listener, boolean writable, EFFECT e, MODEL sourceConditionsModelInput, MODEL targetConditionsListModel) {
@@ -175,7 +175,7 @@ public class CommonEditor {
             BasicLambdaWithReturn<ELEMENT> selectedGetTarget = () -> hitTargetConditionPane.selectedCondition;
             BasicLambda selectedResetTarget = () -> hitTargetConditionPane.selectedCondition = null;
             BasicLambdaWithArg<JPanel> updatePaneTarget = (editorPane) -> hitTargetConditionPane.updateEffectTimedConditionEditorPane(
-                    editorPane, hitTargetConditionPane.selectedCondition, listener, editor);
+                    editorPane, hitTargetConditionPane.selectedCondition, listener);
 
             var resultTarget = UiUtils.getCollapsibleItemList(listener, hitTargetConditionPane.conditionsModel,
                                                               selectedResetTarget, selectedSetTarget, selectedGetTarget,
@@ -206,10 +206,9 @@ public class CommonEditor {
     }
 
     public static class DeathEffectPane<EFFECT extends Common.DeathEffect, LIST_MODEL_SOURCE, ELEMENT extends Common.TimedActorConditionEffect, MODEL extends OrderedListenerListModel<LIST_MODEL_SOURCE, ELEMENT>> {
-        protected Supplier<ELEMENT> conditionSupplier;
-        protected String title;
-        protected Editor editor;
-        protected String applyToHint;
+        protected final Supplier<ELEMENT> conditionSupplier;
+        protected final String title;
+        protected final String applyToHint;
 
 
         EFFECT effect;
@@ -220,7 +219,7 @@ public class CommonEditor {
         private JSpinner effectAPMax;
         private JList<ELEMENT> sourceConditionsList;
 
-        private ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT, MODEL> sourceConditionPane = new ConditionEffectEditorPane<>();
+        private final ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT, MODEL> sourceConditionPane;
 
 
         /*
@@ -229,19 +228,18 @@ public class CommonEditor {
         public DeathEffectPane(String title, Supplier<ELEMENT> conditionSupplier, Editor editor, String applyToHint) {
             this.title = title;
             this.conditionSupplier = conditionSupplier;
-            this.editor = editor;
-            this.applyToHint = applyToHint;
+            this.sourceConditionPane = new ConditionEffectEditorPane<>(editor);
+            if (applyToHint == null || applyToHint == "") {
+                this.applyToHint = "";
+            } else {
+                this.applyToHint = " (%s)".formatted(applyToHint);
+            }
         }
 
         void createDeathEffectPaneContent(FieldUpdateListener listener, boolean writable, EFFECT e, MODEL sourceConditionsModel) {
             effect = e;
             sourceConditionPane.conditionsModel = sourceConditionsModel;
 
-            if (applyToHint == null || applyToHint == "") {
-                applyToHint = "";
-            } else {
-                applyToHint = " (%s)".formatted(applyToHint);
-            }
             effectPane = new CollapsiblePanel(title);
             effectPane.setLayout(new JideBoxLayout(effectPane, JideBoxLayout.PAGE_AXIS));
 
@@ -268,7 +266,7 @@ public class CommonEditor {
             BasicLambdaWithReturn<ELEMENT> selectedGetSource = () -> sourceConditionPane.selectedCondition;
             BasicLambda selectedResetSource = () -> sourceConditionPane.selectedCondition = null;
             BasicLambdaWithArg<JPanel> updatePaneSource = (editorPane) -> sourceConditionPane.updateEffectTimedConditionEditorPane(
-                    editorPane, sourceConditionPane.selectedCondition, listener, editor);
+                    editorPane, sourceConditionPane.selectedCondition, listener);
 
             var resultSource = UiUtils.getCollapsibleItemList(listener, sourceConditionPane.conditionsModel, selectedResetSource,
                                                               selectedSetSource, selectedGetSource, (x) -> {
@@ -305,6 +303,7 @@ public class CommonEditor {
     }
 
     static class ConditionEffectEditorPane<LIST_MODEL_SOURCE, ELEMENT extends Common.TimedActorConditionEffect, MODEL extends OrderedListenerListModel<LIST_MODEL_SOURCE, ELEMENT>> {
+        private final Editor editor;
         ELEMENT selectedCondition;
 
         MODEL conditionsModel;
@@ -317,6 +316,10 @@ public class CommonEditor {
         JRadioButton conditionTimed;
         JRadioButton conditionForever;
         JSpinner conditionDuration;
+
+        ConditionEffectEditorPane(Editor editor) {
+            this.editor = editor;
+        }
 
         public  void updateEffectTimedConditionWidgets(ELEMENT condition) {
             boolean immunity = condition.isImmunity();
@@ -334,16 +337,16 @@ public class CommonEditor {
             conditionForever.setEnabled(!clear);
         }
 
-        public void updateEffectTimedConditionEditorPane(JPanel pane, ELEMENT condition, final FieldUpdateListener listener, Editor e) {
+        public void updateEffectTimedConditionEditorPane(JPanel pane, ELEMENT condition, final FieldUpdateListener listener) {
             pane.removeAll();
             if (conditionBox != null) {
-                e.removeElementListener(conditionBox);
+                editor.removeElementListener(conditionBox);
             }
 
-            boolean writable = e.target.writable;
-            Project proj = e.target.getProject();
+            boolean writable = editor.target.writable;
+            Project proj = editor.target.getProject();
 
-            conditionBox = e.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable,
+            conditionBox = editor.addActorConditionBox(pane, proj, "Actor Condition: ", condition.condition, writable,
                                                   listener);
             conditionChance = Editor.addDoubleField(pane, "Chance: ", condition.chance, writable, listener);
 
