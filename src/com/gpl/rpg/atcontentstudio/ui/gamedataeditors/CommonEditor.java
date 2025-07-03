@@ -28,7 +28,8 @@ public class CommonEditor {
         @Override
         public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c instanceof JLabel label) {
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
                 Common.TimedActorConditionEffect effect = (Common.TimedActorConditionEffect) value;
 
                 if (effect.condition != null) {
@@ -69,7 +70,8 @@ public class CommonEditor {
         @Override
         public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c instanceof JLabel label) {
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
                 Common.ActorConditionEffect effect = (Common.ActorConditionEffect) value;
 
                 if (effect.condition != null) {
@@ -108,13 +110,13 @@ public class CommonEditor {
         @Override
         protected void addFields(FieldUpdateListener listener, boolean writable) {
             super.addFields(listener, writable);
-            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToTargetHint),
+            hitReceivedEffectHPMinTarget = addIntegerField(effectPane, String.format("HP bonus min%s: ", applyToTargetHint),
                                                            effect.target.hp_boost_min, true, writable, listener);
-            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToTargetHint),
+            hitReceivedEffectHPMaxTarget = addIntegerField(effectPane, String.format("HP bonus max%s: ", applyToTargetHint),
                                                            effect.target.hp_boost_max, true, writable, listener);
-            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToTargetHint),
+            hitReceivedEffectAPMinTarget = addIntegerField(effectPane, String.format("AP bonus min%s: ", applyToTargetHint),
                                                            effect.target.ap_boost_min, true, writable, listener);
-            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToTargetHint),
+            hitReceivedEffectAPMaxTarget = addIntegerField(effectPane, String.format("AP bonus max%s: ", applyToTargetHint),
                                                            effect.target.ap_boost_max, true, writable, listener);
         }
 
@@ -160,7 +162,7 @@ public class CommonEditor {
             if (applyToTargetHint == null || applyToTargetHint == "") {
                 this.applyToTargetHint = "";
             } else {
-                this.applyToTargetHint = " (%s)".formatted(applyToTargetHint);
+                this.applyToTargetHint = String.format(" (%s)", applyToTargetHint);
             }
         }
 
@@ -174,7 +176,7 @@ public class CommonEditor {
         protected void addLists(FieldUpdateListener listener, boolean writable) {
             super.addLists(listener, writable);
 
-            String titleTarget = "Actor Conditions applied to the target%s: ".formatted(applyToTargetHint);
+            String titleTarget = String.format("Actor Conditions applied to the target%s: ", applyToTargetHint);
             CommonEditor.TimedConditionsCellRenderer cellRendererTarget = new CommonEditor.TimedConditionsCellRenderer();
             BasicLambdaWithArg<ELEMENT> selectedSetTarget = (value) -> hitTargetConditionPane.selectedCondition = value;
             BasicLambdaWithReturn<ELEMENT> selectedGetTarget = () -> hitTargetConditionPane.selectedCondition;
@@ -237,7 +239,7 @@ public class CommonEditor {
             if (applyToHint == null || applyToHint == "") {
                 this.applyToHint = "";
             } else {
-                this.applyToHint = " (%s)".formatted(applyToHint);
+                this.applyToHint = String.format(" (%s)", applyToHint);
             }
         }
 
@@ -254,18 +256,18 @@ public class CommonEditor {
         }
 
         protected void addFields(FieldUpdateListener listener, boolean writable) {
-            effectHPMin = addIntegerField(effectPane, "HP bonus min%s: ".formatted(applyToHint), effect.hp_boost_min,
+            effectHPMin = addIntegerField(effectPane, String.format("HP bonus min%s: ", applyToHint), effect.hp_boost_min,
                                           true, writable, listener);
-            effectHPMax = addIntegerField(effectPane, "HP bonus max%s: ".formatted(applyToHint), effect.hp_boost_max,
+            effectHPMax = addIntegerField(effectPane, String.format("HP bonus max%s: ", applyToHint), effect.hp_boost_max,
                                           true, writable, listener);
-            effectAPMin = addIntegerField(effectPane, "AP bonus min%s: ".formatted(applyToHint), effect.ap_boost_min,
+            effectAPMin = addIntegerField(effectPane, String.format("AP bonus min%s: ", applyToHint), effect.ap_boost_min,
                                           true, writable, listener);
-            effectAPMax = addIntegerField(effectPane, "AP bonus max%s: ".formatted(applyToHint), effect.ap_boost_max,
+            effectAPMax = addIntegerField(effectPane, String.format("AP bonus max%s: ", applyToHint), effect.ap_boost_max,
                                           true, writable, listener);
         }
 
         protected void addLists(FieldUpdateListener listener, boolean writable) {
-            String titleSource = "Actor Conditions applied to the source%s: ".formatted(applyToHint);
+            String titleSource = String.format("Actor Conditions applied to the source%s: ", applyToHint);
             TimedConditionsCellRenderer cellRendererSource = new TimedConditionsCellRenderer();
             BasicLambdaWithArg<ELEMENT> selectedSetSource = (value) -> sourceConditionPane.selectedCondition = value;
             BasicLambdaWithReturn<ELEMENT> selectedGetSource = () -> sourceConditionPane.selectedCondition;
