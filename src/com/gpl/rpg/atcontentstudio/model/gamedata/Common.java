@@ -1,5 +1,6 @@
 package com.gpl.rpg.atcontentstudio.model.gamedata;
 
+import com.gpl.rpg.atcontentstudio.Notification;
 import com.gpl.rpg.atcontentstudio.model.GameDataElement;
 import com.gpl.rpg.atcontentstudio.model.Project;
 
@@ -49,6 +50,10 @@ public final class Common {
     public static void linkIcon(Project proj, String iconId, GameDataElement backlink) {
         if (iconId != null) {
             String spritesheetId = iconId.split(":")[0];
+            if (proj.getSpritesheet(spritesheetId) == null) {
+                Notification.addError("Error Spritesheet " + spritesheetId + ". has no backlink. (" + iconId + ")");
+                return;
+            }
             proj.getSpritesheet(spritesheetId).addBacklink(backlink);
         }
     }
