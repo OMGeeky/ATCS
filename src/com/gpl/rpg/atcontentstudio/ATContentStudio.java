@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 public class ATContentStudio {
 
     public static final String APP_NAME = "Andor's Trail Content Studio";
-    public static final String APP_VERSION = "v0.6.21";
+    public static final String APP_VERSION = readVersionFromFile();
 
     public static final String CHECK_UPDATE_URL = "https://andorstrail.com/static/ATCS_latest";
     public static final String DOWNLOAD_URL = "https://andorstrail.com/viewtopic.php?f=6&t=4806";
@@ -216,6 +216,16 @@ public class ATContentStudio {
             for (Object key : newDefaults.keySet()) {
                 defaults.put(key, newDefaults.get(key));
             }
+        }
+    }
+
+    private static String readVersionFromFile() {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                Objects.requireNonNull(ATContentStudio.class.getResourceAsStream("/ATCS_latest"))))) {
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "unknown";
         }
     }
 }
