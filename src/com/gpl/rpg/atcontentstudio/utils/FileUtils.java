@@ -2,6 +2,7 @@ package com.gpl.rpg.atcontentstudio.utils;
 
 import com.gpl.rpg.atcontentstudio.Notification;
 import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
+import com.gpl.rpg.atcontentstudio.io.JsonSerializable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,7 +19,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class FileUtils {
-
+    public static String toJsonString(JsonSerializable jsonSerializable) {
+        return toJsonString(jsonSerializable.toMap());
+    }
     public static String toJsonString(Map json) {
         StringWriter writer = new JsonPrettyWriter();
         try {
