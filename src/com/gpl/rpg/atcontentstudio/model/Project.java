@@ -241,9 +241,9 @@ public class Project implements ProjectTreeNode, Serializable, JsonSerializable 
                 return null;
             } else {
                 p = (Project) SettingsSave.loadInstance(f, "Project");
+                p.baseFolder = projRoot;
             }
             p.save();
-
         }
         p.refreshTransients(w);
         return p;

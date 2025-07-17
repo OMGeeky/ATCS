@@ -115,7 +115,7 @@ public class Workspace implements ProjectTreeNode, Serializable, JsonSerializabl
             w = loadWorkspaceFromJson(workspaceRoot, f2);
             w.refreshTransients();
         } else {
-            Notification.addInfo("Could not find json workspace file. Falling back to binary");
+            Notification.addInfo("Could not find json workspace file. Checking for binary file");
             File f = new File(workspaceRoot, WS_SETTINGS_FILE);
             if (!workspaceRoot.exists() || !f.exists()) {
                 w = new Workspace(workspaceRoot);
@@ -123,10 +123,13 @@ public class Workspace implements ProjectTreeNode, Serializable, JsonSerializabl
                 w = (Workspace) SettingsSave.loadInstance(f, "Workspace");
                 if (w == null) {
                     w = new Workspace(workspaceRoot);
-                    w.save();
                 } else {
+                    w.settingsFile = f2;
+                    w.baseFolder = workspaceRoot;
+                    Notification.addInfo("Switched workspace to json format.");
                     w.refreshTransients();
                 }
+                w.save();
             }
         }
         activeWorkspace = w;
