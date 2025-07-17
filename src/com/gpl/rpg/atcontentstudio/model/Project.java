@@ -62,8 +62,6 @@ public class Project implements ProjectTreeNode, Serializable, JsonSerializable 
     public transient BookmarksRoot bookmarks;
 
 
-    public SavedGamesSet saves; //For simulations.
-
     public transient SavedSlotCollection v;
 
     public transient Workspace parent;
@@ -140,13 +138,11 @@ public class Project implements ProjectTreeNode, Serializable, JsonSerializable 
         createdContent = new GameSource(this, Type.created);
         bookmarks = new BookmarksRoot(this);
 
-        saves = new SavedGamesSet(this);
 
         v.add(createdContent);
         v.add(alteredContent);
 //		v.add(referencedContent);
         v.add(baseContent);
-        v.add(saves);
         v.add(bookmarks);
     }
 
@@ -269,14 +265,11 @@ public class Project implements ProjectTreeNode, Serializable, JsonSerializable 
         createdContent = new GameSource(this, GameSource.Type.created);
         bookmarks = new BookmarksRoot(this);
 
-        saves.refreshTransients();
-
         v = new SavedSlotCollection();
         v.add(createdContent);
         v.add(alteredContent);
 //		v.add(referencedContent);
         v.add(baseContent);
-        v.add(saves);
         v.add(bookmarks);
 
 
@@ -1013,11 +1006,6 @@ public class Project implements ProjectTreeNode, Serializable, JsonSerializable 
     @Override
     public boolean isEmpty() {
         return v.isEmpty();
-    }
-
-
-    public void addSave(File selectedFile) {
-        saves.addSave(selectedFile);
     }
 
 

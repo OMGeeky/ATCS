@@ -6,7 +6,6 @@ import com.gpl.rpg.atcontentstudio.model.gamedata.*;
 import com.gpl.rpg.atcontentstudio.model.maps.TMXMap;
 import com.gpl.rpg.atcontentstudio.model.maps.Worldmap;
 import com.gpl.rpg.atcontentstudio.model.maps.WorldmapSegment;
-import com.gpl.rpg.atcontentstudio.model.saves.SavedGamesSet;
 import com.gpl.rpg.atcontentstudio.model.tools.writermode.WriterModeData;
 import com.gpl.rpg.atcontentstudio.model.tools.writermode.WriterModeDataSet;
 import com.gpl.rpg.atcontentstudio.ui.tools.BeanShellView;
@@ -315,22 +314,6 @@ public class WorkspaceActions {
         }
     };
 
-    public ATCSAction loadSave = new ATCSAction("Load saved game...", "Opens the saved game loading wizard") {
-        public void actionPerformed(ActionEvent e) {
-            if (!(selectedNode instanceof Project || selectedNode instanceof SavedGamesSet)) return;
-            JFileChooser chooser = new JFileChooser("Select an Andor's Trail save file");
-            if (chooser.showOpenDialog(ATContentStudio.frame) == JFileChooser.APPROVE_OPTION) {
-                selectedNode.getProject().addSave(chooser.getSelectedFile());
-                selectedNode.getProject().save();
-            }
-        }
-
-        public void selectionChanged(ProjectTreeNode selectedNode, TreePath[] selectedPaths) {
-            setEnabled(selectedNode instanceof Project || selectedNode instanceof SavedGamesSet);
-        }
-
-    };
-
     public ATCSAction compareItems = new ATCSAction("Items comparator", "Opens an editor showing all the items of the project in a table") {
         public void actionPerformed(ActionEvent e) {
             if (selectedNode == null || selectedNode.getProject() == null) return;
@@ -466,7 +449,6 @@ public class WorkspaceActions {
         actions.add(createGDE);
         actions.add(createMap);
         actions.add(importJSON);
-        actions.add(loadSave);
         actions.add(compareItems);
         actions.add(compareNPCs);
         actions.add(exportProject);

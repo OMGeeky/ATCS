@@ -8,7 +8,6 @@ import com.gpl.rpg.atcontentstudio.model.Workspace;
 import com.gpl.rpg.atcontentstudio.model.gamedata.JSONElement;
 import com.gpl.rpg.atcontentstudio.model.maps.TMXMap;
 import com.gpl.rpg.atcontentstudio.model.maps.WorldmapSegment;
-import com.gpl.rpg.atcontentstudio.model.saves.SavedGame;
 import com.gpl.rpg.atcontentstudio.model.sprites.Spritesheet;
 import com.gpl.rpg.atcontentstudio.model.tools.writermode.WriterModeData;
 
@@ -127,7 +126,6 @@ public class StudioFrame extends JFrame {
         projectMenu.add(new JMenuItem(actions.importJSON));
         projectMenu.add(new JMenuItem(actions.createMap));
         projectMenu.add(new JMenuItem(actions.createWorldmap));
-        projectMenu.add(new JMenuItem(actions.loadSave));
         getJMenuBar().add(projectMenu);
 
         JMenu toolsMenu = new JMenu("Tools");
@@ -202,10 +200,6 @@ public class StudioFrame extends JFrame {
         } else if (node instanceof WriterModeData) {
             openEditor((WriterModeData) node);
         }
-    }
-
-    public void openEditor(SavedGame save) {
-        editors.openEditor(save);
     }
 
     public void openEditor(WorldmapSegment node) {
