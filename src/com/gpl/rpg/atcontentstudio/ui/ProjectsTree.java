@@ -1,6 +1,5 @@
 package com.gpl.rpg.atcontentstudio.ui;
 
-import com.gpl.rpg.andorstrainer.AndorsTrainer;
 import com.gpl.rpg.atcontentstudio.ATContentStudio;
 import com.gpl.rpg.atcontentstudio.model.ProjectTreeNode;
 import com.gpl.rpg.atcontentstudio.model.Workspace;
@@ -35,12 +34,6 @@ public class ProjectsTree extends JPanel {
 
     private JPopupMenu popupMenu;
 
-    private Thread konamiTimeout = null;
-    private boolean exit = false;
-    private int timeout = 200;
-    private Integer[] konamiBuffer = new Integer[]{null, null, null, null, null, null, null, null, null, null};
-    private boolean konamiCodeEntered = false;
-
     public ProjectsTree() {
         super();
         setLayout(new BorderLayout());
@@ -66,22 +59,6 @@ public class ProjectsTree extends JPanel {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     if (projectsTree.getSelectionPath() != null) {
                         itemAction((ProjectTreeNode) projectsTree.getSelectionPath().getLastPathComponent());
-                    }
-                } else {
-                    if (konamiTimeout == null) {
-                        startKonamiCount();
-                    }
-                    int i = 0;
-                    while (i < konamiBuffer.length && konamiBuffer[i] != null) {
-                        i++;
-                    }
-                    if (i < konamiBuffer.length) {
-                        konamiBuffer[i] = e.getKeyCode();
-                        if (!compareBuffers()) {
-                            exit = true;
-                        } else {
-                            resetTimeout();
-                        }
                     }
                 }
             }
@@ -240,22 +217,6 @@ public class ProjectsTree extends JPanel {
             popupMenu.add(new JSeparator());
             addNextSeparator = false;
         }
-
-        if (konamiCodeEntered) {
-            JMenuItem openTrainer = new JMenuItem("Start Andor's Trainer...");
-            popupMenu.add(openTrainer);
-            popupMenu.addSeparator();
-            openTrainer.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new Thread() {
-                        public void run() {
-                            AndorsTrainer.startApp(false);
-                        }
-                    }.start();
-                }
-            });
-        }
     }
 
     public void popupActivated(MouseEvent e) {
@@ -404,67 +365,6 @@ public class ProjectsTree extends JPanel {
         TreePath tp = new TreePath(path.toArray());
         projectsTree.setSelectionPath(tp);
         projectsTree.scrollPathToVisible(tp);
-    }
-
-    protected void startKonamiCount() {
-        resetTimeout();
-        exit = false;
-        konamiTimeout = new Thread() {
-            @Override
-            public void run() {
-                while (!exit && timeout > 0) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                    }
-                    timeout -= 10;
-                }
-                konamiTimeout = null;
-                konamiBuffer = new Integer[]{null, null, null, null, null, null, null, null, null, null};
-            }
-        };
-        konamiTimeout.start();
-    }
-
-    protected void resetTimeout() {
-        timeout = 400;
-    }
-
-    protected boolean compareBuffers() {
-        if (konamiBuffer[0] == null) return true;
-        else if (konamiBuffer[0] != KeyEvent.VK_UP) return false;
-
-        if (konamiBuffer[1] == null) return true;
-        else if (konamiBuffer[1] != KeyEvent.VK_UP) return false;
-
-        if (konamiBuffer[2] == null) return true;
-        else if (konamiBuffer[2] != KeyEvent.VK_DOWN) return false;
-
-        if (konamiBuffer[3] == null) return true;
-        else if (konamiBuffer[3] != KeyEvent.VK_DOWN) return false;
-
-        if (konamiBuffer[4] == null) return true;
-        else if (konamiBuffer[4] != KeyEvent.VK_LEFT) return false;
-
-        if (konamiBuffer[5] == null) return true;
-        else if (konamiBuffer[5] != KeyEvent.VK_RIGHT) return false;
-
-        if (konamiBuffer[6] == null) return true;
-        else if (konamiBuffer[6] != KeyEvent.VK_LEFT) return false;
-
-        if (konamiBuffer[7] == null) return true;
-        else if (konamiBuffer[7] != KeyEvent.VK_RIGHT) return false;
-
-        if (konamiBuffer[8] == null) return true;
-        else if (konamiBuffer[8] != KeyEvent.VK_B) return false;
-
-        if (konamiBuffer[9] == null) return true;
-        else if (konamiBuffer[9] != KeyEvent.VK_A) return false;
-
-        konamiCodeEntered = true;
-
-        exit = true;
-        return true;
     }
 
 }
