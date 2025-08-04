@@ -6,6 +6,7 @@ import com.gpl.rpg.atcontentstudio.model.*;
 import com.gpl.rpg.atcontentstudio.model.GameSource.Type;
 import com.gpl.rpg.atcontentstudio.model.gamedata.GameDataSet;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
+import com.gpl.rpg.atcontentstudio.utils.FileUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -155,24 +156,12 @@ public class WriterModeDataSet implements ProjectTreeNode, Serializable {
 
             return;
         }
-        StringWriter writer = new JsonPrettyWriter();
-        try {
-            JSONArray.writeJSONString(dataToSave, writer);
-        } catch (IOException e) {
-            //Impossible with a StringWriter
-        }
-        String toWrite = writer.toString();
-        try {
-            FileWriter w = new FileWriter(writerFile);
-            w.write(toWrite);
-            w.close();
+
+        String toWrite = FileUtils.toJsonString(dataToSave);
+        if(FileUtils.writeStringToFile(toWrite, writerFile, "Json file " + writerFile.getAbsolutePath())) {
             for (WriterModeData element : writerModeDataList) {
                 element.state = GameDataElement.State.saved;
             }
-            Notification.addSuccess("Json file " + writerFile.getAbsolutePath() + " saved.");
-        } catch (IOException e) {
-            Notification.addError("Error while writing json file " + writerFile.getAbsolutePath() + " : " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

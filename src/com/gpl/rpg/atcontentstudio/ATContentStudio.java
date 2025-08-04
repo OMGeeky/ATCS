@@ -20,6 +20,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpTimeoutException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
@@ -183,8 +187,14 @@ public class ATContentStudio {
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        } catch (HttpTimeoutException e) {
+            System.out.println("Could not connect to url to check for updates (timeout): " + CHECK_UPDATE_URL);
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e.getMessage() != null && e.getMessage().startsWith("Server returned HTTP response code:")) {
+                System.out.println("Could not fetch current version from server to check for updates (non-success-status): " + e.getMessage());
+            } else {
+                System.out.println("Could not check for updates: '" + CHECK_UPDATE_URL + "' - " + e.getMessage());
+            }
         } finally {
             try {
                 if (in != null)

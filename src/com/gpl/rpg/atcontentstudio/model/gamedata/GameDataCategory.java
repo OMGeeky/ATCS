@@ -5,6 +5,7 @@ import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
 import com.gpl.rpg.atcontentstudio.model.*;
 import com.gpl.rpg.atcontentstudio.model.GameSource.Type;
 import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
+import com.gpl.rpg.atcontentstudio.utils.FileUtils;
 import org.json.simple.JSONArray;
 
 import javax.swing.tree.TreeNode;
@@ -157,26 +158,13 @@ public class GameDataCategory<E extends JSONElement> extends ArrayList<E> implem
 
             return;
         }
-        StringWriter writer = new JsonPrettyWriter();
-        try {
-            JSONArray.writeJSONString(dataToSave, writer);
-        } catch (IOException e) {
-            //Impossible with a StringWriter
-        }
-        String toWrite = writer.toString();
-        try {
-            FileWriter w = new FileWriter(jsonFile);
-            w.write(toWrite);
-            w.close();
+
+        String toWrite = FileUtils.toJsonString(dataToSave);
+        if(FileUtils.writeStringToFile(toWrite, jsonFile, "JSON file '"+jsonFile.getAbsolutePath()+"'")){
             for (E element : this) {
                 element.state = GameDataElement.State.saved;
             }
-            Notification.addSuccess("Json file " + jsonFile.getAbsolutePath() + " saved.");
-        } catch (IOException e) {
-            Notification.addError("Error while writing json file " + jsonFile.getAbsolutePath() + " : " + e.getMessage());
-            e.printStackTrace();
         }
-
     }
 
 

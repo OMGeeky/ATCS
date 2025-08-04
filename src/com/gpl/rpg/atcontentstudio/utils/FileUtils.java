@@ -1,14 +1,104 @@
 package com.gpl.rpg.atcontentstudio.utils;
 
+import com.gpl.rpg.atcontentstudio.Notification;
+import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
+import com.gpl.rpg.atcontentstudio.io.JsonSerializable;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class FileUtils {
+    public static String toJsonString(JsonSerializable jsonSerializable) {
+        return toJsonString(jsonSerializable.toMap());
+    }
+    public static String toJsonString(Map json) {
+        StringWriter writer = new JsonPrettyWriter();
+        try {
+            JSONObject.writeJSONString(json, writer);
+        } catch (IOException e) {
+            //Impossible with a StringWriter
+        }
+        return writer.toString();
+    }
+    public static String toJsonString(List json) {
+        StringWriter writer = new JsonPrettyWriter();
+        try {
+            JSONArray.writeJSONString(json, writer);
+        } catch (IOException e) {
+            //Impossible with a StringWriter
+        }
+        return writer.toString();
+    }
+
+    public static Object fromJsonString(String json) {
+        Object o;
+        try {
+            JSONParser parser = new JSONParser();
+            o = parser.parse(json);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return o;
+    }
+
+    public static Map mapFromJsonFile(File file){
+        String json = readFileToString(file);
+        if (json == null) {
+            return null;
+        }
+        Map map = (Map)FileUtils.fromJsonString(json);
+        return map;
+    }
+
+    public static boolean writeStringToFile(String toWrite, File file, String type) {
+        return writeStringToFile(toWrite, file, type, true);
+    }
+    public static boolean writeStringToFile(String toWrite, File file, String type, boolean notifyOnSuccess) {
+        try {
+            FileWriter w = new FileWriter(file);
+            w.write(toWrite);
+            w.close();
+            if(type != null) {
+                Notification.addSuccess(type + " saved.");
+            }
+            return true;
+        } catch (IOException e) {
+            if(type != null) {
+                Notification.addError("Error while saving " + type + " : " + e.getMessage());
+            }
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static String readFileToString(File settingsFile) {
+        String json;
+        try{
+            FileReader file = new FileReader(settingsFile);
+            BufferedReader reader = new BufferedReader(file);
+            StringBuilder builder = new StringBuilder();
+            int c;
+            while ((c = reader.read()) != -1) {
+                builder.append((char) c);
+            }
+            json = builder.toString();
+        }catch (IOException e){
+            json = null;
+            e.printStackTrace();
+        }
+        return json;
+    }
 
     public static void deleteDir(File dir) {
         if (dir.exists()) {

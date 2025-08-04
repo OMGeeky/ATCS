@@ -53,9 +53,14 @@ public class SpritesheetEditor extends Editor {
 
     public SpritesheetEditor(Spritesheet sheet) {
         super();
-        this.icon = new ImageIcon(sheet.getIcon(0));
         this.name = sheet.id;
         this.target = sheet;
+        Image icon = sheet.getIcon(0);
+        if (icon == null) {
+            Notification.addError("Unable to open spritesheet " + sheet.id + " because the image is missing. This might be because its an UI spritesheet, which is not supported in ATCS");
+            return;
+        }
+        this.icon = new ImageIcon(icon);
 
         JPanel pane = new JPanel();
 

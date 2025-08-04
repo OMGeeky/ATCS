@@ -1,8 +1,7 @@
 package com.gpl.rpg.atcontentstudio.model;
 
 import com.gpl.rpg.atcontentstudio.Notification;
-import com.gpl.rpg.atcontentstudio.io.JsonPrettyWriter;
-import org.json.simple.JSONObject;
+import com.gpl.rpg.atcontentstudio.utils.FileUtils;
 import org.json.simple.parser.JSONParser;
 
 import java.io.*;
@@ -108,22 +107,8 @@ public class WorkspaceSettings {
         }
 
         json.put(VERSION_KEY, SETTINGS_VERSION);
-        StringWriter writer = new JsonPrettyWriter();
-        try {
-            JSONObject.writeJSONString(json, writer);
-        } catch (IOException e) {
-            //Impossible with a StringWriter
-        }
-        String toWrite = writer.toString();
-        try {
-            FileWriter w = new FileWriter(file);
-            w.write(toWrite);
-            w.close();
-            Notification.addSuccess("Workspace settings saved.");
-        } catch (IOException e) {
-            Notification.addError("Error while saving workspace settings : " + e.getMessage());
-            e.printStackTrace();
-        }
+        String toWrite = FileUtils.toJsonString(json);
+        FileUtils.writeStringToFile(toWrite, file, "Workspace settings");
     }
 
     public void resetDefault() {

@@ -10,9 +10,7 @@ import com.gpl.rpg.atcontentstudio.ui.DefaultIcons;
 import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
 
 public class SpriteSheetSet implements ProjectTreeNode {
@@ -44,6 +42,7 @@ public class SpriteSheetSet implements ProjectTreeNode {
                 }
             }
         }
+        spritesheets.sort(Comparator.comparing(s -> s.id));
     }
 
     @Override

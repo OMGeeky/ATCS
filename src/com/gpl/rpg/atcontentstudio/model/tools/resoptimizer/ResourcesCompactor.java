@@ -145,16 +145,12 @@ public class ResourcesCompactor {
     private Minify jsonMinifier = new Minify();
 
     private void writeJson(List<Map> dataToSave, File target) {
-        StringWriter writer = new JsonPrettyWriter();
-        try {
-            JSONArray.writeJSONString(dataToSave, writer);
-        } catch (IOException e) {
-            //Impossible with a StringWriter
-        }
-        String toWrite = writer.toString();
+        String toWrite = FileUtils.toJsonString(dataToSave);
+        toWrite = jsonMinifier.minify(toWrite);
+        FileUtils.writeStringToFile(toWrite, target, null);
         try {
             FileWriter w = new FileWriter(target);
-            w.write(jsonMinifier.minify(toWrite));
+            w.write(toWrite);
             w.close();
         } catch (IOException e) {
             e.printStackTrace();

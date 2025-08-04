@@ -1,5 +1,6 @@
 package com.gpl.rpg.atcontentstudio.model;
 
+import com.gpl.rpg.atcontentstudio.io.JsonSerializable;
 import com.gpl.rpg.atcontentstudio.model.Project.ResourceSet;
 import com.gpl.rpg.atcontentstudio.model.gamedata.GameDataSet;
 import com.gpl.rpg.atcontentstudio.model.maps.TMXMapSet;
@@ -24,7 +25,7 @@ import java.io.*;
 import java.util.List;
 import java.util.*;
 
-public class GameSource implements ProjectTreeNode, Serializable {
+public class GameSource implements ProjectTreeNode, Serializable, JsonSerializable {
 
     private static final long serialVersionUID = -1512979360971918158L;
 
@@ -37,6 +38,22 @@ public class GameSource implements ProjectTreeNode, Serializable {
     public transient Worldmap worldmap;
     public transient WriterModeDataSet writerModeDataSet;
     private transient SavedSlotCollection v;
+
+
+    @Override
+    public Map toMap() {
+        Map map = new HashMap();
+        map.put("type", type.toString());
+        map.put("baseFolder", baseFolder.getPath());
+        return map;
+    }
+
+    @Override
+    public void fromMap(Map map) {
+        if(map==null)return;
+        type = Enum.valueOf(Type.class, (String)map.get("type"));
+        baseFolder = new File((String) map.get("baseFolder"));
+    }
 
     public static enum Type {
         source,
@@ -52,6 +69,10 @@ public class GameSource implements ProjectTreeNode, Serializable {
 
     public transient Map<String, List<String>> referencedSourceFiles = null;
 
+    public GameSource(Map json, Project parent) {
+        fromMap(json);
+        refreshTransients(parent);
+    }
     public GameSource(File folder, Project parent) {
         this.parent = parent;
         this.baseFolder = folder;
