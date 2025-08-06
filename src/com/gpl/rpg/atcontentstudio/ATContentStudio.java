@@ -1,10 +1,16 @@
 package com.gpl.rpg.atcontentstudio;
 
-import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
+import com.gpl.rpg.atcontentstudio.model.Workspace;
+import com.gpl.rpg.atcontentstudio.ui.StudioFrame;
+import com.gpl.rpg.atcontentstudio.ui.WorkerDialog;
+import com.gpl.rpg.atcontentstudio.ui.WorkspaceSelector;
+import prefuse.data.expression.parser.ExpressionParser;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.plaf.FontUIResource;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -14,31 +20,20 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpTimeoutException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.plaf.FontUIResource;
-
-import prefuse.data.expression.parser.ExpressionParser;
-
-import com.gpl.rpg.atcontentstudio.model.Workspace;
-import com.gpl.rpg.atcontentstudio.ui.StudioFrame;
-import com.gpl.rpg.atcontentstudio.ui.WorkerDialog;
-import com.gpl.rpg.atcontentstudio.ui.WorkspaceSelector;
 
 public class ATContentStudio {
 
     public static final String APP_NAME = "Andor's Trail Content Studio";
     public static final String APP_VERSION = readVersionFromFile();
+
     public static final String CHECK_UPDATE_URL = "https://andorstrail.com/static/ATCS_latest";
     public static final String DOWNLOAD_URL = "https://andorstrail.com/viewtopic.php?f=6&t=4806";
 
@@ -57,7 +52,7 @@ public class ATContentStudio {
      */
     public static void main(String[] args) {
         String fontScaling = System.getProperty(FONT_SCALE_ENV_VAR_NAME);
-        Float fontScale = null;
+        Float fontScale;
         if (fontScaling != null) {
             try {
                 fontScale = Float.parseFloat(fontScaling);
@@ -107,8 +102,6 @@ public class ATContentStudio {
                             frame.setVisible(true);
                             frame.setDefaultCloseOperation(StudioFrame.DO_NOTHING_ON_CLOSE);
                         }
-
-                        ;
                     });
                     for (File f : ConfigCache.getKnownWorkspaces()) {
                         if (workspaceRoot.equals(f)) {
@@ -207,8 +200,14 @@ public class ATContentStudio {
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        } catch (HttpTimeoutException e) {
+            System.out.println("Could not connect to url to check for updates (timeout): " + CHECK_UPDATE_URL);
         } catch (IOException e) {
-            e.printStackTrace();
+            if (e.getMessage() != null && e.getMessage().startsWith("Server returned HTTP response code:")) {
+                System.out.println("Could not fetch current version from server to check for updates (non-success-status): " + e.getMessage());
+            } else {
+                System.out.println("Could not check for updates: '" + CHECK_UPDATE_URL + "' - " + e.getMessage());
+            }
         } finally {
             try {
                 if (in != null)
